@@ -1,0 +1,8 @@
+.vscode/
+build/*
+data/*
+bin/*
+
+!build/.gitkeep
+!data/.gitkeep
+!bin/.gitkeep
