@@ -1,7 +1,12 @@
-#include <cstdlib>
-#include <iostream>
+#include <chrono>
 
-char** parse_map();
+#include "io.h"
+
+#define MICROSECONDS std::chrono::microseconds
+#define SECONDS std::chrono::seconds
+#define CURRENT_TIME std::chrono::high_resolution_clock::now()
+#define DURATION(x) std::chrono::duration_cast<MICROSECONDS>(x).count()
+#define CLEANUP_TIME 1000
 
 void make_moves(char* argv[], int time_limit);
 
@@ -18,12 +23,19 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-char** parse_map()
-{
-    return nullptr;
-}
-
 void make_moves(char *argv[], int time_limit)
 {
+    auto start = CURRENT_TIME;
+    int time_limit_us = MICROSECONDS(SECONDS(time_limit)).count();
 
+    int X, Y;
+    grid map = parse_map(argv[1], X, Y);
+
+    int duration = DURATION(CURRENT_TIME - start);
+    while (duration < time_limit_us - CLEANUP_TIME)
+    {
+        // this is where the magic happens
+        duration = DURATION(CURRENT_TIME - start);
+    }
+    // cleanup
 }

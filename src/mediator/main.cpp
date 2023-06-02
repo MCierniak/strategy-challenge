@@ -1,6 +1,6 @@
+#include <iostream>
 #include <fstream>
 #include <random>
-#include <iostream>
 
 void generate_random_map();
 
