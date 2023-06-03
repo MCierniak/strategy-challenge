@@ -1,8 +1,38 @@
+// Strategy Challenge Project
+// Copyright (C) 2023 Mateusz Cierniak
+//
+// This file is part of Strategy Challenge Project.
+//
+// Strategy Challenge Project is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3 of the License, or (at your
+// option) any later version.
+//
+// Strategy Challenge Project is distributed in the hope that it will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+// Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
+
 #include <iostream>
 #include <fstream>
 #include <random>
 
-void generate_random_map();
+// Initial resource for each player
+#define INITIAL_GOLD_1 2000
+#define INITIAL_GOLD_2 2000
+// Define chance for random map tile to be empty (val*10%)
+#define EMPTY_CHANCE 7
+// Define chance for random map tile to be RESOURCE (val*10%)
+#define RESOURCE_CHANCE 1
+// The chance for blockade tiles is 100% - EMPTY_CHANCE*10% - RESOURCE_CHANCE*10%
+
+// Function preparing the initial state of the game,
+// generating randomized map file "mapa.txt",
+// generating corresponding "status1.txt", "status2.txt" files for both players.
+void start_game();
 
 int main(int argc, char* argv[])
 {
@@ -10,33 +40,39 @@ int main(int argc, char* argv[])
     {
         /*do something*/
     }
-    else
+    else if (argc == 1)
     {
-        generate_random_map();
+        start_game();
     }
     return 0;
 }
 
-void generate_random_map()
+void start_game()
 {
+    // Random engine initialization for map generation
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> len(1, 100), type(0, 8);
+    // Random int distribution for map size (min 2, max 100 rows/columns)
+    // Random int distribution for map tile type
+    std::uniform_int_distribution<> len(2, 100), type(0, 9);
 
+    // Randomized map size
     int X = len(gen), Y = len(gen);
 
-    std::uniform_int_distribution<> posx(0, X-1), posy(0, Y-1);
-
-    char map[X][Y];
-
-    for (int i = 0; i < X; i++)
+    // Generating map geography without bases
+    char map[Y][X];
+    for (int i = 0; i < Y; i++)
     {
-        for (int j = 0; j < Y; j++)
+        for (int j = 0; j < X; j++)
         {
             int grid = type(gen);
-            if (grid != 8)
+            if (grid <= EMPTY_CHANCE - 1)
             {
                 map[i][j] = '0';
+            }
+            else if (grid > EMPTY_CHANCE - 1 && grid <= EMPTY_CHANCE + RESOURCE_CHANCE - 1)
+            {
+                map[i][j] = '6';
             }
             else
             {
@@ -45,21 +81,51 @@ void generate_random_map()
         }
     }
 
-    map[posx(gen)][posy(gen)] = '1';
-    map[posx(gen)][posy(gen)] = '2';
+    // Random int distribution for base location within map bounds
+    std::uniform_int_distribution<> posx(0, X-1), posy(0, Y-1);
 
-    std::ofstream file("data/mapa.txt");
-    for (int j = 0; j < Y; j++)
+    // Generate position of base 1, make sure not to overwrite a blockade tile or base 2
+    int trgt_x_1 = posx(gen), trgt_y_1 = posy(gen);
+    while (map[trgt_y_1][trgt_x_1] == '9' || map[trgt_y_1][trgt_x_1] == '2')
     {
-        file << map[0][j];
+        trgt_x_1 = posx(gen);
+        trgt_y_1 = posy(gen);
     }
+    map[trgt_y_1][trgt_x_1] = '1';
+
+    // Generate position of base 2, make sure not to overwrite a blockade tile or base 1
+    int trgt_x_2 = posx(gen), trgt_y_2 = posy(gen);
+    while (map[trgt_y_2][trgt_x_2] == '9' || map[trgt_y_2][trgt_x_2] == '1')
+    {
+        trgt_x_2 = posx(gen);
+        trgt_y_2 = posy(gen);
+    }
+    map[trgt_y_2][trgt_x_2] = '2';
+
+    // Output map to file
+    std::ofstream file("data/mapa.txt");
     for (int i = 0; i < X; i++)
     {
-        file << '\n';
         for (int j = 0; j < Y; j++)
         {
-            file << map[i][j];
+            file << map[j][i];
         }
+        file << '\n';
     }
+    file.close();
+
+    // Set initial resource distribution
+    long gold_1 = INITIAL_GOLD_1, gold_2 = INITIAL_GOLD_2;
+
+    file.open("data/status1.txt");
+    file << gold_1 << '\n';
+    file << "P B 0" << trgt_x_1 << " " << trgt_y_1 << " 0\n";
+    file << "E B 1" << trgt_x_2 << " " << trgt_y_2 << " 0\n";
+    file.close();
+
+    file.open("data/status2.txt");
+    file << gold_2 << '\n';
+    file << "E B 0" << trgt_x_1 << " " << trgt_y_1 << " 0\n";
+    file << "P B 1" << trgt_x_2 << " " << trgt_y_2 << " 0\n";
     file.close();
 }
