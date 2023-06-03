@@ -11,11 +11,39 @@ grid parse_map(char map_path[], int &X, int &Y)
     std::string line;
     while(getline(file, line))
     {
-        map.push_back(gridline(line.begin(), line.end()));
+        grid_row temp;
+        for (int i = 0; i < line.length(); i++)
+        {
+            if (line[i] == '0')
+            {
+                temp.push_back(
+                    std::make_unique<emptySpace>()
+                );
+            }
+            else if (line[i] == '1')
+            {
+                temp.push_back(
+                    std::make_unique<emptySpace>()
+                );
+            }
+            else if (line[i] == '2')
+            {
+                temp.push_back(
+                    std::make_unique<emptySpace>()
+                );
+            }
+            else
+            {
+                temp.push_back(
+                    std::make_unique<barrier>()
+                );
+            }
+        }
+        
+        map.push_back(std::move(temp));
         X = line.length();
         Y += 1;
     }
-
     file.close();
     return map;
 }

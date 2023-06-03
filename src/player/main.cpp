@@ -1,6 +1,8 @@
-#include <chrono>
-
 #include "io.h"
+#include "grid.h"
+#include "units.h"
+
+#include <chrono>
 
 #define MICROSECONDS std::chrono::microseconds
 #define SECONDS std::chrono::seconds
@@ -31,11 +33,21 @@ void make_moves(char *argv[], int time_limit)
     int X, Y;
     grid map = parse_map(argv[1], X, Y);
 
-    int duration = DURATION(CURRENT_TIME - start);
-    while (duration < time_limit_us - CLEANUP_TIME)
+    for (int i = 0; i < Y; i++)
     {
-        // this is where the magic happens
-        duration = DURATION(CURRENT_TIME - start);
+        for (int j = 0; j < X; j++)
+        {
+            std::cout << map[i][j] -> print() << " ";
+        }
+        std::cout << '\n';
     }
-    // cleanup
+    
+
+    // int duration = DURATION(CURRENT_TIME - start);
+    // while (duration < time_limit_us - CLEANUP_TIME)
+    // {
+    //     // this is where the magic happens
+    //     duration = DURATION(CURRENT_TIME - start);
+    // }
+    // // cleanup
 }
