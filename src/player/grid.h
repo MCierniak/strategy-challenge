@@ -41,6 +41,9 @@ public:
 
     virtual std::string print() = 0;
     
+    // Set traversal status
+    virtual void setTrav(bool newTrav) = 0;
+
     // Check if unit can stop on this node
     bool checkTrav();
 };
@@ -52,10 +55,9 @@ public:
     emptySpace();
     ~emptySpace();
 
-    std::string print();
-
-    // Set traversal status
     void setTrav(bool newTrav);
+
+    std::string print();
 };
 
 // Resource tile
@@ -70,19 +72,20 @@ public:
 
     std::string print();
 
-    // Set traversal status
     void setTrav(bool newTrav);
 
     // Get current resource node count
     static int getResourceCount();
 };
 
-// Blockade class
+// Barrier class
 class barrier : public gridObj
 {
 public:
     barrier();
     ~barrier();
+
+    void setTrav(bool newTrav);
 
     std::string print();
 };

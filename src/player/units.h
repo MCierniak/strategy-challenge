@@ -29,6 +29,7 @@
 #define listA std::vector<Archer>
 #define listS std::vector<Swordsman>
 #define listK std::vector<Knight>
+#define listB std::vector<Base>
 
 // Abstract interface for units
 class Unit
@@ -112,7 +113,7 @@ struct listUnits
     listA archers;
     listS swordsmen;
     listK knights;
-    Base base;
+    listB bases;
 };
 
 #endif

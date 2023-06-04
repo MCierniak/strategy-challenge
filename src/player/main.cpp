@@ -51,43 +51,30 @@ int main(int argc, char* argv[])
 
 void make_moves(char *argv[], int time_limit)
 {
-    try
-    {
-        // Get current time and translate the time limit to microseconds (possibly overkill)
-        auto start = CURRENT_TIME;
-        int time_limit_us = MICROSECONDS(SECONDS(time_limit)).count();
+    // Get current time and translate the time limit to microseconds (possibly overkill)
+    auto start = CURRENT_TIME;
+    int time_limit_us = MICROSECONDS(SECONDS(time_limit)).count();
 
-        // Load raw map into memory. Ignore bases.
-        int X = 0, Y = 0;
-        grid map = get_map(argv[1], X, Y);
-        if (X == 0 || Y == 0) return;
+    // Load raw map into memory. Ignore bases.
+    int X = 0, Y = 0;
+    grid map;
+    if (!get_map(argv[1], map, X, Y)) return;
 
-        // Load status into memory. Separate own and enemy units.
-        unitRoster myTeam, enemy;
-        long gold;
-        if (!get_status(argv[2], myTeam, enemy, gold)) return;
+    // Load status into memory. Separate by alliegence type.
+    // Update grid traversal flags based on enemy unit placement
+    listUnits myUnits, enemyUnits;
+    long gold;
+    if (!get_status(argv[2], map, gold, myUnits, enemyUnits)) return;
 
-        std::cout << Y << " " << X << std::endl;
-        for (int i = 0; i < Y; i++)
-        {
-            for (int j = 0; j < X; j++)
-            {
-                std::cout << map[i][j] -> print() << " ";
-            }
-            std::cout << '\n';
-        }
+    // print_map(map, X, Y);
 
-        // int duration = DURATION(CURRENT_TIME - start);
-        // while (duration < time_limit_us - CLEANUP_TIME)
-        // {
-        //     // this is where the magic happens
-        //     duration = DURATION(CURRENT_TIME - start);
-        // }
-        // // cleanup
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-        return;
-    }
+    print_status(myUnits, enemyUnits);
+
+    // int duration = DURATION(CURRENT_TIME - start);
+    // while (duration < time_limit_us - CLEANUP_TIME)
+    // {
+    //     // this is where the magic happens
+    //     duration = DURATION(CURRENT_TIME - start);
+    // }
+    // // cleanup
 }

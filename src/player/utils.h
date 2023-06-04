@@ -16,28 +16,8 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef IO_H
-#define IO_H
+#ifndef UTILS_H
+#define UTILS_H
 
-#include "units.h"
-#include "grid.h"
-
-#include <iostream>
-#include <fstream>
-#include <cstring>
-#include <sstream>
-
-// Parse map from file, output parsed map and X,Y size
-bool get_map(char map_path[], grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(char status_path[], grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
-
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
-
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
 
 #endif

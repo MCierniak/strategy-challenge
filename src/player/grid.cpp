@@ -35,6 +35,12 @@ void resource::setTrav(bool newTrav)
     isTraversable = newTrav;
 }
 
+void barrier::setTrav(bool newTrav)
+{
+    (void)newTrav;
+    isTraversable = false;
+}
+
 int resource::getResourceCount()
 {
     return resource::resourceCount;
