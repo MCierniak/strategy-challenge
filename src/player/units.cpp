@@ -22,9 +22,18 @@ Unit::Unit(int ident, int end, int sp, int aR, int px, int py):
     id(ident), endurance(end), speed(sp), attackRange(aR), posx(px), posy(py)
 {}
 
-Base::Base(int ident, int end, int px, int py, char q):
-    Unit(ident, end, 0, 0, px, py), queue(q)
+Base::Base():
+    Unit(0, 0, 0, 0, 0, 0), queue('0'), init(false)
 {}
+
+Base::Base(int ident, int end, int px, int py, char q):
+    Unit(ident, end, 0, 0, px, py), queue(q), init(true)
+{}
+
+bool Base::isInit()
+{
+    return init;
+}
 
 Worker::Worker(int ident, int end, int px, int py):
     Unit(ident, end, 2, 1, px, py)

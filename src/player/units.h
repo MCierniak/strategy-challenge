@@ -33,21 +33,25 @@
 // Abstract interface for units
 class Unit
 {
-protected:
-    int id, endurance, speed, attackRange;
-    int posx, posy;
 public:
+    const int id, endurance, speed, attackRange;
+    const int posx, posy;
+    
     Unit(int ident, int end, int sp, int aR, int px, int py);
     virtual ~Unit() = 0;
 };
 
 class Base : public Unit
 {
-private:
-    char queue;
 public:
+    const char queue;
+    const bool init;
+
+    Base();
     Base(int ident, int end, int px, int py, char q);
     ~Base();
+
+    bool isInit();
 };
 
 class Worker : public Unit
@@ -108,6 +112,7 @@ struct listUnits
     listA archers;
     listS swordsmen;
     listK knights;
+    Base base;
 };
 
 #endif
