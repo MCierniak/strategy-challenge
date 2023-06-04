@@ -30,9 +30,9 @@ void emptySpace::setTrav(bool newTrav)
     isTraversable = newTrav;
 }
 
-std::string emptySpace::print()
+void resource::setTrav(bool newTrav)
 {
-    return std::string("e");
+    isTraversable = newTrav;
 }
 
 int resource::getResourceCount()
@@ -40,32 +40,30 @@ int resource::getResourceCount()
     return resource::resourceCount;
 }
 
-void resource::setTrav(bool newTrav)
+std::string emptySpace::print()
 {
-    isTraversable = newTrav;
+    if (isTraversable) return std::string("e");
+    else return std::string("e(x)");
 }
 
 std::string resource::print()
 {
-    return std::string("r");
+    if (isTraversable) return std::string("r");
+    else return std::string("r(x)");
 }
 
 std::string barrier::print()
 {
-    return std::string("b");
+    return std::string("b(x)");
 }
 
 gridObj::gridObj(bool traversible):
     isTraversable(traversible)
 {}
 
-gridObj::~gridObj(){}
-
 emptySpace::emptySpace():
     gridObj(true)
 {}
-
-emptySpace::~emptySpace(){}
 
 resource::resource():
     gridObj(true)
@@ -73,13 +71,17 @@ resource::resource():
     resource::resourceCount++;
 }
 
+barrier::barrier():
+    gridObj(false)
+{}
+
+gridObj::~gridObj(){}
+
+emptySpace::~emptySpace(){}
+
 resource::~resource()
 {
     resource::resourceCount--;
 }
-
-barrier::barrier():
-    gridObj(false)
-{}
 
 barrier::~barrier(){}

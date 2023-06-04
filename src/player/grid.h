@@ -56,9 +56,6 @@ public:
 
     // Set traversal status
     void setTrav(bool newTrav);
-
-    // Get current resource node count
-    static int getResourceCount();
 };
 
 // Resource tile
