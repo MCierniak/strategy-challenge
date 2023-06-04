@@ -18,21 +18,11 @@
 
 #include "grid.h"
 
-int emptySpace::resourceCount = 0;
+int resource::resourceCount = 0;
 
 bool gridObj::checkTrav()
 {
     return isTraversable;
-}
-
-int emptySpace::checkVal()
-{
-    return value;
-}
-
-void emptySpace::addUnit(std::unique_ptr<Unit> &newUnitPtr)
-{
-    units.push_back(std::move(newUnitPtr));
 }
 
 void emptySpace::setTrav(bool newTrav)
@@ -40,62 +30,24 @@ void emptySpace::setTrav(bool newTrav)
     isTraversable = newTrav;
 }
 
-void emptySpace::setAttack(bool newAtt)
-{
-    attackAdvantage = newAtt;
-}
-
-void emptySpace::removeUnit(std::size_t pos)
-{
-    if (pos < units.size())
-    {
-        if (pos != units.size() - 1)
-        {
-            units[pos] = std::move(units.back());
-        }
-        units.pop_back();
-    }
-}
-
-void emptySpace::setResource(bool newRes)
-{
-    resource = newRes;
-}
-
-void emptySpace::setVal(int newVal)
-{
-    value = newVal;
-}
-
-int emptySpace::getResourceCount()
-{
-    return emptySpace::resourceCount;
-}
-
 std::string emptySpace::print()
 {
-    if (resource)
-    {
-        if (units.size() == 0)
-        {
-            return std::string("r");
-        }
-        else
-        {
-            return std::string("r(units)");
-        }
-    }
-    else
-    {
-        if (units.size() == 0)
-        {
-            return std::string("e");
-        }
-        else
-        {
-            return std::string("e(units)");
-        }
-    }
+    return std::string("e");
+}
+
+int resource::getResourceCount()
+{
+    return resource::resourceCount;
+}
+
+void resource::setTrav(bool newTrav)
+{
+    isTraversable = newTrav;
+}
+
+std::string resource::print()
+{
+    return std::string("r");
 }
 
 std::string barrier::print()
@@ -110,20 +62,20 @@ gridObj::gridObj(bool traversible):
 gridObj::~gridObj(){}
 
 emptySpace::emptySpace():
-    gridObj(true), attackAdvantage(false), resource(false), value(1)
+    gridObj(true)
+{}
+
+emptySpace::~emptySpace(){}
+
+resource::resource():
+    gridObj(true)
 {
-    if (resource)
-    {
-        emptySpace::resourceCount++;
-    }
+    resource::resourceCount++;
 }
 
-emptySpace::~emptySpace()
+resource::~resource()
 {
-    if (resource)
-    {
-        emptySpace::resourceCount--;
-    }
+    resource::resourceCount--;
 }
 
 barrier::barrier():

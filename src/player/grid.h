@@ -45,40 +45,36 @@ public:
     bool checkTrav();
 };
 
-// Empty space tile and also resource tile class
+// Empty space tile
 class emptySpace : public gridObj
 {
-protected:
-    // Logic flags for decision making
-    bool attackAdvantage, resource;
-    // Vector of units on the tile
-    unitRoster units;
-    // Tile value for decision making
-    int value;
-
-    // Static count of resource tiles
-    static int resourceCount;
 public:
     emptySpace();
     ~emptySpace();
 
     std::string print();
 
-    // Check tile value
-    int checkVal();
-
-    // Add unit to tile
-    void addUnit(std::unique_ptr<Unit> &newUnitPtr);
-    // Remove unit from tile roster. O(1)
-    void removeUnit(std::size_t pos);
-    // Change tile status from empty to resource
-    void setResource(bool newRes);
     // Set traversal status
     void setTrav(bool newTrav);
-    // Set attack advantage status
-    void setAttack(bool newAtt);
-    // Set tile value
-    void setVal(int newVal);
+
+    // Get current resource node count
+    static int getResourceCount();
+};
+
+// Resource tile
+class resource : public gridObj
+{
+protected:
+    // Static count of resource tiles
+    static int resourceCount;
+public:
+    resource();
+    ~resource();
+
+    std::string print();
+
+    // Set traversal status
+    void setTrav(bool newTrav);
 
     // Get current resource node count
     static int getResourceCount();
