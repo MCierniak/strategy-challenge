@@ -1,55 +1,113 @@
+// Strategy Challenge Project
+// Copyright (C) 2023 Mateusz Cierniak
+//
+// This file is part of Strategy Challenge Project.
+//
+// Strategy Challenge Project is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 3 of the License, or (at your
+// option) any later version.
+//
+// Strategy Challenge Project is distributed in the hope that it will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+// Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
+
 #ifndef UNITS_H
 #define UNITS_H
 
-#define unitRoster std::vector<std::unique_ptr<Unit>>
+#include <vector>
 
+// Vector for units
+#define listW std::vector<Worker>
+#define listC std::vector<Catapult>
+#define listR std::vector<Ram>
+#define listP std::vector<Pikeman>
+#define listA std::vector<Archer>
+#define listS std::vector<Swordsman>
+#define listK std::vector<Knight>
+
+// Abstract interface for units
 class Unit
 {
-private:
-    /* data */
+protected:
+    int id, endurance, speed, attackRange;
+    int posx, posy;
 public:
-    Unit(/* args */);
-    ~Unit();
+    Unit(int ident, int end, int sp, int aR, int px, int py);
+    virtual ~Unit() = 0;
 };
 
-// class object
-// {
-// protected:
-//     int y, x;
-// public:
-//     object(int y_coord, int x_coord);
-//     object(object &other);
-//     ~object();
-//     virtual std::string print() = 0;
-// };
+class Base : public Unit
+{
+private:
+    char queue;
+public:
+    Base(int ident, int end, int px, int py, char q);
+    ~Base();
+};
 
-// class emptySpace : public object
-// {
-// private:
-//     /* data */
-// public:
-//     emptySpace(int y_coord, int x_coord);
-//     emptySpace(emptySpace &other);
-//     ~emptySpace();
-//     std::string print();
-// };
+class Worker : public Unit
+{
+public:
+    Worker(int ident, int end, int px, int py);
+    ~Worker();
+};
 
-// class obstacle : public object
-// {
-// private:
-//     /* data */
-// public:
-//     obstacle(int y_coord, int x_coord);
-//     ~obstacle();
-// };
+class Catapult : public Unit
+{
+public:
+    Catapult(int ident, int end, int px, int py);
+    ~Catapult();
+};
 
-// obstacle::obstacle(int y_coord, int x_coord)
-// {
-// }
+class Ram : public Unit
+{
+public:
+    Ram(int ident, int end, int px, int py);
+    ~Ram();
+};
 
-// obstacle::~obstacle()
-// {
-// }
+class Pikeman : public Unit
+{
+public:
+    Pikeman(int ident, int end, int px, int py);
+    ~Pikeman();
+};
 
+class Archer : public Unit
+{
+public:
+    Archer(int ident, int end, int px, int py);
+    ~Archer();
+};
+
+class Swordsman : public Unit
+{
+public:
+    Swordsman(int ident, int end, int px, int py);
+    ~Swordsman();
+};
+
+class Knight : public Unit
+{
+public:
+    Knight(int ident, int end, int px, int py);
+    ~Knight();
+};
+
+struct listUnits
+{
+    listW workers;
+    listC catapults;
+    listR rams;
+    listP pikemen;
+    listA archers;
+    listS swordsmen;
+    listK knights;
+};
 
 #endif
