@@ -20,6 +20,7 @@
 #include "grid.h"
 #include "units.h"
 
+#include <algorithm>
 #include <chrono>
 
 // Macros for wall time monitoring
@@ -28,9 +29,9 @@
 #define MICROSECONDS std::chrono::microseconds
 #define SECONDS std::chrono::seconds
 // Time (in microseconds) needed for final cleanup
-#define CLEANUP_TIME 1000
+#define CLEANUP_TIME 5
 
-// Main player function. All logic lives here.
+// Main player function.
 void make_moves(char* argv[], int time_limit);
 
 int main(int argc, char* argv[])
@@ -66,15 +67,37 @@ void make_moves(char *argv[], int time_limit)
     long gold;
     if (!get_status(argv[2], map, gold, myUnits, enemyUnits)) return;
 
-    // print_map(map, X, Y);
+    // Prep exit conditions for decision loop
+    std::size_t i = 0;
+    std::size_t max_i = std::max({
+        myUnits.archers.size(), myUnits.bases.size(),
+        myUnits.catapults.size(), myUnits.knights.size(),
+        myUnits.pikemen.size(), myUnits.rams.size(),
+        myUnits.swordsmen.size(), myUnits.workers.size()
+    });
 
-    print_status(myUnits, enemyUnits);
+    // Open order file.
+    std::ofstream file(argv[3]);
+    if(file.fail()) return;
 
-    // int duration = DURATION(CURRENT_TIME - start);
-    // while (duration < time_limit_us - CLEANUP_TIME)
-    // {
-    //     // this is where the magic happens
-    //     duration = DURATION(CURRENT_TIME - start);
-    // }
-    // // cleanup
+    // Decision loop. One unit of each type performs an action which
+    // gets immediately written to file. Wall time is estimated so that
+    // the player script has a chance to end without timeout disqualification.
+    int duration = DURATION(CURRENT_TIME - start);
+    while (duration < time_limit_us - CLEANUP_TIME)
+    {
+        if (i >= max_i) break;
+        
+        std::string temp;
+        if (i < myUnits.bases.size())
+        {
+            if (action(temp, myUnits.bases[i], gold, map, myUnits, enemyUnits)) file << temp;
+        }
+        // other actions
+        i++;
+        duration = DURATION(CURRENT_TIME - start);
+    }
+
+    // cleanup
+    file.close();
 }

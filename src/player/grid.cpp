@@ -18,7 +18,7 @@
 
 #include "grid.h"
 
-int resource::resourceCount = 0;
+std::size_t resource::resourceCount = 0;
 
 bool gridObj::checkTrav()
 {
@@ -41,7 +41,7 @@ void barrier::setTrav(bool newTrav)
     isTraversable = false;
 }
 
-int resource::getResourceCount()
+std::size_t resource::getResourceCount()
 {
     return resource::resourceCount;
 }
@@ -80,8 +80,6 @@ resource::resource():
 barrier::barrier():
     gridObj(false)
 {}
-
-gridObj::~gridObj(){}
 
 emptySpace::~emptySpace(){}
 

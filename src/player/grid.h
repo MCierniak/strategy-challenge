@@ -16,13 +16,9 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GRID_H
-#define GRID_H
+#ifndef PLAYER_GRID_H
+#define PLAYER_GRID_H
 
-#include "units.h"
-
-#include <memory>
-#include <vector>
 #include <string>
 
 // Vector for map tiles. Call with grid[y coord][x coord]
@@ -37,7 +33,7 @@ protected:
     bool isTraversable;
 public:
     gridObj(bool traversible);
-    ~gridObj();
+    virtual ~gridObj() = default;
 
     virtual std::string print() = 0;
     
@@ -65,7 +61,7 @@ class resource : public gridObj
 {
 protected:
     // Static count of resource tiles
-    static int resourceCount;
+    static std::size_t resourceCount;
 public:
     resource();
     ~resource();
@@ -75,7 +71,7 @@ public:
     void setTrav(bool newTrav);
 
     // Get current resource node count
-    static int getResourceCount();
+    static std::size_t getResourceCount();
 };
 
 // Barrier class

@@ -16,10 +16,15 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UNITS_H
-#define UNITS_H
+#ifndef PLAYER_UNITS_H
+#define PLAYER_UNITS_H
 
+#include "grid.h"
+
+#include <iostream>
+#include <sstream>
 #include <vector>
+#include <memory>
 
 // Vector for units
 #define listW std::vector<Worker>
@@ -30,6 +35,15 @@
 #define listS std::vector<Swordsman>
 #define listK std::vector<Knight>
 #define listB std::vector<Base>
+
+// Build cost logic
+#define CAN_GET_WORKER(x) (x >= 100)
+#define CAN_GET_CATAPULT(x) (x >= 800)
+#define CAN_GET_RAM(x) (x >= 500)
+#define CAN_GET_PIKEMAN(x) (x >= 200)
+#define CAN_GET_ARCHER(x) (x >= 250)
+#define CAN_GET_SWORDSMAN(x) (x >= 250)
+#define CAN_GET_KNIGHT(x) (x >= 400)
 
 // Abstract interface for units
 class Unit
@@ -114,6 +128,17 @@ struct listUnits
     listS swordsmen;
     listK knights;
     listB bases;
+    int unitCount = 0;
 };
+
+//Decision making functions
+bool action(std::string &payload, const Base &unit, long gold, const grid &map, const listUnits &allies, const listUnits &enemies);
+bool action(std::string &payload, const Worker &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, const Catapult &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, const Ram &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, const Pikeman &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, const Archer &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, const Swordsman &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, const Knight &unit, const grid &map, const listUnits &enemies);
 
 #endif

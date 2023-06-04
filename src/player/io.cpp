@@ -18,7 +18,7 @@
 
 #include "io.h"
 
-bool get_map(char map_path[], grid &map, int &X, int &Y)
+bool get_map(const std::string &map_path, grid &map, int &X, int &Y)
 {
     try{
         // Initialize grid object and set X and Y
@@ -74,7 +74,7 @@ bool get_map(char map_path[], grid &map, int &X, int &Y)
     }
 }
 
-bool get_status(char status_path[], grid &map, long &gold, listUnits &myTeam, listUnits &enemy)
+bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy)
 {
     try
     {
@@ -119,74 +119,111 @@ bool get_status(char status_path[], grid &map, long &gold, listUnits &myTeam, li
                 if (alliegence == 'P')
                 {
                     myTeam.bases.push_back(Base(id, endurance, posx, posy, bQueue));
+                    myTeam.unitCount++;
                 }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.bases.push_back(Base(id, endurance, posx, posy, bQueue));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'K': // Knight unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.knights.push_back(Knight(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.knights.push_back(Knight(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.knights.push_back(Knight(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'S': // Swordsman unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'A': // Archer unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.archers.push_back(Archer(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.archers.push_back(Archer(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.archers.push_back(Archer(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'P': // Pikeman unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.pikemen.push_back(Pikeman(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.pikemen.push_back(Pikeman(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.pikemen.push_back(Pikeman(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'C': // Catapult unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.catapults.push_back(Catapult(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.catapults.push_back(Catapult(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.catapults.push_back(Catapult(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'R': // Ram unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.rams.push_back(Ram(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.rams.push_back(Ram(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.rams.push_back(Ram(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             case 'W': // Worker unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
-                if (alliegence == 'P') myTeam.workers.push_back(Worker(id, endurance, posx, posy));
+                if (alliegence == 'P')
+                {
+                    myTeam.workers.push_back(Worker(id, endurance, posx, posy));
+                    myTeam.unitCount++;
+                }
                 else
                 {
                     map[posy][posx]->setTrav(false);
                     enemy.workers.push_back(Worker(id, endurance, posx, posy));
+                    enemy.unitCount++;
                 }
                 continue;
             default: // Error in unit tag, terminate
@@ -349,7 +386,7 @@ void test_get_map()
     // Desired result is an empty grid object and false return.
     grid test;
     int X, Y;
-    bool testReturn = get_map(strdup("wrong address"), test, X, Y);
+    bool testReturn = get_map("wrong address", test, X, Y);
     if (!testReturn)
     {
         std::cout << "get_map() wrong address test passed (1/2)" << std::endl;
@@ -375,7 +412,7 @@ void test_get_status()
     listUnits test1, test2;
     grid testMap;
     long testGold;
-    bool testReturn = get_status(strdup("wrong address"), testMap, testGold, test1, test2);
+    bool testReturn = get_status("wrong address", testMap, testGold, test1, test2);
     if (!testReturn)
     {
         std::cout << "get_status() wrong address test passed (1/4)" << std::endl;

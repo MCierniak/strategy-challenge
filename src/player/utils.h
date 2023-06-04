@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef PLAYER_UTILS_H
+#define PLAYER_UTILS_H
 
 
 #endif

@@ -16,21 +16,19 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef IO_H
-#define IO_H
+#ifndef PLAYER_IO_H
+#define PLAYER_IO_H
 
 #include "units.h"
-#include "grid.h"
 
 #include <iostream>
 #include <fstream>
-#include <cstring>
 #include <sstream>
 
 // Parse map from file, output parsed map and X,Y size
-bool get_map(char map_path[], grid &map, int &X, int &Y);
+bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
 // Parse status from file, output rosters of own and enemy units
-bool get_status(char status_path[], grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
 
 void print_map(const grid &map, int X, int Y);
 void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
