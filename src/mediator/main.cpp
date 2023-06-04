@@ -34,6 +34,8 @@
 // generating corresponding "status1.txt", "status2.txt" files for both players.
 void start_game();
 
+void print_map(const std::vector<std::vector<char>> &map, int X, int Y);
+
 int main(int argc, char* argv[])
 {
     if (argc > 1)
@@ -104,11 +106,11 @@ void start_game()
 
     // Output map to file
     std::ofstream file("data/mapa.txt");
-    for (int i = 0; i < X; i++)
+    for (int i = 0; i < Y; i++)
     {
-        for (int j = 0; j < Y; j++)
+        for (int j = 0; j < X; j++)
         {
-            file << map[j][i];
+            file << map[i][j];
         }
         file << '\n';
     }
@@ -128,4 +130,20 @@ void start_game()
     file << "E B 0 " << trgt_x_1 << " " << trgt_y_1 << " 200 0\n";
     file << "P B 1 " << trgt_x_2 << " " << trgt_y_2 << " 200 0\n";
     file.close();
+}
+
+void print_map(const std::vector<std::vector<char>> &map, int X, int Y)
+{
+    std::cout << "Map:\n";
+    std::cout << "Size: (" << X << ", " << Y << ")\n\n";
+    std::cout << "Geography:" << "\n\n";
+    for (int i = 0; i < Y; i++)
+    {
+        for (int j = 0; j < X; j++)
+        {
+            std::cout << map[i][j] << " ";
+        }
+        std::cout << '\n';
+    }
+    std::cout << '\n';
 }
