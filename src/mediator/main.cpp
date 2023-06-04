@@ -27,7 +27,7 @@
 #define EMPTY_CHANCE 7
 // Define chance for random map tile to be RESOURCE (val*10%)
 #define RESOURCE_CHANCE 1
-// The chance for blockade tiles is 100% - EMPTY_CHANCE*10% - RESOURCE_CHANCE*10%
+// The chance for barrier tiles is 100% - EMPTY_CHANCE*10% - RESOURCE_CHANCE*10%
 
 // Function preparing the initial state of the game,
 // generating randomized map file "mapa.txt",
@@ -60,7 +60,7 @@ void start_game()
     int X = len(gen), Y = len(gen);
 
     // Generating map geography without bases
-    char map[Y][X];
+    std::vector<std::vector<char>> map(Y, std::vector<char>(X));
     for (int i = 0; i < Y; i++)
     {
         for (int j = 0; j < X; j++)
@@ -84,7 +84,7 @@ void start_game()
     // Random int distribution for base location within map bounds
     std::uniform_int_distribution<> posx(0, X-1), posy(0, Y-1);
 
-    // Generate position of base 1, make sure not to overwrite a blockade tile or base 2
+    // Generate position of base 1, make sure not to overwrite a barrier tile or base 2
     int trgt_x_1 = posx(gen), trgt_y_1 = posy(gen);
     while (map[trgt_y_1][trgt_x_1] == '9' || map[trgt_y_1][trgt_x_1] == '2')
     {
@@ -93,7 +93,7 @@ void start_game()
     }
     map[trgt_y_1][trgt_x_1] = '1';
 
-    // Generate position of base 2, make sure not to overwrite a blockade tile or base 1
+    // Generate position of base 2, make sure not to overwrite a barrier tile or base 1
     int trgt_x_2 = posx(gen), trgt_y_2 = posy(gen);
     while (map[trgt_y_2][trgt_x_2] == '9' || map[trgt_y_2][trgt_x_2] == '1')
     {
@@ -119,13 +119,13 @@ void start_game()
 
     file.open("data/status1.txt");
     file << gold_1 << '\n';
-    file << "P B 0" << trgt_x_1 << " " << trgt_y_1 << " 0\n";
-    file << "E B 1" << trgt_x_2 << " " << trgt_y_2 << " 0\n";
+    file << "P B 0 " << trgt_x_1 << " " << trgt_y_1 << " 200 0\n";
+    file << "E B 1 " << trgt_x_2 << " " << trgt_y_2 << " 200 0\n";
     file.close();
 
     file.open("data/status2.txt");
     file << gold_2 << '\n';
-    file << "E B 0" << trgt_x_1 << " " << trgt_y_1 << " 0\n";
-    file << "P B 1" << trgt_x_2 << " " << trgt_y_2 << " 0\n";
+    file << "E B 0 " << trgt_x_1 << " " << trgt_y_1 << " 200 0\n";
+    file << "P B 1 " << trgt_x_2 << " " << trgt_y_2 << " 200 0\n";
     file.close();
 }
