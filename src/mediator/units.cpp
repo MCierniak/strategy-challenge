@@ -23,11 +23,11 @@ Unit::Unit(int ident, int end, int sp, int aR, int px, int py):
 {}
 
 Base::Base():
-    Unit(0, 0, 0, 0, 0, 0), queue('0'), init(false)
+    Unit(0, 0, 0, 0, 0, 0), init(false), queue('0')
 {}
 
 Base::Base(int ident, int end, int px, int py, char q):
-    Unit(ident, end, 0, 0, px, py), queue(q), init(true)
+    Unit(ident, end, 0, 0, px, py), init(true), queue(q)
 {}
 
 bool Base::isInit()
@@ -90,10 +90,10 @@ bool action(std::string &payload, const Base &unit, long gold, const grid &map, 
 
     if (unit.queue == '0')
     {
-        // Only in turn 1 can both players have exactly 1 unit simultaneously.
+        // Both players can have exactly 1 unit simultaneously only in turn 1.
         bool firstTurn = (
             allies.unitCount == 1 && enemies.unitCount == 1 && \
-            enemies.bases[0].queue == '0'
+            allies.bases[0].queue == '0' && enemies.bases[0].queue == '0'
         );
 
         // Pikemen are a cheap hard counter to knights.
@@ -114,28 +114,28 @@ bool action(std::string &payload, const Base &unit, long gold, const grid &map, 
             allies.knights.size() < enemies.archers.size()
         );
 
-        // First turn. Build a swordsman.
-        if (firstTurn && CAN_GET_SWORDSMAN(gold))
+        // First turn. Build a knight.
+        if (firstTurn)
         {
-            ss << unit.id << " B S\n";
+            ss << unit.id << " B K\n";
             payload = ss.str();
             return true;
         }
-        // If gold >= 800 build catapults. Always.
+        // If gold > 800 build catapults. Always.
         else if (!firstTurn && CAN_GET_CATAPULT(gold))
         {
             ss << unit.id << " B C\n";
             payload = ss.str();
             return true;
         }
-        // If gold >= 400 and there are reasons, build knights.
+        // If gold > 400 and there are reasons, build knights.
         else if (!firstTurn && CAN_GET_KNIGHT(gold) && needKnights)
         {
             ss << unit.id << " B K\n";
             payload = ss.str();
             return true;
         }
-        // If gold >= 200 and there are reasons, build pikemen.
+        // If gold > 200 and there are reasons, build pikemen.
         else if (!firstTurn && CAN_GET_PIKEMAN(gold) && needPikemen)
         {
             ss << unit.id << " B K\n";
