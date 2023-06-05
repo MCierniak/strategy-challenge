@@ -84,7 +84,6 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
         // If file does not exist, terminate
         if (file.fail())
         {
-            gold = 0;
             return false;
         }
 
@@ -95,7 +94,6 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
         // If failed to parse first line, terminate
         if (line.length() == 0)
         {
-            gold = 0;
             return false;
         }
         else
@@ -408,7 +406,7 @@ void test_get_map()
 void test_get_status()
 {
     // Test wrong input address.
-    // Desired result will have unmodified listUnit objects, 0 gold and false return.
+    // Desired result will have unmodified objects and false return.
     listUnits test1, test2;
     grid testMap;
     long testGold;

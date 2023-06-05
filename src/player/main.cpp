@@ -29,7 +29,7 @@
 #define MICROSECONDS std::chrono::microseconds
 #define SECONDS std::chrono::seconds
 // Time (in microseconds) needed for final cleanup
-#define CLEANUP_TIME 5
+#define CLEANUP_TIME 100
 
 // Main player function.
 void make_moves(char* argv[], int time_limit);

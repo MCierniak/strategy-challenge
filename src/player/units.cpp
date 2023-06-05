@@ -91,10 +91,7 @@ bool action(std::string &payload, const Base &unit, long gold, const grid &map, 
     if (unit.queue == '0')
     {
         // Only in turn 1 can both players have exactly 1 unit simultaneously.
-        bool firstTurn = (
-            allies.unitCount == 1 && enemies.unitCount == 1 && \
-            enemies.bases[0].queue == '0'
-        );
+        bool firstTurn = (allies.unitCount == 1 && enemies.unitCount == 1);
 
         // Pikemen are a cheap hard counter to knights.
         bool needPikemen = (allies.pikemen.size() < enemies.knights.size());
