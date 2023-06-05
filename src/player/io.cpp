@@ -40,23 +40,17 @@ bool get_map(const std::string &map_path, grid &map, int &X, int &Y)
                 // Set empty spaces on tiles without barriers. Ignore bases.
                 if (line[i] == '0' || line[i] == '1' || line[i] == '2')
                 {
-                    temp.push_back(
-                        std::make_unique<emptySpace>()
-                    );
+                    temp.push_back(std::make_unique<emptySpace>());
                 }
                 // Set resource nodes
                 else if (line[i] == '6')
                 {
-                    temp.push_back(
-                        std::make_unique<resource>()
-                    );
+                    temp.push_back(std::make_unique<resource>());
                 }
                 // Set barriers
                 else
                 {
-                    temp.push_back(
-                        std::make_unique<barrier>()
-                    );
+                    temp.push_back(std::make_unique<barrier>());
                 }
             }
             map.push_back(std::move(temp));
@@ -82,146 +76,222 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
         std::ifstream file(status_path);
 
         // If file does not exist, terminate
-        if (file.fail())
-        {
-            return false;
-        }
+        if (file.fail()) return false;
 
         // Parse file, start with 1st line (gold)
         std::string line;
         getline(file, line);
 
         // If failed to parse first line, terminate
-        if (line.length() == 0)
-        {
-            return false;
-        }
-        else
-        {
-            gold = std::stol(line);
-        }
+        if (line.length() == 0) return false;
+        else gold = std::stol(line);
 
         // Parse rest of status (units)
         char alliegence, type, bQueue;
-        int id, posx, posy, endurance;
+        int id, endurance;
+        std::size_t posx, posy;
         while(getline(file, line))
         {
             std::istringstream ss(line);
 
             // Determine type of unit first, alliegence last.
-            // If enemy, set map grid as not traversible.
             switch (line[2])
             {
             case 'B': // Base unit, assume line has extra queue param
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue;
                 if (alliegence == 'P')
                 {
-                    myTeam.bases.push_back(Base(id, endurance, posx, posy, bQueue));
-                    myTeam.unitCount++;
+                    Base unit(id, endurance, posx, posy, bQueue);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.bases.push_back(Base(id, endurance, posx, posy, bQueue));
-                    enemy.unitCount++;
+                    Base unit(id, endurance, posx, posy, bQueue);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
                 }
                 continue;
             case 'K': // Knight unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.knights.push_back(Knight(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Knight unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.knights.push_back(Knight(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Knight unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_5)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(KNIGHT2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(KNIGHT2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(KNIGHT2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(KNIGHT2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(KNIGHT2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(KNIGHT2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(KNIGHT2WORKER);
+                    }
+                    
                 }
                 continue;
             case 'S': // Swordsman unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Swordsman unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Swordsman unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_2)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(SWORDSMAN2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(SWORDSMAN2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(SWORDSMAN2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(SWORDSMAN2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(SWORDSMAN2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(SWORDSMAN2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(SWORDSMAN2WORKER);
+                    }
                 }
                 continue;
             case 'A': // Archer unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.archers.push_back(Archer(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Archer unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.archers.push_back(Archer(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Archer unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_6)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(ARCHER2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(ARCHER2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(ARCHER2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(ARCHER2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(ARCHER2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(ARCHER2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(ARCHER2WORKER);
+                    }
                 }
                 continue;
             case 'P': // Pikeman unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.pikemen.push_back(Pikeman(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Pikeman unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.pikemen.push_back(Pikeman(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Pikeman unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_3)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(PIKEMAN2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(PIKEMAN2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(PIKEMAN2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(PIKEMAN2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(PIKEMAN2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(PIKEMAN2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(PIKEMAN2WORKER);
+                    }
                 }
                 continue;
             case 'C': // Catapult unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.catapults.push_back(Catapult(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Catapult unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.catapults.push_back(Catapult(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Catapult unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_8)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(CATAPULT2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(CATAPULT2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(CATAPULT2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(CATAPULT2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(CATAPULT2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(CATAPULT2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(CATAPULT2WORKER);
+                    }
                 }
                 continue;
             case 'R': // Ram unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.rams.push_back(Ram(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Ram unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.rams.push_back(Ram(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Ram unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_2)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(RAM2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(RAM2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(RAM2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(RAM2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(RAM2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(RAM2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(RAM2WORKER);
+                    }
                 }
                 continue;
             case 'W': // Worker unit
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance;
                 if (alliegence == 'P')
                 {
-                    myTeam.workers.push_back(Worker(id, endurance, posx, posy));
-                    myTeam.unitCount++;
+                    Worker unit(id, endurance, posx, posy);
+                    if(!(myTeam.addUnit(unit))) return false;
                 }
                 else
                 {
-                    map[posy][posx]->setTrav(false);
-                    enemy.workers.push_back(Worker(id, endurance, posx, posy));
-                    enemy.unitCount++;
+                    Worker unit(id, endurance, posx, posy);
+                    if(!(enemy.addUnit(unit))) return false;
+                    map[posy][posx] -> addEnemyId(id);
+                    for (auto &&mod : MOVE_2)
+                    {
+                        if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
+                        if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(WORKER2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(WORKER2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(WORKER2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(WORKER2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(WORKER2RAM);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(WORKER2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(WORKER2WORKER);
+                    }
                 }
                 continue;
             default: // Error in unit tag, terminate

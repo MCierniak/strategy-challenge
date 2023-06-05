@@ -25,20 +25,95 @@ bool gridObj::checkTrav()
     return isTraversable;
 }
 
-void emptySpace::setTrav(bool newTrav)
+void gridObj::addDmg2Knight(int dmg)
 {
-    isTraversable = newTrav;
+    dmg2Knight += dmg;
 }
 
-void resource::setTrav(bool newTrav)
+void gridObj::addDmg2Swordsman(int dmg)
 {
-    isTraversable = newTrav;
+    dmg2Swordsman += dmg;
 }
 
-void barrier::setTrav(bool newTrav)
+void gridObj::addDmg2Archer(int dmg)
 {
-    (void)newTrav;
+    dmg2Archer += dmg;
+}
+
+void gridObj::addDmg2Pikeman(int dmg)
+{
+    dmg2Pikeman += dmg;
+}
+
+void gridObj::addDmg2Catapult(int dmg)
+{
+    dmg2Catapult += dmg;
+}
+
+void gridObj::addDmg2Ram(int dmg)
+{
+    dmg2Ram += dmg;
+}
+
+void gridObj::addDmg2Worker(int dmg)
+{
+    dmg2Worker += dmg;
+}
+
+void gridObj::addEnemyId(int id)
+{
+    enemyIds.push_back(id);
     isTraversable = false;
+}
+
+std::size_t gridObj::checkEnemyNr()
+{
+    return enemyIds.size();
+}
+
+int gridObj::checkDmgKnight()
+{
+    return dmg2Knight;
+}
+
+int gridObj::checkDmgSwordsman()
+{
+    return dmg2Swordsman;
+}
+
+int gridObj::checkDmgArcher()
+{
+    return dmg2Archer;
+}
+
+int gridObj::checkDmgPikeman()
+{
+    return dmg2Pikeman;
+}
+
+int gridObj::checkDmgCatapult()
+{
+    return dmg2Catapult;
+}
+
+int gridObj::checkDmgRam()
+{
+    return dmg2Ram;
+}
+
+int gridObj::checkDmgWorker()
+{
+    return dmg2Worker;
+}
+
+std::vector<int>& gridObj::getEnemyId()
+{
+    return enemyIds;
+}
+
+int gridObj::getEnemyId(std::size_t i)
+{
+    return enemyIds[i];
 }
 
 std::size_t resource::getResourceCount()
@@ -74,7 +149,7 @@ emptySpace::emptySpace():
 resource::resource():
     gridObj(true)
 {
-    resource::resourceCount++;
+    resource::resourceCount += 1;
 }
 
 barrier::barrier():
@@ -85,7 +160,7 @@ emptySpace::~emptySpace(){}
 
 resource::~resource()
 {
-    resource::resourceCount--;
+    resource::resourceCount -= 1;
 }
 
 barrier::~barrier(){}

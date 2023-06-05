@@ -20,6 +20,7 @@
 #define PLAYER_GRID_H
 
 #include <string>
+#include <vector>
 
 // Vector for map tiles. Call with grid[y coord][x coord]
 #define grid_row std::vector<std::unique_ptr<gridObj>>
@@ -29,19 +30,46 @@
 class gridObj
 {
 protected:
+    // Ids of enemies on the tile
+    std::vector<int> enemyIds;
     // Bool indicating if unit can stop on this tile
     bool isTraversable;
+    // Indicators for potential damage inflicted if
+    // ending turn on this node
+    int dmg2Knight = 0, dmg2Swordsman = 0, dmg2Archer = 0, dmg2Pikeman = 0;
+    int dmg2Catapult = 0, dmg2Ram = 0, dmg2Worker = 0;
 public:
+    
     gridObj(bool traversible);
     virtual ~gridObj() = default;
 
     virtual std::string print() = 0;
-    
-    // Set traversal status
-    virtual void setTrav(bool newTrav) = 0;
+
+    void addDmg2Knight(int dmg);
+    void addDmg2Swordsman(int dmg);
+    void addDmg2Archer(int dmg);
+    void addDmg2Pikeman(int dmg);
+    void addDmg2Catapult(int dmg);
+    void addDmg2Ram(int dmg);
+    void addDmg2Worker(int dmg);
+
+    void addEnemyId(int id);
 
     // Check if unit can stop on this node
     bool checkTrav();
+
+    std::size_t checkEnemyNr();
+
+    int checkDmgKnight();
+    int checkDmgSwordsman();
+    int checkDmgArcher();
+    int checkDmgPikeman();
+    int checkDmgCatapult();
+    int checkDmgRam();
+    int checkDmgWorker();
+
+    std::vector<int>& getEnemyId();
+    int getEnemyId(std::size_t i);
 };
 
 // Empty space tile
@@ -50,8 +78,6 @@ class emptySpace : public gridObj
 public:
     emptySpace();
     ~emptySpace();
-
-    void setTrav(bool newTrav);
 
     std::string print();
 };
@@ -68,8 +94,6 @@ public:
 
     std::string print();
 
-    void setTrav(bool newTrav);
-
     // Get current resource node count
     static std::size_t getResourceCount();
 };
@@ -80,8 +104,6 @@ class barrier : public gridObj
 public:
     barrier();
     ~barrier();
-
-    void setTrav(bool newTrav);
 
     std::string print();
 };

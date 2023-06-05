@@ -20,6 +20,7 @@
 #define PLAYER_IO_H
 
 #include "units.h"
+#include "utils.h"
 
 #include <iostream>
 #include <fstream>
