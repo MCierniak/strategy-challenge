@@ -37,7 +37,7 @@ OBJS_MEDIATOR := $(subst $(SRC_MEDIATOR)/,$(BUILD)/mediator/,$(addsuffix .o,$(ba
 DEPS_MEDIATOR := $(OBJS_MEDIATOR:.o=.d)
 
 # Main task
-all: player mediator
+all: clean player mediator
 
 player: $(TARGET_PLAYER)
 
