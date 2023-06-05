@@ -553,6 +553,8 @@ bool process_base_orders(int id, const std::string &order, long &gold, listUnits
 
         units.bases[itInd -> second].queue = order[1];
         units.bases[itInd -> second].qTime = BUILD_TIME(order[1]);
+
+        // Does the player have enough gold
         gold -= BUILD_COST(order[1]);
         if (gold < 0)
         {
@@ -573,47 +575,54 @@ bool add_new_unit(int &max_index, listUnits &units)
         switch (units.bases[0].queue)
         {
         case 'K':
-            units.knights.push_back(Knight(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'K';
-            units.id2index[max_index] = units.knights.size() - 1;
+        {
+            Knight unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         case 'S':
-            units.swordsmen.push_back(Swordsman(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'S';
-            units.id2index[max_index] = units.swordsmen.size() - 1;
+        {
+            Swordsman unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         case 'A':
-            units.archers.push_back(Archer(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'A';
-            units.id2index[max_index] = units.archers.size() - 1;
+        {
+            Archer unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         case 'P':
-            units.pikemen.push_back(Pikeman(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'P';
-            units.id2index[max_index] = units.pikemen.size() - 1;
+        {
+            Pikeman unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         case 'R':
-            units.rams.push_back(Ram(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'R';
-            units.id2index[max_index] = units.rams.size() - 1;
+        {
+            Ram unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         case 'C':
-            units.catapults.push_back(Catapult(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'C';
-            units.id2index[max_index] = units.catapults.size() - 1;
+        {
+            Catapult unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         case 'W':
-            units.workers.push_back(Worker(max_index, units.bases[0].posx, units.bases[0].posy));
-            units.unitCount++;
-            units.id2type[max_index] = 'W';
-            units.id2index[max_index] = units.workers.size() - 1;
+        {
+            Worker unit(max_index, units.bases[0].posx, units.bases[0].posy);
+            units.addUnit(unit);
+            units.bases[0].queue = '0';
             break;
+        }
         default:
             std::cerr << "Error in base queue!" << std::endl;
             return false;

@@ -22,7 +22,7 @@ std::string exec(const char* cmd);
 
 int main(int argc, char **argv)
 {
-    // Declare command line with streangstream
+    // Declare command line with stringstream
     std::stringstream ss;
 
     // Get custom timeout from arg, if nothing passed, assume 5s
@@ -46,7 +46,8 @@ int main(int argc, char **argv)
         if (++turn; turn % 2 == 1)
         {
             std::cout << "Turn " << turn << ". Running player 1 script." << std::endl;
-            ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC; 
+            if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
+            else ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC << " " << timeout;
             std::string ret = exec(ss.str().c_str());
             if (!(ret == std::string()))
             {
@@ -61,7 +62,8 @@ int main(int argc, char **argv)
         else
         {
             std::cout << "Turn " << turn << ". Running player 2 script." << std::endl;
-            ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC; 
+            if(timeout == 5) ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC;
+            else ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC << " " << timeout;
             std::string ret = exec(ss.str().c_str());
             if (!(ret == std::string()))
             {
@@ -105,7 +107,8 @@ int main(int argc, char **argv)
         std::cout << "Turn " << turn << ". Running player 1 script." << std::endl;
 
         // Call player 1 script
-        ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC; 
+        if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
+        else ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC << " " << timeout;
         std::string ret = exec(ss.str().c_str());
         if (!(ret == std::string()))
         {

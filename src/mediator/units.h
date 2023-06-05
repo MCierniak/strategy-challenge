@@ -55,15 +55,11 @@
 class Unit
 {
 public:
-    const int id, endurance, speed, attackRange;
-    const int posx, posy;
+    int id, endurance;
+    int posx, posy;
     
-    Unit(int ident, int end, int sp, int aR, int px, int py);
+    Unit(int ident, int end, int px, int py);
     virtual ~Unit() = 0;
-
-    //to zrobić...
-    // virtual std::string state4Player() = 0;
-    // virtual std::string state4Mediator() = 0;
 };
 
 class Base : public Unit
@@ -162,6 +158,5 @@ struct listUnits
 
     bool is_unique(int id);
 };
-
 
 #endif

@@ -18,20 +18,20 @@
 
 #include "units.h"
 
-Unit::Unit(int ident, int end, int sp, int aR, int px, int py):
-    id(ident), endurance(end), speed(sp), attackRange(aR), posx(px), posy(py)
+Unit::Unit(int ident, int end, int px, int py):
+    id(ident), endurance(end), posx(px), posy(py)
 {}
 
 Base::Base():
-    Unit(0, 0, 0, 0, 0, 0), init(false), queue('0')
+    Unit(0, 0, 0, 0), init(false), queue('0')
 {}
 
 Base::Base(int ident, int end, int px, int py, char q):
-    Unit(ident, end, 0, 0, px, py), init(true), queue(q)
+    Unit(ident, end, px, py), init(true), queue(q)
 {}
 
 Base::Base(int ident, int end, int px, int py, char q, int qT):
-    Unit(ident, end, 0, 0, px, py), init(true), queue(q), qTime(qT)
+    Unit(ident, end, px, py), init(true), queue(q), qTime(qT)
 {}
 
 bool Base::isInit()
@@ -40,59 +40,59 @@ bool Base::isInit()
 }
 
 Worker::Worker(int ident, int px, int py):
-    Unit(ident, 20, 2, 1, px, py)
+    Unit(ident, 20, px, py)
 {}
 
 Worker::Worker(int ident, int end, int px, int py):
-    Unit(ident, end, 2, 1, px, py)
+    Unit(ident, end, px, py)
 {}
 
 Catapult::Catapult(int ident, int px, int py):
-    Unit(ident, 50, 2, 7, px, py)
+    Unit(ident, 50, px, py)
 {}
 
 Catapult::Catapult(int ident, int end, int px, int py):
-    Unit(ident, end, 2, 7, px, py)
+    Unit(ident, end, px, py)
 {}
 
 Ram::Ram(int ident, int px, int py):
-    Unit(ident, 90, 2, 1, px, py)
+    Unit(ident, 90, px, py)
 {}
 
 Ram::Ram(int ident, int end, int px, int py):
-    Unit(ident, end, 2, 1, px, py)
+    Unit(ident, end, px, py)
 {}
 
 Pikeman::Pikeman(int ident, int px, int py):
-    Unit(ident, 50, 2, 2, px, py)
+    Unit(ident, 50, px, py)
 {}
 
 Pikeman::Pikeman(int ident, int end, int px, int py):
-    Unit(ident, end, 2, 2, px, py)
+    Unit(ident, end, px, py)
 {}
 
 Archer::Archer(int ident, int px, int py):
-    Unit(ident, 40, 2, 5, px, py)
+    Unit(ident, 40, px, py)
 {}
 
 Archer::Archer(int ident, int end, int px, int py):
-    Unit(ident, end, 2, 5, px, py)
+    Unit(ident, end, px, py)
 {}
 
 Swordsman::Swordsman(int ident, int px, int py):
-    Unit(ident, 60, 2, 1, px, py)
+    Unit(ident, 60, px, py)
 {}
 
 Swordsman::Swordsman(int ident, int end, int px, int py):
-    Unit(ident, end, 2, 1, px, py)
+    Unit(ident, end, px, py)
 {}
 
 Knight::Knight(int ident, int px, int py):
-    Unit(ident, 70, 5, 1, px, py)
+    Unit(ident, 70, px, py)
 {}
 
 Knight::Knight(int ident, int end, int px, int py):
-    Unit(ident, end, 5, 1, px, py)
+    Unit(ident, end, px, py)
 {}
 
 bool listUnits::addUnit(Worker &unit)

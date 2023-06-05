@@ -62,7 +62,7 @@ void make_moves(char *argv[], int time_limit)
     if (!get_map(argv[1], map, X, Y)) return;
 
     // Load status into memory. Separate by alliegence type.
-    // Update grid traversal flags based on enemy unit placement
+    // Update grid flags based on enemy unit placement
     listUnits myUnits, enemyUnits;
     long gold;
     if (!get_status(argv[2], map, gold, myUnits, enemyUnits)) return;
