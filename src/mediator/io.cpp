@@ -74,7 +74,7 @@ bool get_map(const std::string &map_path, grid &map, int &X, int &Y)
     }
 }
 
-bool get_status(const std::string &status_path, bool &player1Turn, int &max_index, grid &map_p1, grid &map_p2, long &gold_p1, long &gold_p2, listUnits &units_p1, listUnits &units_p2)
+bool get_status(const std::string &status_path, int &max_index, grid &map_p1, grid &map_p2, long &gold_p1, long &gold_p2, listUnits &units_p1, listUnits &units_p2)
 {
     try
     {
@@ -83,29 +83,12 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
         if (file.fail())
         {
             std::cerr << "Can't open mediator.txt!" << std::endl;
-            gold_p1 = 0;
-            gold_p2 = 0;
             return false;
         }
 
-        // Parse file, start with 1st line, indicating the player that took the last turn
+        // Parse file, start with 1st line, indicating the last turn
         std::string line;
         getline(file, line);
-        if (line == "1")
-        {
-            std::cout << "player 1 submitted orders." << std::endl;
-            player1Turn = false;
-        }
-        else if (line == "2")
-        {
-            std::cout << "player 2 submitted orders." << std::endl;
-            player1Turn = true;
-        }
-        else
-        {
-            std::cerr << "Can't parse line 1 of mediator.txt!" << std::endl;
-            return false;
-        }
 
         // Parse index guard. If failed to parse, terminate
         getline(file, line);
@@ -153,22 +136,19 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
             switch (line[3])
             {
             case 'B': // Base unit, assume line has extra queue param
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue;
+                int bqTime;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue >> bqTime;
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.bases.push_back(Base(id, endurance, posx, posy, bQueue));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'B';
-                    units_p1.id2index[id] = units_p1.bases.size() - 1;
+                    Base unit(id, endurance, posx, posy, bQueue, bqTime);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.bases.push_back(Base(id, endurance, posx, posy, bQueue));
-                    units_p1.unitCount++;
-                    units_p2.id2type[id] = 'B';
-                    units_p2.id2index[id] = units_p2.bases.size() - 1;
+                    Base unit(id, endurance, posx, posy, bQueue, bqTime);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'K': // Knight unit
@@ -176,18 +156,14 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.knights.push_back(Knight(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'K';
-                    units_p1.id2index[id] = units_p1.knights.size() - 1;
+                    Knight unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.knights.push_back(Knight(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'K';
-                    units_p2.id2index[id] = units_p2.knights.size() - 1;
+                    Knight unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'S': // Swordsman unit
@@ -195,18 +171,14 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'S';
-                    units_p1.id2index[id] = units_p1.swordsmen.size() - 1;
+                    Swordsman unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.swordsmen.push_back(Swordsman(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'S';
-                    units_p2.id2index[id] = units_p2.swordsmen.size() - 1;
+                    Swordsman unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'A': // Archer unit
@@ -214,18 +186,14 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.archers.push_back(Archer(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'A';
-                    units_p1.id2index[id] = units_p1.archers.size() - 1;
+                    Archer unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.archers.push_back(Archer(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'A';
-                    units_p2.id2index[id] = units_p2.archers.size() - 1;
+                    Archer unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'P': // Pikeman unit
@@ -233,18 +201,14 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.pikemen.push_back(Pikeman(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'P';
-                    units_p1.id2index[id] = units_p1.pikemen.size() - 1;
+                    Pikeman unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.pikemen.push_back(Pikeman(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'P';
-                    units_p2.id2index[id] = units_p2.pikemen.size() - 1;
+                    Pikeman unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'C': // Catapult unit
@@ -252,18 +216,14 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.catapults.push_back(Catapult(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'C';
-                    units_p1.id2index[id] = units_p1.catapults.size() - 1;
+                    Catapult unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.catapults.push_back(Catapult(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'C';
-                    units_p2.id2index[id] = units_p2.catapults.size() - 1;
+                    Catapult unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'R': // Ram unit
@@ -271,18 +231,14 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.rams.push_back(Ram(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'R';
-                    units_p1.id2index[id] = units_p1.rams.size() - 1;
+                    Ram unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.rams.push_back(Ram(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'R';
-                    units_p2.id2index[id] = units_p2.rams.size() - 1;
+                    Ram unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             case 'W': // Worker unit
@@ -290,21 +246,18 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
                 if (alliegence == "P1")
                 {
                     map_p2[posy][posx]->setTrav(false);
-                    units_p1.workers.push_back(Worker(id, endurance, posx, posy));
-                    units_p1.unitCount++;
-                    units_p1.id2type[id] = 'W';
-                    units_p1.id2index[id] = units_p1.workers.size() - 1;
+                    Worker unit(id, endurance, posx, posy);
+                    if(!(units_p1.addUnit(unit))) return false;
                 }
                 else
                 {
                     map_p1[posy][posx]->setTrav(false);
-                    units_p2.workers.push_back(Worker(id, endurance, posx, posy));
-                    units_p2.unitCount++;
-                    units_p2.id2type[id] = 'W';
-                    units_p2.id2index[id] = units_p2.workers.size() - 1;
+                    Worker unit(id, endurance, posx, posy);
+                    if(!(units_p2.addUnit(unit))) return false;
                 }
                 continue;
             default: // Error in unit tag, terminate
+                std::cerr << "Error! Unrecognised unit tag!" << std::endl;
                 return false;
             }
         }
@@ -319,7 +272,7 @@ bool get_status(const std::string &status_path, bool &player1Turn, int &max_inde
     }
 }
 
-bool get_orders(const std::string &orders_path, int &max_index, grid &map, long &gold, listUnits &playerUnits, listUnits &opponentUnits, bool &playerWins, bool &opponentWins)
+bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits &playerUnits, listUnits &opponentUnits, bool &playerWins, bool &opponentWins)
 {
     try
     {
@@ -336,8 +289,8 @@ bool get_orders(const std::string &orders_path, int &max_index, grid &map, long 
         while(getline(file, line))
         {
             std::istringstream ss(line);
-            int id, posx, posy;
-            char action, target;
+            int id;
+            char action;
             ss >> id >> action;
             if (auto itType = playerUnits.id2type.find(id); itType != playerUnits.id2type.end())
             {
@@ -345,23 +298,11 @@ bool get_orders(const std::string &orders_path, int &max_index, grid &map, long 
                 {
                 case 'B': // Base unit
                     getline(ss, line);
-                    if (line.length() > 2)
-                    {
-                        std::cout << "Error in orders! Unit with id " << id << " received an invalid command!" << std::endl;
-                        playerWins = false;
-                        opponentWins = true;
-                        return true;
-                    }
-                    else
-                    {
-                        std::cout << "Unit with id " << id << " (B) received an order to build " << line[1] << "." << std::endl;
-                        auto itInd = playerUnits.id2index.find(id);
-                        playerUnits.bases[itInd -> second].queue = line[1];
-                        playerUnits.bases[itInd -> second].qTime = BUILD_TIME(line[1]);
-                    }
-                //other orders go here
+                    if(!process_base_orders(id, line, gold, playerUnits, playerWins, opponentWins)) return true;
                     continue;
+                // TODO: other orders go here
                 default: // Error in unit tag, terminate
+                    std::cerr << "Error in unit tags!" << std::endl;
                     return false;
                 }
             }
@@ -489,6 +430,7 @@ bool start_game()
             return false;
         }
         file << 1 << '\n';
+        file << 1 << '\n';
         file << gold_1 << '\n';
         file << gold_2 << '\n';
         file << "P1 B 0 " << trgt_x_1 << " " << trgt_y_1 << " 200 0 0\n";
@@ -503,7 +445,7 @@ bool start_game()
     }
 }
 
-bool prep_next_turn(bool &player1Win, bool &player2Win)
+bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
 {
     // Load raw map into memory. Ignore units.
     int X = 0, Y = 0;
@@ -512,31 +454,248 @@ bool prep_next_turn(bool &player1Win, bool &player2Win)
     if (!get_map(MAP_LOC, map_p2, X, Y)) return false;
 
     // Get game status prior to last turn
-    bool player1Turn;
     long gold_p1 = 0, gold_p2 = 0;
     int max_index = 0;
     listUnits units_p1, units_p2;
-    if (!get_status(MEDIATOR_LOC, player1Turn, max_index, map_p1, map_p2, gold_p1, gold_p2, units_p1, units_p2)) return false;
+    if (!get_status(MEDIATOR_LOC, max_index, map_p1, map_p2, gold_p1, gold_p2, units_p1, units_p2)) return false;
     
-    // Parse player orders, decr building queue
-    if (player1Turn)
+    // Parse player orders, decr building time
+    if (turn % 2 == 1)
     {
-        if (!get_orders(ORDERS_P2_LOC, max_index, map_p2, gold_p2, units_p2, units_p1, player2Win, player1Win)) return false;
-        if (units_p1.bases[0].queue != '0' && --units_p1.bases[0].qTime == 0)
-        {
-            // Build new unit, set base queue to '0'
-        }
+        if (!get_orders(ORDERS_P1_LOC, map_p1, gold_p1, units_p1, units_p2, player1Win, player2Win)) return false;
+        if (units_p1.bases[0].queue != '0') units_p1.bases[0].qTime -= 1;
+        // If build complete, insert new unit
+        if(!add_new_unit(max_index, units_p1)) return false;
+        // TODO: If any enemy unit has hp < 0, remove it
     }
     else
     {
-        if (!get_orders(ORDERS_P1_LOC, max_index, map_p1, gold_p1, units_p1, units_p2, player1Win, player2Win)) return false;
-        if (units_p2.bases[0].queue != '0' && --units_p2.bases[0].qTime == 0)
-        {
-            // Build new unit, set base queue to '0'
-        }
+        if (!get_orders(ORDERS_P2_LOC, map_p2, gold_p2, units_p2, units_p1, player2Win, player1Win)) return false;
+        if (units_p2.bases[0].queue != '0') units_p2.bases[0].qTime -= 1;
+        // If build complete, insert new unit
+        if(!add_new_unit(max_index, units_p2)) return false;
+        // TODO: If any enemy unit has hp < 0, remove it
     }
 
+    // Update mediator.txt, prep new statusX.txt file.
+    std::ofstream file(STATUS_P1_LOC);
+    if (file.fail())
+    {
+        std::cerr << "Can't open status1.txt!" << std::endl;
+        return false;
+    }
+    file << gold_p1 << '\n';
+    file << unit_output_player("P", units_p1);
+    file << unit_output_player("E", units_p2);
+    file.close();
+
+    file.open(STATUS_P2_LOC);
+    if (file.fail())
+    {
+        std::cerr << "Can't open status2.txt!" << std::endl;
+        return false;
+    }
+    file << gold_p2 << '\n';
+    file << unit_output_player("P", units_p2);
+    file << unit_output_player("E", units_p1);
+    file.close();
+
+    file.open(MEDIATOR_LOC);
+    if (file.fail())
+    {
+        std::cerr << "Can't open mediator.txt!" << std::endl;
+        return false;
+    }
+    file << turn << '\n';
+    file << max_index << '\n';
+    file << gold_p1 << '\n';
+    file << gold_p2 << '\n';
+    file << unit_output_mediator("P1", units_p1);
+    file << unit_output_mediator("P2", units_p2);
+    file.close();
+
     return true;
+}
+
+bool process_base_orders(int id, const std::string &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins)
+{
+    // Order format check
+    if (order.length() > 2)
+    {
+        std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        playerWins = false;
+        opponentWins = true;
+        return false;
+    }
+    else
+    {
+        // Does the order contain valid targets
+        std::vector<char> check_order = {'K', 'S', 'A', 'P', 'R', 'C', 'W'};
+        if(std::find(check_order.begin(), check_order.end(), order[1]) == check_order.end())
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid target!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        std::cout << "Unit with id " << id << " (B) received order to build " << order[1] << "." << std::endl;
+        auto itInd = units.id2index.find(id);
+
+        // Does the unit have an empty build queue
+        if(units.bases[itInd -> second].queue != '0')
+        {
+            std::cout << "Error in orders! Unit with id " << id << " is already building!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        units.bases[itInd -> second].queue = order[1];
+        units.bases[itInd -> second].qTime = BUILD_TIME(order[1]);
+        gold -= BUILD_COST(order[1]);
+        if (gold < 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " cannot begin construction! Insufficient funds!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool add_new_unit(int &max_index, listUnits &units)
+{
+    if (units.bases[0].queue != '0' && units.bases[0].qTime == 0)
+    {
+        max_index++;
+        switch (units.bases[0].queue)
+        {
+        case 'K':
+            units.knights.push_back(Knight(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'K';
+            units.id2index[max_index] = units.knights.size() - 1;
+            break;
+        case 'S':
+            units.swordsmen.push_back(Swordsman(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'S';
+            units.id2index[max_index] = units.swordsmen.size() - 1;
+            break;
+        case 'A':
+            units.archers.push_back(Archer(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'A';
+            units.id2index[max_index] = units.archers.size() - 1;
+            break;
+        case 'P':
+            units.pikemen.push_back(Pikeman(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'P';
+            units.id2index[max_index] = units.pikemen.size() - 1;
+            break;
+        case 'R':
+            units.rams.push_back(Ram(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'R';
+            units.id2index[max_index] = units.rams.size() - 1;
+            break;
+        case 'C':
+            units.catapults.push_back(Catapult(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'C';
+            units.id2index[max_index] = units.catapults.size() - 1;
+            break;
+        case 'W':
+            units.workers.push_back(Worker(max_index, units.bases[0].posx, units.bases[0].posy));
+            units.unitCount++;
+            units.id2type[max_index] = 'W';
+            units.id2index[max_index] = units.workers.size() - 1;
+            break;
+        default:
+            std::cerr << "Error in base queue!" << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+std::string unit_output_player(const std::string &name, const listUnits &units)
+{
+    std::stringstream ss;
+    for (auto &&unit : units.bases)
+    {
+        ss << name << " B " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << " " << unit.queue << '\n';
+    }
+    for (auto &&unit : units.archers)
+    {
+        ss << name << " A " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.catapults)
+    {
+        ss << name << " C " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.knights)
+    {
+        ss << name << " K " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.pikemen)
+    {
+        ss << name << " P " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.rams)
+    {
+        ss << name << " R " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.swordsmen)
+    {
+        ss << name << " S " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.workers)
+    {
+        ss << name << " W " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    return ss.str();
+}
+
+std::string unit_output_mediator(const std::string &name, const listUnits &units)
+{
+    std::stringstream ss;
+    for (auto &&unit : units.bases)
+    {
+        ss << name << " B " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << " " << unit.queue << " " << unit.qTime << '\n';
+    }
+    for (auto &&unit : units.archers)
+    {
+        ss << name << " A " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.catapults)
+    {
+        ss << name << " C " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.knights)
+    {
+        ss << name << " K " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.pikemen)
+    {
+        ss << name << " P " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.rams)
+    {
+        ss << name << " R " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.swordsmen)
+    {
+        ss << name << " S " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    for (auto &&unit : units.workers)
+    {
+        ss << name << " W " << unit.id << " " << unit.posx << " " << unit.posy << " " << unit.endurance << '\n';
+    }
+    return ss.str();
 }
 
 void print_map(const grid &map, int X, int Y)
@@ -678,7 +837,8 @@ void print_status(const listUnits &units_p1, const listUnits &units_p2)
     }
 }
 
-bool file_exists (const std::string &name) {
-  struct stat buffer;   
-  return (stat(name.c_str(), &buffer) == 0); 
+bool file_exists(const std::string &name)
+{
+    struct stat buffer;
+    return (stat(name.c_str(), &buffer) == 0);
 }

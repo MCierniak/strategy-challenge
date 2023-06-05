@@ -18,4 +18,8 @@
 #define ORDERS_P1_LOC "data/rozkazy1.txt"
 #define ORDERS_P2_LOC "data/rozkazy2.txt"
 
+// Path to player scripts
+#define P1_SCRIPT "bin/player"
+#define P2_SCRIPT "bin/player"
+
 #endif

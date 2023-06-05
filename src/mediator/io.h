@@ -32,10 +32,10 @@
 bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
 
 // Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, bool &player1Turn, int &max_index, grid &map_p1, grid &map_p2, long &gold_p1, long &gold_p2, listUnits &units_p1, listUnits &units_p2);
+bool get_status(const std::string &status_path, int &max_index, grid &map_p1, grid &map_p2, long &gold_p1, long &gold_p2, listUnits &units_p1, listUnits &units_p2);
 
 // Parse, test and apply player orders
-bool get_orders(const std::string &orders_path, int &max_index, grid &map, long &gold, listUnits &playerUnits, listUnits &opponentUnits, bool &playerWins, bool &opponentWins);
+bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits &playerUnits, listUnits &opponentUnits, bool &playerWins, bool &opponentWins);
 
 // Function preparing the initial state of the game,
 // generating randomized map file "mapa.txt",
@@ -43,7 +43,13 @@ bool get_orders(const std::string &orders_path, int &max_index, grid &map, long 
 bool start_game();
 
 // Function evaluating last order and updating status for the next player.
-bool prep_next_turn(bool &player1Win, bool &player2Win);
+bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win);
+
+bool process_base_orders(int id, const std::string &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins);
+bool add_new_unit(int &max_index, listUnits &units);
+
+std::string unit_output_player(const std::string &name, const listUnits &units);
+std::string unit_output_mediator(const std::string &name, const listUnits &units);
 
 void print_map(const grid &map, int X, int Y);
 void print_status(const listUnits &units_p1, const listUnits &units_p2);

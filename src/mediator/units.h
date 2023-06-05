@@ -48,6 +48,8 @@
 
 // Build time
 #define BUILD_TIME(x) (x == 'K' ? 5 : x == 'C' ? 6 : x == 'R' ? 4 : x == 'W' ? 2 : 3)
+// Build cost
+#define BUILD_COST(x) (x == 'K' ? 400 : x == 'C' ? 800 : x == 'R' ? 500 : x == 'W' ? 100 : x == 'P' ? 200 : 250)
 
 // Abstract interface for units
 class Unit
@@ -73,6 +75,7 @@ public:
 
     Base();
     Base(int ident, int end, int px, int py, char q);
+    Base(int ident, int end, int px, int py, char q, int qT);
     ~Base();
 
     bool isInit();
@@ -81,6 +84,7 @@ public:
 class Worker : public Unit
 {
 public:
+    Worker(int ident, int px, int py);
     Worker(int ident, int end, int px, int py);
     ~Worker();
 };
@@ -88,6 +92,7 @@ public:
 class Catapult : public Unit
 {
 public:
+    Catapult(int ident, int px, int py);
     Catapult(int ident, int end, int px, int py);
     ~Catapult();
 };
@@ -95,6 +100,7 @@ public:
 class Ram : public Unit
 {
 public:
+    Ram(int ident, int px, int py);
     Ram(int ident, int end, int px, int py);
     ~Ram();
 };
@@ -102,6 +108,7 @@ public:
 class Pikeman : public Unit
 {
 public:
+    Pikeman(int ident, int px, int py);
     Pikeman(int ident, int end, int px, int py);
     ~Pikeman();
 };
@@ -109,6 +116,7 @@ public:
 class Archer : public Unit
 {
 public:
+    Archer(int ident, int px, int py);
     Archer(int ident, int end, int px, int py);
     ~Archer();
 };
@@ -116,6 +124,7 @@ public:
 class Swordsman : public Unit
 {
 public:
+    Swordsman(int ident, int px, int py);
     Swordsman(int ident, int end, int px, int py);
     ~Swordsman();
 };
@@ -123,6 +132,7 @@ public:
 class Knight : public Unit
 {
 public:
+    Knight(int ident, int px, int py);
     Knight(int ident, int end, int px, int py);
     ~Knight();
 };
@@ -140,16 +150,18 @@ struct listUnits
     int unitCount = 0;
     std::unordered_map<int, char> id2type;
     std::unordered_map<int, int> id2index;
+
+    bool addUnit(Worker &unit);
+    bool addUnit(Catapult &unit);
+    bool addUnit(Ram &unit);
+    bool addUnit(Pikeman &unit);
+    bool addUnit(Archer &unit);
+    bool addUnit(Swordsman &unit);
+    bool addUnit(Knight &unit);
+    bool addUnit(Base &unit);
+
+    bool is_unique(int id);
 };
 
-//Decision making functions
-bool action(std::string &payload, const Base &unit, long gold, const grid &map, const listUnits &allies, const listUnits &enemies);
-bool action(std::string &payload, const Worker &unit, const grid &map, const listUnits &enemies);
-bool action(std::string &payload, const Catapult &unit, const grid &map, const listUnits &enemies);
-bool action(std::string &payload, const Ram &unit, const grid &map, const listUnits &enemies);
-bool action(std::string &payload, const Pikeman &unit, const grid &map, const listUnits &enemies);
-bool action(std::string &payload, const Archer &unit, const grid &map, const listUnits &enemies);
-bool action(std::string &payload, const Swordsman &unit, const grid &map, const listUnits &enemies);
-bool action(std::string &payload, const Knight &unit, const grid &map, const listUnits &enemies);
 
 #endif
