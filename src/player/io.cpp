@@ -40,17 +40,17 @@ bool get_map(const std::string &map_path, grid &map, int &X, int &Y)
                 // Set empty spaces on tiles without barriers. Ignore bases.
                 if (line[i] == '0' || line[i] == '1' || line[i] == '2')
                 {
-                    temp.push_back(std::make_unique<emptySpace>(Y, i));
+                    temp.push_back(std::make_unique<emptySpace>(i, Y));
                 }
                 // Set resource nodes
                 else if (line[i] == '6')
                 {
-                    temp.push_back(std::make_unique<resource>(Y, i));
+                    temp.push_back(std::make_unique<resource>(i, Y));
                 }
                 // Set barriers
                 else
                 {
-                    temp.push_back(std::make_unique<barrier>(Y, i));
+                    temp.push_back(std::make_unique<barrier>(i, Y));
                 }
             }
             map.push_back(std::move(temp));

@@ -47,20 +47,20 @@ bool Worker::find_target(const grid &map)
     // Find nearest empty resource node
     for (auto &&el : resource::resNodeList)
     {
-        if (map[el[1]][el[2]]->checkTrav() && map[el[1]][el[2]]->getWorkerId().size() == 0)
+        if (map[el[0]][el[1]]->checkTrav() && map[el[0]][el[1]]->getWorkerId().size() == 0)
         {
-            this->trgtY = el[1];
-            this->trgtX = el[2];
+            this->trgtY = el[0];
+            this->trgtX = el[1];
             return true;
         }
     }
     // If none, find nearest resource node without enemies
     for (auto &&el : resource::resNodeList)
     {
-        if (map[el[1]][el[2]]->checkTrav())
+        if (map[el[0]][el[1]]->checkTrav())
         {
-            this->trgtY = el[1];
-            this->trgtX = el[2];
+            this->trgtY = el[0];
+            this->trgtX = el[1];
             return true;
         }
     }
@@ -385,8 +385,12 @@ bool action(std::string &payload, Worker &unit, const grid &map)
         // Use Dijkstra's algorithm
         else
         {
-            return false;
-            //TODO
+            int stepX, stepY;
+            if(!dijkstra_find_path_worker(map, unit.posx, unit.posy, unit.trgtX, unit.trgtY, stepX, stepY, MOVE_2)) return false;
+            std::ostringstream ss;
+            ss << unit.id << " M " << stepX << ' ' << stepY << '\n';
+            payload = ss.str();
+            return true;
         }
     }
     else

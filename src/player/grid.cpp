@@ -193,7 +193,7 @@ emptySpace::emptySpace(std::size_t px, std::size_t py):
 resource::resource(std::size_t px, std::size_t py):
     gridObj(true, true, px, py)
 {
-    resource::resNodeList.push_back(std::vector<size_t>{10000000000, py, px});
+    resource::resNodeList.push_back(std::vector<size_t>{py, px});
     resource::unusedResourceCount += 1;
 }
 
@@ -247,16 +247,13 @@ bool bfs_find_path(const grid &map, int sX, int sY, int tX, int tY, int &resX, i
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -301,16 +298,13 @@ bool dijkstra_find_path_knight(const grid &map, int sX, int sY, int tX, int tY, 
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -355,16 +349,13 @@ bool dijkstra_find_path_swordsman(const grid &map, int sX, int sY, int tX, int t
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -409,16 +400,13 @@ bool dijkstra_find_path_archer(const grid &map, int sX, int sY, int tX, int tY, 
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -463,16 +451,13 @@ bool dijkstra_find_path_pikeman(const grid &map, int sX, int sY, int tX, int tY,
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -517,16 +502,13 @@ bool dijkstra_find_path_ram(const grid &map, int sX, int sY, int tX, int tY, int
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -571,16 +553,13 @@ bool dijkstra_find_path_catapult(const grid &map, int sX, int sY, int tX, int tY
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
@@ -625,16 +604,13 @@ bool dijkstra_find_path_worker(const grid &map, int sX, int sY, int tX, int tY, 
 
             if (newYi == tY && newXi == tX)
             {
-                std::cout << "Path" << std::endl;
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))
                 {
-                    std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                     resX = pCurr[1];
                     resY = pCurr[0];
                     pCurr = paths[pCurr];
                 }
-                std::cout << pCurr[0]+1 << " " << pCurr[1]+1 << std::endl;
                 return true;
             }
         }
