@@ -40,17 +40,17 @@ bool get_map(const std::string &map_path, grid &map, int &X, int &Y)
                 // Set empty spaces on tiles without barriers. Ignore bases.
                 if (line[i] == '0' || line[i] == '1' || line[i] == '2')
                 {
-                    temp.push_back(std::make_unique<emptySpace>());
+                    temp.push_back(std::make_unique<emptySpace>(Y, i));
                 }
                 // Set resource nodes
                 else if (line[i] == '6')
                 {
-                    temp.push_back(std::make_unique<resource>());
+                    temp.push_back(std::make_unique<resource>(Y, i));
                 }
                 // Set barriers
                 else
                 {
-                    temp.push_back(std::make_unique<barrier>());
+                    temp.push_back(std::make_unique<barrier>(Y, i));
                 }
             }
             map.push_back(std::move(temp));
@@ -108,7 +108,7 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Base unit(id, endurance, posx, posy, bQueue);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                 }
                 continue;
             case 'K': // Knight unit
@@ -122,18 +122,18 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Knight unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_5)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(KNIGHT2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(KNIGHT2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(KNIGHT2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(KNIGHT2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(KNIGHT2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(KNIGHT2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(KNIGHT2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(KNIGHT2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(KNIGHT2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(KNIGHT2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(KNIGHT2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(KNIGHT2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(KNIGHT2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(KNIGHT2WORKER);
                     }
                     
                 }
@@ -149,18 +149,18 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Swordsman unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_2)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(SWORDSMAN2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(SWORDSMAN2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(SWORDSMAN2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(SWORDSMAN2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(SWORDSMAN2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(SWORDSMAN2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(SWORDSMAN2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(SWORDSMAN2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(SWORDSMAN2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(SWORDSMAN2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(SWORDSMAN2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(SWORDSMAN2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(SWORDSMAN2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(SWORDSMAN2WORKER);
                     }
                 }
                 continue;
@@ -175,18 +175,18 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Archer unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_6)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(ARCHER2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(ARCHER2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(ARCHER2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(ARCHER2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(ARCHER2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(ARCHER2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(ARCHER2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(ARCHER2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(ARCHER2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(ARCHER2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(ARCHER2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(ARCHER2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(ARCHER2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(ARCHER2WORKER);
                     }
                 }
                 continue;
@@ -201,18 +201,18 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Pikeman unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_3)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(PIKEMAN2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(PIKEMAN2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(PIKEMAN2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(PIKEMAN2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(PIKEMAN2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(PIKEMAN2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(PIKEMAN2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(PIKEMAN2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(PIKEMAN2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(PIKEMAN2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(PIKEMAN2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(PIKEMAN2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(PIKEMAN2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(PIKEMAN2WORKER);
                     }
                 }
                 continue;
@@ -227,18 +227,18 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Catapult unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_8)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(CATAPULT2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(CATAPULT2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(CATAPULT2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(CATAPULT2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(CATAPULT2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(CATAPULT2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(CATAPULT2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(CATAPULT2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(CATAPULT2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(CATAPULT2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(CATAPULT2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(CATAPULT2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(CATAPULT2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(CATAPULT2WORKER);
                     }
                 }
                 continue;
@@ -253,18 +253,18 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Ram unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_2)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(RAM2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(RAM2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(RAM2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(RAM2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(RAM2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(RAM2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(RAM2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(RAM2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(RAM2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(RAM2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(RAM2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(RAM2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(RAM2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(RAM2WORKER);
                     }
                 }
                 continue;
@@ -274,23 +274,24 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 {
                     Worker unit(id, endurance, posx, posy);
                     if(!(myTeam.addUnit(unit))) return false;
+                    map[posy][posx]->addWorkerId(id);
                 }
                 else
                 {
                     Worker unit(id, endurance, posx, posy);
                     if(!(enemy.addUnit(unit))) return false;
-                    map[posy][posx] -> addEnemyId(id);
+                    map[posy][posx]->addEnemyId(id);
                     for (auto &&mod : MOVE_2)
                     {
                         if (int(posy) + mod[0] < 0 || int(posy) + mod[0] >= int(map.size())) continue;
                         if (int(posx) + mod[1] < 0 || int(posx) + mod[1] >= int(map[posy + mod[0]].size())) continue;
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Archer(WORKER2ARCHER);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Catapult(WORKER2CATAPULT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Knight(WORKER2KNIGHT);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Pikeman(WORKER2PIKEMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Ram(WORKER2RAM);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Swordsman(WORKER2SWORDSMAN);
-                        map[posy + mod[0]][posx + mod[1]] -> addDmg2Worker(WORKER2WORKER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Archer(WORKER2ARCHER);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Catapult(WORKER2CATAPULT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Knight(WORKER2KNIGHT);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Pikeman(WORKER2PIKEMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Ram(WORKER2RAM);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Swordsman(WORKER2SWORDSMAN);
+                        map[posy + mod[0]][posx + mod[1]]->addDmg2Worker(WORKER2WORKER);
                     }
                 }
                 continue;
@@ -318,7 +319,7 @@ void print_map(const grid &map, int X, int Y)
     {
         for (int j = 0; j < X; j++)
         {
-            std::cout << map[i][j] -> print() << " ";
+            std::cout << map[i][j]->print() << " ";
         }
         std::cout << '\n';
     }

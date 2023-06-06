@@ -19,8 +19,15 @@
 #ifndef PLAYER_GRID_H
 #define PLAYER_GRID_H
 
+#include "utils.h"
+
+#include <bits/stdc++.h>
+#include <unordered_map>
 #include <string>
 #include <vector>
+#include <memory>
+#include <queue>
+#include <list>
 
 // Vector for map tiles. Call with grid[y coord][x coord]
 #define grid_row std::vector<std::unique_ptr<gridObj>>
@@ -32,15 +39,18 @@ class gridObj
 protected:
     // Ids of enemies on the tile
     std::vector<int> enemyIds;
+    // Ids of own workers on the tile 
+    std::vector<int> workerIds;
     // Bool indicating if unit can stop on this tile
-    bool isTraversable;
+    bool isTraversable, isResource;
     // Indicators for potential damage inflicted if
     // ending turn on this node
-    int dmg2Knight = 0, dmg2Swordsman = 0, dmg2Archer = 0, dmg2Pikeman = 0;
-    int dmg2Catapult = 0, dmg2Ram = 0, dmg2Worker = 0;
+    int dmg2Knight = 1, dmg2Swordsman = 1, dmg2Archer = 1, dmg2Pikeman = 1;
+    int dmg2Catapult = 1, dmg2Ram = 1, dmg2Worker = 1;
 public:
-    
-    gridObj(bool traversible);
+    const std::size_t posx, posy;
+
+    gridObj(bool traversible, bool resource, std::size_t px, std::size_t py);
     virtual ~gridObj() = default;
 
     virtual std::string print() = 0;
@@ -54,9 +64,11 @@ public:
     void addDmg2Worker(int dmg);
 
     void addEnemyId(int id);
+    void addWorkerId(int id);
 
     // Check if unit can stop on this node
     bool checkTrav();
+    bool checkResource();
 
     std::size_t checkEnemyNr();
 
@@ -70,13 +82,16 @@ public:
 
     std::vector<int>& getEnemyId();
     int getEnemyId(std::size_t i);
+
+    std::vector<int>& getWorkerId();
+    int getWorkerId(std::size_t i);
 };
 
 // Empty space tile
 class emptySpace : public gridObj
 {
 public:
-    emptySpace();
+    emptySpace(std::size_t px, std::size_t py);
     ~emptySpace();
 
     std::string print();
@@ -86,26 +101,47 @@ public:
 class resource : public gridObj
 {
 protected:
-    // Static count of resource tiles
-    static std::size_t resourceCount;
+    // Count unused resource nodes. Adding a worker or
+    // enemy to this node decreases this value
+    static std::size_t unusedResourceCount;
 public:
-    resource();
+    static std::list<std::vector<std::size_t>> resNodeList;
+    
+    resource(std::size_t px, std::size_t py);
     ~resource();
 
     std::string print();
 
-    // Get current resource node count
-    static std::size_t getResourceCount();
+    static std::size_t getUnusedResourceCount();
+
+    void addEnemyId(int id);
+    void addWorkerId(int id);
+
+    std::vector<int>& getWorkerId();
+    int getWorkerId(std::size_t i);
 };
 
 // Barrier class
 class barrier : public gridObj
 {
 public:
-    barrier();
+    barrier(std::size_t px, std::size_t py);
     ~barrier();
 
     std::string print();
 };
+
+// Bredth-first search algorithm for map traversal. Returns false if there is no traversable path between s and t.
+bool bfs_find_path(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+
+// Dijkstra's search algorithm for map traversal. Returns false if there is no traversable path between s and t.
+// Slower than BFS.
+bool dijkstra_find_path_knight(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+bool dijkstra_find_path_swordsman(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+bool dijkstra_find_path_archer(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+bool dijkstra_find_path_pikeman(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+bool dijkstra_find_path_ram(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+bool dijkstra_find_path_catapult(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+bool dijkstra_find_path_worker(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
 
 #endif

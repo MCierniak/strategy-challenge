@@ -20,12 +20,13 @@
 #define PLAYER_UNITS_H
 
 #include "grid.h"
+#include "utils.h"
 
-#include <unordered_map>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <memory>
+#include <list>
 
 // Vector for units
 #define listW std::vector<Worker>
@@ -132,8 +133,14 @@
 class Unit
 {
 public:
-    const int id, endurance;
+    // Unit id
+    const int id;
+    // Unit HP
+    int endurance;
+    // Unit position
     const std::size_t posx, posy;
+    // Coordinates of the target
+    std::size_t trgtX, trgtY;
     
     Unit(int ident, int end, std::size_t px, std::size_t py);
     virtual ~Unit() = 0;
@@ -157,6 +164,8 @@ class Worker : public Unit
 public:
     Worker(int ident, int end, std::size_t px, std::size_t py);
     ~Worker();
+
+    bool find_target(const grid &map);
 };
 
 class Catapult : public Unit
@@ -211,9 +220,10 @@ struct listUnits
     listS swordsmen;
     listK knights;
     listB bases;
+
     int unitCount = 0;
+
     std::unordered_map<int, char> id2type;
-    std::unordered_map<int, int> id2index;
 
     bool addUnit(Worker &unit);
     bool addUnit(Catapult &unit);
@@ -229,7 +239,7 @@ struct listUnits
 
 //Decision making functions
 bool action(std::string &payload, const Base &unit, long gold, const grid &map, const listUnits &allies, const listUnits &enemies);
-bool action(std::string &payload, const Worker &unit, const grid &map, const listUnits &enemies);
+bool action(std::string &payload, Worker &unit, const grid &map);
 bool action(std::string &payload, const Catapult &unit, const grid &map, const listUnits &enemies);
 bool action(std::string &payload, const Ram &unit, const grid &map, const listUnits &enemies);
 bool action(std::string &payload, const Pikeman &unit, const grid &map, const listUnits &enemies);
@@ -238,7 +248,8 @@ bool action(std::string &payload, const Swordsman &unit, const grid &map, const 
 bool action(std::string &payload, const Knight &unit, const grid &map, const listUnits &enemies);
 
 //Misc
-std::size_t Dist(Unit *first, Unit *second);
-std::size_t Dist(Unit *first, std::size_t xSecond, std::size_t ySecond);
+int Dist(Unit *first, Unit *second);
+int Dist(Unit *first, int xSecond, int ySecond);
+int Dist(int xFirst, int yFirst, int xSecond, int ySecond);
 
 #endif

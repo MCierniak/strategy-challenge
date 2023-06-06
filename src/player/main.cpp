@@ -67,6 +67,28 @@ void make_moves(char *argv[], int time_limit)
     long gold;
     if (!get_status(argv[2], map, gold, myUnits, enemyUnits)) return;
 
+    // Sort resource node list by distance to base
+    for (auto &&el : resource::resNodeList) el[0] = Dist(&myUnits.bases[0], el[1], el[2]);
+    resource::resNodeList.sort(
+        [](const std::vector<std::size_t> &first, const std::vector<std::size_t> &second)
+        { 
+            return (first[0] < second[0]);
+        }
+    );
+
+    int resX, resY;
+    start = CURRENT_TIME;
+    bfs_find_path(map, 8, 4, map[0].size() - 1, map.size() - 1, resX, resY, MOVE_2);
+    int dur = DURATION(CURRENT_TIME - start);
+    std::cout << "You should move to " << resY+1 << " " << resX+1 << std::endl;
+    std::cout << "Time " << dur << " us" << std::endl;
+    int resX2, resY2;
+    start = CURRENT_TIME;
+    dijkstra_find_path_knight(map, 8, 4, map[0].size() - 1, map.size() - 1, resX2, resY2, MOVE_2);
+    dur = DURATION(CURRENT_TIME - start);
+    std::cout << "You should move to " << resY2+1 << " " << resX2+1 << std::endl;
+    std::cout << "Time " << dur << " us" << std::endl;
+
     // Prep exit conditions for decision loop
     std::size_t i = 0;
     std::size_t max_i = std::max({

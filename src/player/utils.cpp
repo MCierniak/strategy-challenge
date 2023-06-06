@@ -17,3 +17,12 @@
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
 #include "utils.h"
+
+int VectorHasher::operator()(const std::vector<int> &V) const
+{
+    int hash = V.size();
+    for(auto &i : V) {
+        hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+    }
+    return hash;
+}
