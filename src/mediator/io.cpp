@@ -345,31 +345,30 @@ bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits
                     getline(ss, line);
                     if(!process_worker_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
                     continue;
-                case 'K': // Knight units
-                    getline(ss, line);
-                    if(!process_knight_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                case 'S': // Swordsman units
-                    getline(ss, line);
-                    if(!process_swordsman_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                case 'A': // Archer units
-                    getline(ss, line);
-                    if(!process_archer_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                case 'P': // Pikeman units
-                    getline(ss, line);
-                    if(!process_pikeman_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                case 'C': // Catapult units
-                    getline(ss, line);
-                    if(!process_catapult_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                case 'R': // Ram units
-                    getline(ss, line);
-                    if(!process_ram_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                // TODO: other orders go here
+                // case 'K': // Knight units
+                //     getline(ss, line);
+                //     if(!process_knight_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                //     continue;
+                // case 'S': // Swordsman units
+                //     getline(ss, line);
+                //     if(!process_swordsman_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                //     continue;
+                // case 'A': // Archer units
+                //     getline(ss, line);
+                //     if(!process_archer_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                //     continue;
+                // case 'P': // Pikeman units
+                //     getline(ss, line);
+                //     if(!process_pikeman_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                //     continue;
+                // case 'C': // Catapult units
+                //     getline(ss, line);
+                //     if(!process_catapult_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                //     continue;
+                // case 'R': // Ram units
+                //     getline(ss, line);
+                //     if(!process_ram_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                //     continue;
                 default: // Error in unit tag, terminate
                     std::cerr << "Error in unit tags!" << std::endl;
                     return false;
@@ -402,7 +401,7 @@ bool start_game()
         std::mt19937 gen(rd());
         // Random int distribution for map size (min 2, max 100 rows/columns)
         // Random int distribution for map tile type
-        std::uniform_int_distribution<> len(2, 100), type(0, 9);
+        std::uniform_int_distribution<> len(GRID_MIN, GRID_MAX), type(0, 9);
 
         // Randomized map size
         int X = len(gen), Y = len(gen);
@@ -534,7 +533,14 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
         // Parse orders
         if (!get_orders(ORDERS_P1_LOC, map_p1, gold_p1, units_p1, units_p2, player1Win, player2Win)) return false;
         // Incr gold
-        for (auto &&work : units_p1.workers) if (map_p1[work.posy][work.posx]->checkResource()) gold_p1 += 50;
+        for (auto &&work : units_p1.workers)
+        {
+            if (map_p1[work.posy][work.posx]->checkResource())
+            {
+                std::cout << "Unit with id " << work.id << " (W) mined gold at " <<  work.posx << " " << work.posy << " for Player 1\n";
+                gold_p1 += 50;
+            }
+        }
         // Decr queue
         if (units_p1.bases[0].queue != '0') units_p1.bases[0].qTime -= 1;
         // If build complete, insert new unit
@@ -547,7 +553,14 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
         // Parse orders
         if (!get_orders(ORDERS_P2_LOC, map_p2, gold_p2, units_p2, units_p1, player2Win, player1Win)) return false;
         // Incr gold
-        for (auto &&work : units_p2.workers) if (map_p2[work.posy][work.posx]->checkResource()) gold_p2 += 50;
+        for (auto &&work : units_p2.workers)
+        {
+            if (map_p2[work.posy][work.posx]->checkResource())
+            {
+                std::cout << "Unit with id " << work.id << " (W) mined gold at " <<  work.posx << " " << work.posy << " for Player 2\n";
+                gold_p2 += 50;
+            }
+        }
         // Decr queue
         if (units_p2.bases[0].queue != '0') units_p2.bases[0].qTime -= 1;
         // If build complete, insert new unit
@@ -628,11 +641,11 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
             return false;
         }
 
-        std::cout << "Unit with id " << id << " (B) received order to build " << order[1] << "." << std::endl;
-        auto itInd = units.id2index.find(id);
+        std::cout << "Unit with id " << id << " (base) received order to build " << order[1] << "." << std::endl;
+        auto itInd = units.id2index[id];
 
         // Does the unit have an empty build queue
-        if(units.bases[itInd->second].queue != '0')
+        if(units.bases[itInd].queue != '0')
         {
             std::cout << "Error in orders! Unit with id " << id << " is already building!" << std::endl;
             playerWins = false;
@@ -640,8 +653,8 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
             return false;
         }
 
-        units.bases[itInd->second].queue = order[1];
-        units.bases[itInd->second].qTime = BUILD_TIME(order[1]);
+        units.bases[itInd].queue = order[1];
+        units.bases[itInd].qTime = BUILD_TIME(order[1]);
 
         // Does the player have enough gold
         gold -= BUILD_COST(order[1]);
@@ -656,9 +669,210 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
     return true;
 }
 
+bool process_unit_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins)
+{
+    // Move action
+    if (task == 'M')
+    {
+        std::stringstream parser(order);
+        std::string eol_guard;
+
+        int tX, tY;
+        parser >> tX >> tY >> eol_guard;
+
+        if (eol_guard.length() > 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        if (tX >= int(map[0].size()) || tX < 0 || tY >= int(map.size()) || tY < 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        if (!map[tY][tX]->checkTrav())
+        {
+            std::cout << "Error in orders! Unit with id " << id << " attempts an illegal move!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        switch (units.id2type[id])
+        {
+        case 'K':
+            std::cout << "Unit with id " << id << " (knight) received order to move from ";
+            std::cout << units.knights[units.id2index[id]].posx << " " << units.knights[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.knights[units.id2index[id]], tX, tY) > SPEED_KNIGHT)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.knights[units.id2index[id]].posx = tX;
+            units.knights[units.id2index[id]].posy = tY;
+            return true;
+        case 'S':
+            std::cout << "Unit with id " << id << " (swordsman) received order to move from ";
+            std::cout << units.swordsmen[units.id2index[id]].posx << " " << units.swordsmen[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.swordsmen[units.id2index[id]], tX, tY) > SPEED_SWORDSMAN)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.swordsmen[units.id2index[id]].posx = tX;
+            units.swordsmen[units.id2index[id]].posy = tY;
+            return true;
+        case 'A':
+            std::cout << "Unit with id " << id << " (archer) received order to move from ";
+            std::cout << units.archers[units.id2index[id]].posx << " " << units.archers[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.archers[units.id2index[id]], tX, tY) > SPEED_ARCHER)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.archers[units.id2index[id]].posx = tX;
+            units.archers[units.id2index[id]].posy = tY;
+            return true;
+        case 'P':
+            std::cout << "Unit with id " << id << " (pikeman) received order to move from ";
+            std::cout << units.pikemen[units.id2index[id]].posx << " " << units.pikemen[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.pikemen[units.id2index[id]], tX, tY) > SPEED_PIKEMAN)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.pikemen[units.id2index[id]].posx = tX;
+            units.pikemen[units.id2index[id]].posy = tY;
+            return true;
+        case 'C':
+            std::cout << "Unit with id " << id << " (catapult) received order to move from ";
+            std::cout << units.catapults[units.id2index[id]].posx << " " << units.catapults[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.catapults[units.id2index[id]], tX, tY) > SPEED_CATAPULT)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.catapults[units.id2index[id]].posx = tX;
+            units.catapults[units.id2index[id]].posy = tY;
+            return true;
+        case 'R':
+            std::cout << "Unit with id " << id << " (ram) received order to move from ";
+            std::cout << units.rams[units.id2index[id]].posx << " " << units.rams[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.rams[units.id2index[id]], tX, tY) > SPEED_RAM)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.rams[units.id2index[id]].posx = tX;
+            units.rams[units.id2index[id]].posy = tY;
+            return true;
+        case 'W':
+            std::cout << "Unit with id " << id << " (worker) received order to move from ";
+            std::cout << units.workers[units.id2index[id]].posx << " " << units.workers[units.id2index[id]].posy;
+            std::cout << " to " << tX << " " << tY << std::endl;
+            if (Dist(&units.workers[units.id2index[id]], tX, tY) > SPEED_WORKER)
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            units.workers[units.id2index[id]].posx = tX;
+            units.workers[units.id2index[id]].posy = tY;
+            return true;
+        default:
+            std::cerr << "Invalid type label!" << std::endl;
+            return false;
+        }
+    }
+    // Attack action
+    else if (task == 'A')
+    {
+        std::stringstream parser(order);
+        std::string eol_guard;
+
+        int tId;;
+        parser >> tId >> eol_guard;
+
+        if (eol_guard.length() > 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        switch (units.id2type[id])
+        {
+        case 'K':
+            std::cout << "Unit with id " << id << " (knight) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        case 'S':
+            std::cout << "Unit with id " << id << " (swordsman) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        case 'A':
+            std::cout << "Unit with id " << id << " (archer) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        case 'P':
+            std::cout << "Unit with id " << id << " (pikeman) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        case 'C':
+            std::cout << "Unit with id " << id << " (catapult) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        case 'R':
+            std::cout << "Unit with id " << id << " (ram) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        case 'W':
+            std::cout << "Unit with id " << id << " (worker) received order to attack enemy unit with id " << tId << '\n';
+            // todo
+            break;
+        default:
+            std::cerr << "Invalid type label!" << std::endl;
+            return false;
+        }
+    }
+    else
+    {
+        std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        playerWins = false;
+        opponentWins = true;
+        return false;
+    }
+}
+
 bool process_worker_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins)
 {
-    // move action
+    // Move action
     if (task == 'M')
     {
         std::stringstream parser(order);
@@ -681,7 +895,7 @@ bool process_worker_orders(int id, char task, const std::string &order, const gr
             return false;
         }
         std::cout << "Unit with id " << id << " (W) received order to move from " << sX << " " << sY << " to " << tX << " " << tY << std::endl;
-        if (Dist(&units.workers[units.id2index[id]], tX, tY) > 2)
+        if (Dist(&units.workers[units.id2index[id]], tX, tY) > SPEED_WORKER)
         {
             std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
             playerWins = false;
@@ -702,11 +916,277 @@ bool process_worker_orders(int id, char task, const std::string &order, const gr
             return true;
         }
     }
-    // attack action
+    // Attack action
     else if (task == 'A') 
     {
-        std::cout << "Unit with id " << id << " (W) received order to attack!" << std::endl;
-        // TODO
+        std::stringstream parser(order);
+        std::string eol_guard;
+        int tId;;
+        parser >> tId >> eol_guard;
+
+        if (eol_guard.length() > 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        std::cout << "Unit with id " << id << " (W) received order to attack enemy unit with id " << tId << std::endl;
+
+        int sInd = units.id2index[id];
+        int tInd = enemies.id2index[tId];
+
+        switch (enemies.id2type[tId])
+        {
+        case 'B':
+            if (Dist(&enemies.bases[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.bases[tInd].endurance -= WORKER2BASE;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'K':
+            if (Dist(&enemies.knights[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.knights[tInd].endurance -= WORKER2KNIGHT;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'S':
+            if (Dist(&enemies.swordsmen[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.swordsmen[tInd].endurance -= WORKER2SWORDSMAN;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'A':
+            if (Dist(&enemies.archers[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.archers[tInd].endurance -= WORKER2ARCHER;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'P':
+            if (Dist(&enemies.pikemen[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.pikemen[tInd].endurance -= WORKER2PIKEMAN;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'C':
+            if (Dist(&enemies.catapults[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.catapults[tInd].endurance -= WORKER2CATAPULT;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'R':
+            if (Dist(&enemies.rams[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.rams[tInd].endurance -= WORKER2RAM;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'W':
+            if (Dist(&enemies.workers[tInd], &units.workers[sInd]) <= ATTACK_WORKER) enemies.rams[tInd].endurance -= WORKER2WORKER;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        default:
+            std::cerr << "Invalid type label!" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        playerWins = false;
+        opponentWins = true;
+        return false;
+    }
+}
+
+bool process_knight_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins)
+{
+    // Move action
+    if (task == 'M')
+    {
+        std::stringstream parser(order);
+        std::string eol_guard;
+        int tX, tY;
+        parser >> tX >> tY >> eol_guard;
+        if (eol_guard.length() > 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+        int sX = units.knights[units.id2index[id]].posx, sY = units.knights[units.id2index[id]].posy;
+        if (tX >= int(map[0].size()) || tX < 0 || tY >= int(map.size()) || tY < 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+        std::cout << "Unit with id " << id << " (K) received order to move from " << sX << " " << sY << " to " << tX << " " << tY << std::endl;
+        if (Dist(&units.workers[units.id2index[id]], tX, tY) > SPEED_KNIGHT)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+        else if (!map[tY][tX]->checkTrav())
+        {
+            std::cout << "Error in orders! Unit with id " << id << " attempts an illegal move!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+        else
+        {
+            units.knights[units.id2index[id]].posx = tX;
+            units.knights[units.id2index[id]].posy = tY;
+            return true;
+        }
+    }
+    // Attack action
+    else if (task == 'A') 
+    {
+        std::stringstream parser(order);
+        std::string eol_guard;
+        int tId;;
+        parser >> tId >> eol_guard;
+
+        if (eol_guard.length() > 0)
+        {
+            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+
+        std::cout << "Unit with id " << id << " (K) received order to attack enemy unit with id " << tId << std::endl;
+
+        int sInd = units.id2index[id];
+        int tInd = enemies.id2index[tId];
+
+        switch (enemies.id2type[tId])
+        {
+        case 'B':
+            if (Dist(&enemies.bases[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.bases[tInd].endurance -= KNIGHT2BASE;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'K':
+            if (Dist(&enemies.knights[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.knights[tInd].endurance -= KNIGHT2KNIGHT;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'S':
+            if (Dist(&enemies.swordsmen[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.swordsmen[tInd].endurance -= KNIGHT2SWORDSMAN;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'A':
+            if (Dist(&enemies.archers[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.archers[tInd].endurance -= KNIGHT2ARCHER;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'P':
+            if (Dist(&enemies.pikemen[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.pikemen[tInd].endurance -= KNIGHT2PIKEMAN;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'C':
+            if (Dist(&enemies.catapults[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.catapults[tInd].endurance -= KNIGHT2CATAPULT;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'R':
+            if (Dist(&enemies.rams[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.rams[tInd].endurance -= KNIGHT2RAM;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        case 'W':
+            if (Dist(&enemies.workers[tInd], &units.knights[sInd]) <= ATTACK_KNIGHT) enemies.rams[tInd].endurance -= KNIGHT2WORKER;
+            else
+            {
+                std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+                playerWins = false;
+                opponentWins = true;
+                return false;
+            }
+            break;
+        default:
+            std::cerr << "Invalid type label!" << std::endl;
+            return false;
+        }
         return true;
     }
     else

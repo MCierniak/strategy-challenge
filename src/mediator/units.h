@@ -26,6 +26,7 @@
 #include <sstream>
 #include <vector>
 #include <memory>
+#include <map>
 
 // Vector for units
 #define listW std::vector<Worker>
@@ -45,6 +46,88 @@
 #define CAN_GET_ARCHER(x) (x >= 250)
 #define CAN_GET_SWORDSMAN(x) (x >= 250)
 #define CAN_GET_KNIGHT(x) (x >= 400)
+
+// Damage
+#define WORKER2KNIGHT 5
+#define WORKER2SWORDSMAN 5
+#define WORKER2ARCHER 5
+#define WORKER2PIKEMAN 5
+#define WORKER2CATAPULT 5
+#define WORKER2RAM 5
+#define WORKER2WORKER 5
+#define WORKER2BASE 1
+
+#define KNIGHT2KNIGHT 35
+#define KNIGHT2SWORDSMAN 35
+#define KNIGHT2ARCHER 35
+#define KNIGHT2PIKEMAN 35
+#define KNIGHT2CATAPULT 35
+#define KNIGHT2RAM 50
+#define KNIGHT2WORKER 35
+#define KNIGHT2BASE 35
+
+#define ARCHER2KNIGHT 15
+#define ARCHER2SWORDSMAN 15
+#define ARCHER2ARCHER 15
+#define ARCHER2PIKEMAN 15
+#define ARCHER2CATAPULT 10
+#define ARCHER2RAM 10
+#define ARCHER2WORKER 15
+#define ARCHER2BASE 15
+
+#define CATAPULT2KNIGHT 40
+#define CATAPULT2SWORDSMAN 40
+#define CATAPULT2ARCHER 40
+#define CATAPULT2PIKEMAN 40
+#define CATAPULT2CATAPULT 40
+#define CATAPULT2RAM 40
+#define CATAPULT2WORKER 40
+#define CATAPULT2BASE 50
+
+#define PIKEMAN2KNIGHT 35
+#define PIKEMAN2SWORDSMAN 15
+#define PIKEMAN2ARCHER 15
+#define PIKEMAN2PIKEMAN 15
+#define PIKEMAN2CATAPULT 15
+#define PIKEMAN2RAM 10
+#define PIKEMAN2WORKER 15
+#define PIKEMAN2BASE 10
+
+#define RAM2KNIGHT 10
+#define RAM2SWORDSMAN 10
+#define RAM2ARCHER 10
+#define RAM2PIKEMAN 10
+#define RAM2CATAPULT 10
+#define RAM2RAM 10
+#define RAM2WORKER 10
+#define RAM2BASE 50
+
+#define SWORDSMAN2KNIGHT 30
+#define SWORDSMAN2SWORDSMAN 30
+#define SWORDSMAN2ARCHER 30
+#define SWORDSMAN2PIKEMAN 20
+#define SWORDSMAN2CATAPULT 20
+#define SWORDSMAN2RAM 30
+#define SWORDSMAN2WORKER 30
+#define SWORDSMAN2BASE 30
+
+// Speed
+#define SPEED_KNIGHT 5
+#define SPEED_WORKER 2
+#define SPEED_ARCHER 2
+#define SPEED_CATAPULT 2
+#define SPEED_PIKEMAN 2
+#define SPEED_RAM 2
+#define SPEED_SWORDSMAN 2
+
+// Attack Range
+#define ATTACK_KNIGHT 1
+#define ATTACK_WORKER 1
+#define ATTACK_ARCHER 5
+#define ATTACK_CATAPULT 7
+#define ATTACK_PIKEMAN 2
+#define ATTACK_RAM 1
+#define ATTACK_SWORDSMAN 1
 
 // Build time
 #define BUILD_TIME(x) (x == 'K' ? 5 : x == 'C' ? 6 : x == 'R' ? 4 : x == 'W' ? 2 : 3)
@@ -133,28 +216,56 @@ public:
     ~Knight();
 };
 
+// struct listUnits
+// {
+//     listW workers;
+//     listC catapults;
+//     listR rams;
+//     listP pikemen;
+//     listA archers;
+//     listS swordsmen;
+//     listK knights;
+//     listB bases;
+//     int unitCount = 0;
+//     std::unordered_map<int, int> id2index;
+//     std::map<int, char> id2type;
+
+//     bool addUnit(Worker &unit);
+//     bool addUnit(Catapult &unit);
+//     bool addUnit(Ram &unit);
+//     bool addUnit(Pikeman &unit);
+//     bool addUnit(Archer &unit);
+//     bool addUnit(Swordsman &unit);
+//     bool addUnit(Knight &unit);
+//     bool addUnit(Base &unit);
+
+//     bool is_unique(int id);
+// };
+
 struct listUnits
 {
-    listW workers;
-    listC catapults;
-    listR rams;
-    listP pikemen;
-    listA archers;
-    listS swordsmen;
-    listK knights;
-    listB bases;
-    int unitCount = 0;
-    std::unordered_map<int, char> id2type;
-    std::unordered_map<int, int> id2index;
+    std::map<int, std::unique_ptr<Unit>> units;
+    std::map<int, char> id2type;
 
-    bool addUnit(Worker &unit);
-    bool addUnit(Catapult &unit);
-    bool addUnit(Ram &unit);
-    bool addUnit(Pikeman &unit);
-    bool addUnit(Archer &unit);
-    bool addUnit(Swordsman &unit);
-    bool addUnit(Knight &unit);
-    bool addUnit(Base &unit);
+    int qWorker, qCatapult, qRam, qPikeman, qArcher;
+    int qSwordsman, qKnight, qBase;
+
+    bool addBase();
+    bool addBase(int ident, int end, int px, int py, char q);
+    bool addBase(int ident, int end, int px, int py, char q, int qT);
+
+    bool addWorker(int ident, int px, int py);
+    bool addWorker(int ident, int end, int px, int py);
+
+    bool addCatapult(int ident, int px, int py);
+    bool addCatapult(int ident, int end, int px, int py);
+
+
+    bool addRam(Ram &unit);
+    bool addPikeman(Pikeman &unit);
+    bool addArcher(Archer &unit);
+    bool addSwordsman(Swordsman &unit);
+    bool addKnight(Knight &unit);
 
     bool is_unique(int id);
 };

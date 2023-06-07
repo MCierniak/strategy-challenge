@@ -125,8 +125,7 @@ bool action(std::string &payload, const Base &unit, long gold, const listUnits &
             return true;
         }
         // Once the archer is ready, build a worker
-        // else if (secondQueue && CAN_GET_WORKER(gold))
-        else if (true)
+        else if (secondQueue && CAN_GET_WORKER(gold))
         {
             ss << unit.id << " B W\n";
             payload = ss.str();

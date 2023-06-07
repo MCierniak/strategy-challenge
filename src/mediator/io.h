@@ -46,6 +46,8 @@ bool start_game();
 bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win);
 
 bool process_base_orders(int id, char task, const std::string &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins);
+bool process_unit_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
+
 bool process_worker_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 bool process_knight_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 bool process_swordsman_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
@@ -53,6 +55,7 @@ bool process_archer_orders(int id, char task, const std::string &order, const gr
 bool process_pikeman_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 bool process_catapult_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 bool process_ram_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
+
 bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins);
 bool add_new_unit(int &max_index, listUnits &units);
 
