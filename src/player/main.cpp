@@ -18,7 +18,8 @@
 
 #include "io.h"
 #include "grid.h"
-#include "units.h"
+#include "units/misc.h"
+#include "units/actions.h"
 
 #include <algorithm>
 #include <chrono>
@@ -112,13 +113,13 @@ void make_moves(char *argv[], int time_limit)
         std::string temp;
         if (i < myUnits.bases.size())
         {
-            if (action(temp, myUnits.bases[i], gold, map, myUnits, enemyUnits)) file << temp;
+            if (action(temp, myUnits.bases[i], gold, myUnits, enemyUnits)) file << temp;
         }
 
         temp = std::string();
         if (i < myUnits.workers.size())
         {
-            if (action(temp, myUnits.workers[i], map)) file << temp;
+            if (action(temp, myUnits.workers[i], map, enemyUnits)) file << temp;
         }
 
         // other actions

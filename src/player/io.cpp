@@ -93,12 +93,14 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
         while(getline(file, line))
         {
             std::istringstream ss(line);
+            std::string eol_guard;
 
             // Determine type of unit first, alliegence last.
             switch (line[2])
             {
             case 'B': // Base unit, assume line has extra queue param
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Base unit(id, endurance, posx, posy, bQueue);
@@ -112,7 +114,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'K': // Knight unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Knight unit(id, endurance, posx, posy);
@@ -139,7 +142,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'S': // Swordsman unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Swordsman unit(id, endurance, posx, posy);
@@ -165,7 +169,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'A': // Archer unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Archer unit(id, endurance, posx, posy);
@@ -191,7 +196,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'P': // Pikeman unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Pikeman unit(id, endurance, posx, posy);
@@ -217,7 +223,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'C': // Catapult unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Catapult unit(id, endurance, posx, posy);
@@ -243,7 +250,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'R': // Ram unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Ram unit(id, endurance, posx, posy);
@@ -269,7 +277,8 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
                 }
                 continue;
             case 'W': // Worker unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance;
+                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
+                if (eol_guard.length() > 0) return false;
                 if (alliegence == 'P')
                 {
                     Worker unit(id, endurance, posx, posy);

@@ -16,27 +16,38 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#ifndef PLAYER_UNITS_KNIGHT_H
+#define PLAYER_UNITS_KNIGHT_H
 
-#include "units/misc.h"
-#include "utils.h"
+#include "unit.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Vector for units
+#define listK std::vector<Knight>
 
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+// Build cost logic
+#define CAN_GET_KNIGHT(x) (x >= 400)
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
+// Damage
+#define KNIGHT2KNIGHT 35
+#define KNIGHT2SWORDSMAN 35
+#define KNIGHT2ARCHER 35
+#define KNIGHT2PIKEMAN 35
+#define KNIGHT2CATAPULT 35
+#define KNIGHT2RAM 50
+#define KNIGHT2WORKER 35
+#define KNIGHT2BASE 35
 
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
+// Speed
+#define SPEED_KNIGHT 5
+
+// Attack Range
+#define ATTACK_KNIGHT 1
+
+class Knight : public Unit
+{
+public:
+    Knight(int ident, int end, std::size_t px, std::size_t py);
+    ~Knight();
+};
 
 #endif

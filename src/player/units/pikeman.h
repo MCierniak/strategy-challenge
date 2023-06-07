@@ -16,27 +16,38 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#ifndef PLAYER_UNITS_PIKEMAN_H
+#define PLAYER_UNITS_PIKEMAN_H
 
-#include "units/misc.h"
-#include "utils.h"
+#include "unit.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Vector
+#define listP std::vector<Pikeman>
 
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+// Build cost logic
+#define CAN_GET_PIKEMAN(x) (x >= 200)
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
+// Damage
+#define PIKEMAN2KNIGHT 35
+#define PIKEMAN2SWORDSMAN 15
+#define PIKEMAN2ARCHER 15
+#define PIKEMAN2PIKEMAN 15
+#define PIKEMAN2CATAPULT 15
+#define PIKEMAN2RAM 10
+#define PIKEMAN2WORKER 15
+#define PIKEMAN2BASE 10
 
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
+// Speed
+#define SPEED_PIKEMAN 2
+
+// Attack Range
+#define ATTACK_PIKEMAN 2
+
+class Pikeman : public Unit
+{
+public:
+    Pikeman(int ident, int end, std::size_t px, std::size_t py);
+    ~Pikeman();
+};
 
 #endif

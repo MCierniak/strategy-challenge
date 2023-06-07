@@ -16,245 +16,71 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#include "units.h"
+#include "actions.h"
 
-Unit::Unit(int ident, int end, std::size_t px, std::size_t py):
-    id(ident), endurance(end), posx(px), posy(py)
-{}
-
-Base::Base():
-    Unit(0, 0, 0, 0), queue('0'), init(false)
-{}
-
-Base::Base(int ident, int end, std::size_t px, std::size_t py, char q):
-    Unit(ident, end, px, py), queue(q), init(true)
-{}
-
-bool Base::isInit()
+bool worker_attack(std::string &payload, Worker &unit, const grid &map, listUnits &enemies)
 {
-    return init;
-}
-
-bool Worker::find_target(const grid &map)
-{
-    // If already on resource node, stay there
-    if (map[this->posy][this->posx]->checkResource())
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> enemiesInRange;
+    std::stringstream ss;
+    for (auto &&mod : MOVE_1)
     {
-        this->trgtY = this->posy;
-        this->trgtX = this->posx;
+        int newY = int(unit.posy) + mod[0], newX = int(unit.posx) + mod[1];
+        if (newY < 0 || newY >= int(map.size())) continue;
+        if (newX < 0 || newX >= int(map[newY].size())) continue;
+
+        if (map[newY][newX]->checkEnemyNr() > 0)
+        {
+            for (std::size_t i = 0; i < map[newY][newX]->checkEnemyNr(); i++)
+            {
+                int eid = map[newY][newX]->getEnemyId(i);
+                int ehp = enemies.id2hp[eid];
+                if (ehp > 0) enemiesInRange.push(std::pair<int, int>(ehp, eid));
+            }
+        }
+    }
+    if (!enemiesInRange.empty())
+    {
+        int trgt_id = enemiesInRange.top().second;
+        int trgt_ind = enemies.id2ind[trgt_id];
+        ss << unit.id << " A " << trgt_id << '\n';
+        payload += ss.str();
+
+        switch (enemies.id2type[trgt_id])
+        {
+        case 'B':
+            enemies.bases[trgt_ind].endurance -= WORKER2BASE;
+            break;
+        case 'K':
+            enemies.knights[trgt_ind].endurance -= WORKER2KNIGHT;
+            break;
+        case 'S':
+            enemies.swordsmen[trgt_ind].endurance -= WORKER2SWORDSMAN;
+            break;
+        case 'A':
+            enemies.archers[trgt_ind].endurance -= WORKER2ARCHER;
+            break;
+        case 'P':
+            enemies.pikemen[trgt_ind].endurance -= WORKER2PIKEMAN;
+            break;
+        case 'R':
+            enemies.rams[trgt_ind].endurance -= WORKER2RAM;
+            break;
+        case 'C':
+            enemies.catapults[trgt_ind].endurance -= WORKER2CATAPULT;
+            break;
+        case 'W':
+            enemies.workers[trgt_ind].endurance -= WORKER2WORKER;
+            break;
+        default:
+            break;
+        }
         return true;
     }
-    // Find nearest empty resource node
-    for (auto &&el : resource::resNodeList)
-    {
-        if (map[el[0]][el[1]]->checkTrav() && map[el[0]][el[1]]->getWorkerId().size() == 0)
-        {
-            this->trgtY = el[0];
-            this->trgtX = el[1];
-            return true;
-        }
-    }
-    // If none, find nearest resource node without enemies
-    for (auto &&el : resource::resNodeList)
-    {
-        if (map[el[0]][el[1]]->checkTrav())
-        {
-            this->trgtY = el[0];
-            this->trgtX = el[1];
-            return true;
-        }
-    }
-    // If all taken by the enemy, return false
     return false;
 }
 
-Worker::Worker(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-Catapult::Catapult(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-Ram::Ram(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-Pikeman::Pikeman(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-Archer::Archer(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-Swordsman::Swordsman(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-Knight::Knight(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
-
-bool listUnits::addUnit(Worker &unit)
+bool action(std::string &payload, const Base &unit, long gold, const listUnits &allies, const listUnits &enemies)
 {
-    int id = unit.id;
-
-    this->workers.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'W';
-    
-    return true;
-}
-
-bool listUnits::addUnit(Catapult &unit)
-{
-    int id = unit.id;
-
-    this->catapults.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'C';
-
-    return true;
-}
-
-bool listUnits::addUnit(Ram &unit)
-{
-    int id = unit.id;
-
-    this->rams.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'R';
-
-    return true;
-}
-
-bool listUnits::addUnit(Pikeman &unit)
-{
-    int id = unit.id;
-
-    this->pikemen.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'P';
-
-    return true;
-}
-
-bool listUnits::addUnit(Archer &unit)
-{
-    int id = unit.id;
-
-    this->archers.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'A';
-
-    return true;
-}
-
-bool listUnits::addUnit(Swordsman &unit)
-{
-    int id = unit.id;
-
-    this->swordsmen.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'S';
-
-    return true;
-}
-
-bool listUnits::addUnit(Knight &unit)
-{
-    int id = unit.id;
-
-    this->knights.push_back(unit);
-    this->unitCount++;
-
-    if(!is_unique(id)) return false;
-
-    this->id2type[id] = 'K';
-
-    return true;
-}
-
-bool listUnits::addUnit(Base &unit)
-{
-    int id = unit.id;
-
-    this->bases.push_back(unit);
-    this->unitCount++;
-
-    if(!is_unique(id)) return false;
-
-    this->id2type[id] = 'B';
-
-    return true;
-}
-
-bool listUnits::is_unique(int id)
-{
-    if(!(this->id2type.find(id) == this->id2type.end()))
-    {
-        std::cerr << "Error! Unit ids are not unique!" << std::endl;
-        return false;
-    }
-    return true;
-}
-
-Unit::~Unit(){}
-
-Base::~Base(){}
-
-Worker::~Worker(){}
-
-Catapult::~Catapult(){}
-
-Ram::~Ram(){}
-
-Pikeman::~Pikeman(){}
-
-Archer::~Archer(){}
-
-Swordsman::~Swordsman(){}
-
-Knight::~Knight(){}
-
-int Dist(Unit *first, Unit *second)
-{
-    return std::abs(int(first->posx) - int(second->posx)) + std::abs(int(first->posy) - int(second->posy));
-}
-
-int Dist(Unit *first, int xSecond, int ySecond)
-{
-    return std::abs(int(first->posx) - int(xSecond)) + std::abs(int(first->posy) - int(ySecond));
-}
-
-int Dist(int xFirst, int yFirst, int xSecond, int ySecond)
-{
-    return std::abs(int(xFirst) - int(xSecond)) + std::abs(int(yFirst) - int(ySecond));
-}
-
-bool action(std::string &payload, const Base &unit, long gold, const grid &map, const listUnits &allies, const listUnits &enemies)
-{
-    (void)map;
-
     std::ostringstream ss;
 
     if (unit.queue == '0')
@@ -299,7 +125,8 @@ bool action(std::string &payload, const Base &unit, long gold, const grid &map, 
             return true;
         }
         // Once the archer is ready, build a worker
-        else if (secondQueue && CAN_GET_WORKER(gold))
+        // else if (secondQueue && CAN_GET_WORKER(gold))
+        else if (true)
         {
             ss << unit.id << " B W\n";
             payload = ss.str();
@@ -366,19 +193,29 @@ bool action(std::string &payload, const Base &unit, long gold, const grid &map, 
     return false;
 }
 
-bool action(std::string &payload, Worker &unit, const grid &map)
+bool action(std::string &payload, Worker &unit, const grid &map, listUnits &enemies)
 {
-
     if(unit.find_target(map))
     {
-        // Worker already on resource node, take no action
-        if (unit.trgtX == unit.posx && unit.trgtY == unit.posy) return false;
+        // Worker already on resource node, don't move, attack in place
+        if (unit.trgtX == unit.posx && unit.trgtY == unit.posy) return worker_attack(payload, unit, map, enemies);
         // Resource node in range, move to it
-        else if (Dist(&unit, unit.trgtX, unit.trgtY) <= 2)
+        else if (Dist(&unit, unit.trgtX, unit.trgtY) == 2)
         {
             std::ostringstream ss;
             ss << unit.id << " M " << unit.trgtX << ' ' << unit.trgtY << '\n';
             payload = ss.str();
+            return true;
+        }
+        // Resource node in range, move to it, check for valid attack targets
+        else if (Dist(&unit, unit.trgtX, unit.trgtY) == 1)
+        {
+            std::ostringstream ss;
+            ss << unit.id << " M " << unit.trgtX << ' ' << unit.trgtY << '\n';
+            unit.posx = unit.trgtX;
+            unit.posy = unit.trgtY;
+            payload = ss.str();
+            worker_attack(payload, unit, map, enemies);
             return true;
         }
         // Resource node far away, determine shortest path and move
@@ -410,7 +247,9 @@ bool action(std::string &payload, Worker &unit, const grid &map)
         {
             if (int(unit.posy) + mod[0] < 0 || int(unit.posy) + mod[0] >= int(map.size())) continue;
             if (int(unit.posx) + mod[1] < 0 || int(unit.posx) + mod[1] >= int(map[unit.posy + mod[0]].size())) continue;
+
             int moddmg = map[unit.posy + mod[0]][unit.posx + mod[1]]->checkDmgWorker();
+
             // If target node out of range of any enemy, no point to iterate, just move to it
             if (moddmg == 1)
             {

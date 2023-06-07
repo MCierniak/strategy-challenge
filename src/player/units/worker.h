@@ -16,27 +16,40 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#ifndef PLAYER_UNITS_WORKER_H
+#define PLAYER_UNITS_WORKER_H
 
-#include "units/misc.h"
-#include "utils.h"
+#include "unit.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Vector
+#define listW std::vector<Worker>
 
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+// Build cost logic
+#define CAN_GET_WORKER(x) (x >= 100)
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
+// Damage
+#define WORKER2KNIGHT 5
+#define WORKER2SWORDSMAN 5
+#define WORKER2ARCHER 5
+#define WORKER2PIKEMAN 5
+#define WORKER2CATAPULT 5
+#define WORKER2RAM 5
+#define WORKER2WORKER 5
+#define WORKER2BASE 1
 
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
+// Speed
+#define SPEED_WORKER 2
+
+// Attack Range
+#define ATTACK_WORKER 1
+
+class Worker : public Unit
+{
+public:
+    Worker(int ident, int end, std::size_t px, std::size_t py);
+    ~Worker();
+
+    bool find_target(const grid &map);
+};
 
 #endif

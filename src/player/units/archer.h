@@ -16,27 +16,38 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#ifndef PLAYER_UNITS_ARCHER_H
+#define PLAYER_UNITS_ARCHER_H
 
-#include "units/misc.h"
-#include "utils.h"
+#include "unit.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Vector for units
+#define listA std::vector<Archer>
 
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+// Build cost logic
+#define CAN_GET_ARCHER(x) (x >= 250)
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
+// Damage
+#define ARCHER2KNIGHT 15
+#define ARCHER2SWORDSMAN 15
+#define ARCHER2ARCHER 15
+#define ARCHER2PIKEMAN 15
+#define ARCHER2CATAPULT 10
+#define ARCHER2RAM 10
+#define ARCHER2WORKER 15
+#define ARCHER2BASE 15
 
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
+// Speed
+#define SPEED_ARCHER 2
+
+// Attack Range
+#define ATTACK_ARCHER 5
+
+class Archer : public Unit
+{
+public:
+    Archer(int ident, int end, std::size_t px, std::size_t py);
+    ~Archer();
+};
 
 #endif

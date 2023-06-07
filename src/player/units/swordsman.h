@@ -16,27 +16,38 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#ifndef PLAYER_UNITS_SWORDSMAN_H
+#define PLAYER_UNITS_SWORDSMAN_H
 
-#include "units/misc.h"
-#include "utils.h"
+#include "unit.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Vector for units
+#define listS std::vector<Swordsman>
 
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+// Build cost logic
+#define CAN_GET_SWORDSMAN(x) (x >= 250)
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
+// Damage
+#define SWORDSMAN2KNIGHT 30
+#define SWORDSMAN2SWORDSMAN 30
+#define SWORDSMAN2ARCHER 30
+#define SWORDSMAN2PIKEMAN 20
+#define SWORDSMAN2CATAPULT 20
+#define SWORDSMAN2RAM 30
+#define SWORDSMAN2WORKER 30
+#define SWORDSMAN2BASE 30
 
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
+// Speed
+#define SPEED_SWORDSMAN 2
+
+// Attack Range
+#define ATTACK_SWORDSMAN 1
+
+class Swordsman : public Unit
+{
+public:
+    Swordsman(int ident, int end, std::size_t px, std::size_t py);
+    ~Swordsman();
+};
 
 #endif

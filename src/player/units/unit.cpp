@@ -16,27 +16,10 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#include "unit.h"
 
-#include "units/misc.h"
-#include "utils.h"
+Unit::Unit(int ident, int end, std::size_t px, std::size_t py):
+    id(ident), endurance(end), posx(px), posy(py)
+{}
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
-
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
-
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
-
-#endif
+Unit::~Unit(){}

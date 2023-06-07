@@ -16,27 +16,38 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_IO_H
-#define PLAYER_IO_H
+#ifndef PLAYER_UNITS_RAM_H
+#define PLAYER_UNITS_RAM_H
 
-#include "units/misc.h"
-#include "utils.h"
+#include "unit.h"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Vector
+#define listR std::vector<Ram>
 
-// Parse map from file, output parsed map and X,Y size
-bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
-// Parse status from file, output rosters of own and enemy units
-bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
+// Build cost logic
+#define CAN_GET_RAM(x) (x >= 500)
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
+// Damage
+#define RAM2KNIGHT 10
+#define RAM2SWORDSMAN 10
+#define RAM2ARCHER 10
+#define RAM2PIKEMAN 10
+#define RAM2CATAPULT 10
+#define RAM2RAM 10
+#define RAM2WORKER 10
+#define RAM2BASE 50
 
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
+// Speed
+#define SPEED_RAM 2
+
+// Attack range
+#define ATTACK_RAM 1
+
+class Ram : public Unit
+{
+public:
+    Ram(int ident, int end, std::size_t px, std::size_t py);
+    ~Ram();
+};
 
 #endif
