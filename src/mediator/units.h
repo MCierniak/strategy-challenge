@@ -159,4 +159,9 @@ struct listUnits
     bool is_unique(int id);
 };
 
+//Misc
+int Dist(Unit *first, Unit *second);
+int Dist(Unit *first, int xSecond, int ySecond);
+int Dist(int xFirst, int yFirst, int xSecond, int ySecond);
+
 #endif

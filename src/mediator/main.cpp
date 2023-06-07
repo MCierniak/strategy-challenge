@@ -18,6 +18,8 @@
 
 #include "io.h"
 
+#define _DEBUG_MODE
+
 std::string exec(const char* cmd);
 
 int main(int argc, char **argv)
@@ -48,7 +50,14 @@ int main(int argc, char **argv)
             std::cout << "Turn " << turn << ". Running player 1 script." << std::endl;
             if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
             else ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC << " " << timeout;
+            
+            #ifndef _DEBUG_MODE // release call
             std::string ret = exec(ss.str().c_str());
+            #else // debug call 
+            std::string ret;
+            system(ss.str().c_str());
+            #endif
+
             if (!(ret == std::string()))
             {
                 std::cout << "Player 1 timed out!" << std::endl;
@@ -64,7 +73,14 @@ int main(int argc, char **argv)
             std::cout << "Turn " << turn << ". Running player 2 script." << std::endl;
             if(timeout == 5) ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC;
             else ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC << " " << timeout;
+            
+            #ifndef _DEBUG_MODE // release call
             std::string ret = exec(ss.str().c_str());
+            #else // debug call 
+            std::string ret;
+            system(ss.str().c_str());
+            #endif
+
             if (!(ret == std::string()))
             {
                 std::cout << "Player 2 timed out!" << std::endl;
@@ -109,7 +125,14 @@ int main(int argc, char **argv)
         // Call player 1 script
         if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
         else ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC << " " << timeout;
+        
+        #ifndef _DEBUG_MODE // release call
         std::string ret = exec(ss.str().c_str());
+        #else // debug call
+        std::string ret;
+        system(ss.str().c_str());
+        #endif
+        
         if (!(ret == std::string()))
         {
             std::cout << "Player 1 timed out!" << std::endl;

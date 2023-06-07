@@ -36,7 +36,7 @@ Base::Base(int ident, int end, int px, int py, char q, int qT):
 
 bool Base::isInit()
 {
-    return init;
+    return this->init;
 }
 
 Worker::Worker(int ident, int px, int py):
@@ -99,13 +99,13 @@ bool listUnits::addUnit(Worker &unit)
 {
     int id = unit.id;
 
-    workers.push_back(unit);
-    unitCount++;
+    this->workers.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'W';
-    id2index[id] = workers.size() - 1;
+    this->id2type[id] = 'W';
+    this->id2index[id] = this->workers.size() - 1;
     
     return true;
 }
@@ -114,13 +114,13 @@ bool listUnits::addUnit(Catapult &unit)
 {
     int id = unit.id;
 
-    catapults.push_back(unit);
-    unitCount++;
+    this->catapults.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'C';
-    id2index[id] = catapults.size() - 1;
+    this->id2type[id] = 'C';
+    this->id2index[id] = this->catapults.size() - 1;
 
     return true;
 }
@@ -129,13 +129,13 @@ bool listUnits::addUnit(Ram &unit)
 {
     int id = unit.id;
 
-    rams.push_back(unit);
-    unitCount++;
+    this->rams.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'R';
-    id2index[id] = rams.size() - 1;
+    this->id2type[id] = 'R';
+    this->id2index[id] = this->rams.size() - 1;
 
     return true;
 }
@@ -144,13 +144,13 @@ bool listUnits::addUnit(Pikeman &unit)
 {
     int id = unit.id;
 
-    pikemen.push_back(unit);
-    unitCount++;
+    this->pikemen.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'P';
-    id2index[id] = pikemen.size() - 1;
+    this->id2type[id] = 'P';
+    this->id2index[id] = this->pikemen.size() - 1;
 
     return true;
 }
@@ -159,13 +159,13 @@ bool listUnits::addUnit(Archer &unit)
 {
     int id = unit.id;
 
-    archers.push_back(unit);
-    unitCount++;
+    this->archers.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'A';
-    id2index[id] = archers.size() - 1;
+    this->id2type[id] = 'A';
+    this->id2index[id] = this->archers.size() - 1;
 
     return true;
 }
@@ -174,13 +174,13 @@ bool listUnits::addUnit(Swordsman &unit)
 {
     int id = unit.id;
 
-    swordsmen.push_back(unit);
-    unitCount++;
+    this->swordsmen.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'S';
-    id2index[id] = swordsmen.size() - 1;
+    this->id2type[id] = 'S';
+    this->id2index[id] = this->swordsmen.size() - 1;
 
     return true;
 }
@@ -189,13 +189,13 @@ bool listUnits::addUnit(Knight &unit)
 {
     int id = unit.id;
 
-    knights.push_back(unit);
-    unitCount++;
+    this->knights.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'K';
-    id2index[id] = knights.size() - 1;
+    this->id2type[id] = 'K';
+    this->id2index[id] = this->knights.size() - 1;
 
     return true;
 }
@@ -204,20 +204,20 @@ bool listUnits::addUnit(Base &unit)
 {
     int id = unit.id;
 
-    bases.push_back(unit);
-    unitCount++;
+    this->bases.push_back(unit);
+    this->unitCount++;
 
-    if(!is_unique(id)) return false;
+    if(!this->is_unique(id)) return false;
 
-    id2type[id] = 'B';
-    id2index[id] = bases.size() - 1;
+    this->id2type[id] = 'B';
+    this->id2index[id] = this->bases.size() - 1;
 
     return true;
 }
 
 bool listUnits::is_unique(int id)
 {
-    if(!(id2type.find(id) == id2type.end()))
+    if(!(this->id2type.find(id) == this->id2type.end()))
     {
         std::cerr << "Error! Unit ids are not unique!" << std::endl;
         return false;
@@ -242,3 +242,18 @@ Archer::~Archer(){}
 Swordsman::~Swordsman(){}
 
 Knight::~Knight(){}
+
+int Dist(Unit *first, Unit *second)
+{
+    return std::abs(int(first->posx) - int(second->posx)) + std::abs(int(first->posy) - int(second->posy));
+}
+
+int Dist(Unit *first, int xSecond, int ySecond)
+{
+    return std::abs(int(first->posx) - int(xSecond)) + std::abs(int(first->posy) - int(ySecond));
+}
+
+int Dist(int xFirst, int yFirst, int xSecond, int ySecond)
+{
+    return std::abs(int(xFirst) - int(xSecond)) + std::abs(int(yFirst) - int(ySecond));
+}

@@ -22,23 +22,28 @@ std::size_t resource::resourceCount = 0;
 
 bool gridObj::checkTrav()
 {
-    return isTraversable;
+    return this->isTraversable;
+}
+
+bool gridObj::checkResource()
+{
+    return this->isResource;
 }
 
 void emptySpace::setTrav(bool newTrav)
 {
-    isTraversable = newTrav;
+    this->isTraversable = newTrav;
 }
 
 void resource::setTrav(bool newTrav)
 {
-    isTraversable = newTrav;
+    this->isTraversable = newTrav;
 }
 
 void barrier::setTrav(bool newTrav)
 {
     (void)newTrav;
-    isTraversable = false;
+    this->isTraversable = false;
 }
 
 std::size_t resource::getResourceCount()
@@ -48,37 +53,35 @@ std::size_t resource::getResourceCount()
 
 std::string emptySpace::print()
 {
-    if (isTraversable) return std::string("e");
-    else return std::string("e(x)");
+    return std::string("e");
 }
 
 std::string resource::print()
 {
-    if (isTraversable) return std::string("r");
-    else return std::string("r(x)");
+    return std::string("r");
 }
 
 std::string barrier::print()
 {
-    return std::string("b(x)");
+    return std::string("b");
 }
 
-gridObj::gridObj(bool traversible):
-    isTraversable(traversible)
+gridObj::gridObj(bool traversible, bool resource):
+    isTraversable(traversible), isResource(resource)
 {}
 
 emptySpace::emptySpace():
-    gridObj(true)
+    gridObj(true, false)
 {}
 
 resource::resource():
-    gridObj(true)
+    gridObj(true, true)
 {
     resource::resourceCount++;
 }
 
 barrier::barrier():
-    gridObj(false)
+    gridObj(false, false)
 {}
 
 emptySpace::~emptySpace(){}

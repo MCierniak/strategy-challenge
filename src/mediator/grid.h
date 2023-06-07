@@ -30,9 +30,9 @@ class gridObj
 {
 protected:
     // Bool indicating if unit can stop on this tile
-    bool isTraversable;
+    bool isTraversable, isResource;
 public:
-    gridObj(bool traversible);
+    gridObj(bool traversible, bool resource);
     virtual ~gridObj() = default;
 
     virtual std::string print() = 0;
@@ -42,6 +42,7 @@ public:
 
     // Check if unit can stop on this node
     bool checkTrav();
+    bool checkResource();
 };
 
 // Empty space tile
