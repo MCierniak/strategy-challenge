@@ -78,25 +78,63 @@ void make_moves(char *argv[], int time_limit)
     );
 
     // Sort enemy unit ids by distance to my base
-    for (auto &[key, value] : enemyUnits.units)
-    {
-        int distance = Dist(myUnits.base.posx, myUnits.base.posy, value->posx, value->posy);
-        enemyUnits.hitList.push(std::pair<int, int>(distance, key));
-    }
+    enemyUnits.hitList.sort(
+        [&myUnits, &enemyUnits](const int &a, const int &b)
+        {
+            int base_posx = myUnits.base.posx;
+            int base_posy = myUnits.base.posy;
+
+            int unita_posx, unita_posy, unitb_posx, unitb_posy;
+            if (enemyUnits.id2type[a] == 'B')
+            {
+                unita_posx = enemyUnits.base.posx;
+                unita_posy = enemyUnits.base.posy;
+            }
+            else
+            {
+                unita_posx = enemyUnits.units[a]->posx;
+                unita_posy = enemyUnits.units[a]->posy;
+            }
+            if (enemyUnits.id2type[b] == 'B')
+            {
+                unitb_posx = enemyUnits.base.posx;
+                unitb_posy = enemyUnits.base.posy;
+            }
+            else
+            {
+                unitb_posx = enemyUnits.units[b]->posx;
+                unitb_posy = enemyUnits.units[b]->posy;
+            }
+            return (Dist(base_posx, base_posy, unita_posx, unita_posy) < Dist(base_posx, base_posy, unitb_posx, unitb_posy));
+        }
+    );
 
     // Open order file.
     std::ofstream file(argv[3]);
     if(file.fail()) return;
 
     std::string temp;
-    if (action_base(temp, gold, myUnits, enemyUnits)) file << temp;
+    if (action_base(temp, gold, myUnits, enemyUnits))
+    {
+        file << temp;
+        temp = std::string();
+    }
     int duration = DURATION(CURRENT_TIME - start);
     for (auto &[key, value] : myUnits.units)
     {
-        if (action_unit(temp, key, map, myUnits, enemyUnits)) file << temp;
-        if (duration > time_limit_us - CLEANUP_TIME) break;
+        std::cout << "(Player) I am making decisions for unit id " << key <<std::endl;
+        if (action_unit(temp, key, map, myUnits, enemyUnits))
+        {
+            file << temp;
+            temp = std::string();
+        }
+        if (duration > time_limit_us - CLEANUP_TIME)
+        {
+            std::cout << "(Player) I have no time for more." <<std::endl;
+            break;
+        }
     }
-
+    std::cout << "(Player) I am finished." <<std::endl;
     // cleanup
     file.close();
 }

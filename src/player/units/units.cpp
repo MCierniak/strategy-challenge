@@ -80,3 +80,96 @@ bool Base::isInit()
 {
     return this->init;
 }
+
+bool Base::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    (void)map;
+    (void)allies;
+    (void)enemies;
+    return false;
+}
+
+bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    (void)allies;
+    (void)enemies;
+    // If already on empty resource node, stay there
+    // The third condition ensures that at most one worker will stay
+    std::cout << "(Player) (Worker) Looking for resource..." << std::endl;
+    if (
+        map[this->posy][this->posx]->checkResource() && 
+        (
+            map[this->posy][this->posx]->getWorkerId().size() == 1 || 
+            map[this->posy][this->posx]->getWorkerId()[0] == this->id
+        )
+    )
+    {
+        std::cout << "(Player) (Worker) Already on resource node. Staying in place." << std::endl;
+        this->trgtY = this->posy;
+        this->trgtX = this->posx;
+        return true;
+    }
+    // If not, find nearest empty resource node
+    for (auto &&el : resource::resNodeList)
+    {
+        if (map[el[0]][el[1]]->checkTrav() && map[el[0]][el[1]]->getWorkerId().size() == 0)
+        {
+            std::cout << "(Player) (Worker) Found empty resource node. Moving." << std::endl;
+            this->trgtY = el[0];
+            this->trgtX = el[1];
+            return true;
+        }
+    }
+    // If none and unit already on resource node, stay there
+    if (map[this->posy][this->posx]->checkResource())
+    {
+        std::cout << "(Player) (Worker) No empty resource nodes. Staying in place." << std::endl;
+        this->trgtY = this->posy;
+        this->trgtX = this->posx;
+        return true;
+    }
+    // If not, find nearest resource node without enemies
+    for (auto &&el : resource::resNodeList)
+    {
+        std::cout << "(Player) (Worker) No empty resource nodes. Moving." << std::endl;
+        if (map[el[0]][el[1]]->checkTrav())
+        {
+            this->trgtY = el[0];
+            this->trgtX = el[1];
+            return true;
+        }
+    }
+    // If all taken by the enemy, return false
+    std::cout << "(Player) (Worker) All resource nodes in enemy hands." << std::endl;
+    return false;
+}
+
+bool Swordsman::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    return find_target_swordsman(this->id, map, allies, enemies);
+}
+
+bool Archer::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    return find_target_archer(this->id, map, allies, enemies);
+}
+
+bool Pikeman::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    return find_target_pikeman(this->id, map, allies, enemies);
+}
+
+bool Knight::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    return find_target_knight(this->id, map, allies, enemies);
+}
+
+bool Ram::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    return find_target_ram(this->id, map, allies, enemies);
+}
+
+bool Catapult::find_target(const grid &map, listUnits &allies, listUnits &enemies)
+{
+    return find_target_catapult(this->id, map, allies, enemies);
+}

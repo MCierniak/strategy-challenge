@@ -19,13 +19,17 @@
 #ifndef PLAYER_UNITS_MISC_H
 #define PLAYER_UNITS_MISC_H
 
+#include "misc.fwd.h"
+
+#include "actions.h"
 #include "units.h"
 
-#define hitListType std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>>
+#include <queue>
 
 struct listUnits
 {
     std::map<int, std::vector<std::vector<int>>> id2moveattackV;
+    std::map<int, std::vector<std::vector<int>>> id2slowMoveV;
     std::map<int, std::vector<std::vector<int>>> id2attackV;
     std::map<int, std::vector<std::vector<int>>> id2moveV;
     std::map<int, std::unique_ptr<Unit>> units;
@@ -34,7 +38,7 @@ struct listUnits
     std::map<int, char> id2type;
     std::map<int, int> id2speed;
 
-    hitListType hitList;
+    std::list<int> hitList;
 
     int qWorker = 0, qCatapult = 0, qRam = 0, qPikeman = 0, qArcher = 0;
     int qSwordsman = 0, qKnight = 0, qAll = 0;

@@ -19,8 +19,10 @@
 #ifndef PLAYER_UNITS_UNITS_H
 #define PLAYER_UNITS_UNITS_H
 
-#include "../grid.h"
+#include "misc.fwd.h"
+
 #include "../utils.h"
+#include "../grid.h"
 
 #include <algorithm>
 #include <iostream>
@@ -134,6 +136,8 @@ public:
     
     Unit(int ident, int end, int px, int py);
     virtual ~Unit() = 0;
+
+    virtual bool find_target(const grid &map, listUnits &allies, listUnits &enemies) = 0;
 };
 
 class Base : public Unit
@@ -147,6 +151,8 @@ public:
     ~Base();
 
     bool isInit();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Worker : public Unit
@@ -154,6 +160,8 @@ class Worker : public Unit
 public:
     Worker(int ident, int end, int px, int py);
     ~Worker();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Swordsman : public Unit
@@ -161,6 +169,8 @@ class Swordsman : public Unit
 public:
     Swordsman(int ident, int end, int px, int py);
     ~Swordsman();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Archer : public Unit
@@ -168,6 +178,8 @@ class Archer : public Unit
 public:
     Archer(int ident, int end, int px, int py);
     ~Archer();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Pikeman : public Unit
@@ -175,6 +187,8 @@ class Pikeman : public Unit
 public:
     Pikeman(int ident, int end, int px, int py);
     ~Pikeman();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Knight : public Unit
@@ -182,6 +196,8 @@ class Knight : public Unit
 public:
     Knight(int ident, int end, int px, int py);
     ~Knight();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Ram : public Unit
@@ -189,6 +205,8 @@ class Ram : public Unit
 public:
     Ram(int ident, int end, int px, int py);
     ~Ram();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 class Catapult : public Unit
@@ -196,6 +214,8 @@ class Catapult : public Unit
 public:
     Catapult(int ident, int end, int px, int py);
     ~Catapult();
+
+    bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
 #endif

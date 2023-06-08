@@ -16,23 +16,18 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_PATH_DIJKSTRA_H
-#define PLAYER_PATH_DIJKSTRA_H
+#ifndef PLAYER_UNITS_MISC_FWD_H
+#define PLAYER_UNITS_MISC_FWD_H
 
-#include "../units/misc.h"
+#include "grid.h"
 
-#include "../grid.h"
+struct listUnits;
 
-struct my_comparator
-{
-    bool operator()(std::vector<int> const& a, std::vector<int> const& b) const
-    {
-        return a[2] > b[2];
-    }
-};
-
-// Dijkstra's search algorithm for map traversal. Returns false if there is no traversable path between s and t.
-// Slower than BFS.
-bool dijkstra_find_path(int unitId, listUnits &units, const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY);
+bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+bool find_target_archer(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+bool find_target_pikeman(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+bool find_target_knight(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+bool find_target_ram(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+bool find_target_catapult(int sId, const grid &map, listUnits &allies, listUnits &enemies);
 
 #endif

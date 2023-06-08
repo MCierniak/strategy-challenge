@@ -89,11 +89,6 @@ int gridObj::getEnemyId(int i)
     return this->enemyIds[i];
 }
 
-int resource::getUnusedResourceCount()
-{
-    return resource::unusedResourceCount;
-}
-
 void resource::addEnemyId(int id)
 {
     this->enemyIds.push_back(id);
@@ -122,14 +117,9 @@ int gridObj::getWorkerId(int i)
     return this->workerIds[i];
 }
 
-std::vector<int>& resource::getWorkerId()
+int resource::getUnusedResourceCount()
 {
-    return this->workerIds;
-}
-
-int resource::getWorkerId(int i)
-{
-    return this->workerIds[i];
+    return resource::unusedResourceCount;
 }
 
 std::string emptySpace::print()

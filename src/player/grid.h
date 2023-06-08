@@ -101,9 +101,6 @@ public:
 
     void addEnemyId(int id);
     void addWorkerId(int id);
-
-    std::vector<int>& getWorkerId();
-    int getWorkerId(int i);
 };
 
 // Barrier class
