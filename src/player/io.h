@@ -31,9 +31,6 @@ bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
 // Parse status from file, output rosters of own and enemy units
 bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &myUnits, const listUnits &enemyUnits);
-
 // get_map unit test
 void test_get_map();
 // get_status unit test

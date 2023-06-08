@@ -16,10 +16,12 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#include "unit.h"
+#ifndef PLAYER_PATH_BFS_H
+#define PLAYER_PATH_BFS_H
 
-Unit::Unit(int ident, int end, std::size_t px, std::size_t py):
-    id(ident), endurance(end), posx(px), posy(py)
-{}
+#include "../grid.h"
 
-Unit::~Unit(){}
+// Bredth-first search algorithm for map traversal. Returns false if there is no traversable path between s and t.
+bool bfs_find_path(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
+
+#endif

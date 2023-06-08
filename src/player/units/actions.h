@@ -19,13 +19,28 @@
 #ifndef PLAYER_UNITS_ACTIONS_H
 #define PLAYER_UNITS_ACTIONS_H
 
+#include "../path/dijkstra.h"
 #include "misc.h"
 
-bool worker_attack(std::string &payload, Worker &unit, const grid &map, listUnits &enemies);
+#define coord std::pair<int, int>
+#define evade_queue_item std::pair<int, coord>
+#define evade_queue std::priority_queue<evade_queue_item, std::vector<evade_queue_item>, std::greater<evade_queue_item>>
+
+bool find_target_worker(int sId, const grid &map, listUnits &allies);
+bool find_target_ram(int sId, const grid &map, listUnits &allies, const listUnits &enemies);
+bool find_target_knight(int sId, const grid &map, listUnits &allies, const listUnits &enemies);
+bool find_target_pikeman(int sId, const grid &map, listUnits &allies, const listUnits &enemies);
+bool find_target_archer(int sId, const grid &map, listUnits &allies, const listUnits &enemies);
+bool find_target_catapult(int sId, const grid &map, listUnits &allies, const listUnits &enemies);
+bool find_target_swordsman(int sId, const grid &map, listUnits &allies, const listUnits &enemies);
+
+bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
+bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
 
 //Decision making functions
-bool action(std::string &payload, const Base &unit, long gold, const listUnits &allies, const listUnits &enemies);
-bool action(std::string &payload, Worker &unit, const grid &map, listUnits &enemies);
+bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies);
+bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies);
+
 bool action(std::string &payload, Catapult &unit, const grid &map, const listUnits &enemies);
 bool action(std::string &payload, Ram &unit, const grid &map, const listUnits &enemies);
 bool action(std::string &payload, Pikeman &unit, const grid &map, const listUnits &enemies);

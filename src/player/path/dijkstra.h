@@ -16,10 +16,21 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#include "archer.h"
+#ifndef PLAYER_PATH_DIJKSTRA_H
+#define PLAYER_PATH_DIJKSTRA_H
 
-Archer::Archer(int ident, int end, std::size_t px, std::size_t py):
-    Unit(ident, end, px, py)
-{}
+#include "../units/misc.h"
 
-Archer::~Archer(){}
+struct my_comparator
+{
+    bool operator()(std::vector<int> const& a, std::vector<int> const& b) const
+    {
+        return a[2] > b[2];
+    }
+};
+
+// Dijkstra's search algorithm for map traversal. Returns false if there is no traversable path between s and t.
+// Slower than BFS.
+bool dijkstra_find_path(int unitId, listUnits &units, const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY);
+
+#endif

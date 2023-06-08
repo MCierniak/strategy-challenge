@@ -45,23 +45,14 @@ protected:
     bool isTraversable, isResource;
     // Indicators for potential damage inflicted if
     // ending turn on this node
-    int dmg2Knight = 1, dmg2Swordsman = 1, dmg2Archer = 1, dmg2Pikeman = 1;
-    int dmg2Catapult = 1, dmg2Ram = 1, dmg2Worker = 1;
+    std::map<char, int> dmg;
 public:
-    const std::size_t posx, posy;
-
-    gridObj(bool traversible, bool resource, std::size_t px, std::size_t py);
+    gridObj(bool traversible, bool resource);
     virtual ~gridObj() = default;
 
     virtual std::string print() = 0;
 
-    void addDmg2Knight(int dmg);
-    void addDmg2Swordsman(int dmg);
-    void addDmg2Archer(int dmg);
-    void addDmg2Pikeman(int dmg);
-    void addDmg2Catapult(int dmg);
-    void addDmg2Ram(int dmg);
-    void addDmg2Worker(int dmg);
+    void addDmg(char key, int val);
 
     void addEnemyId(int id);
     void addWorkerId(int id);
@@ -70,28 +61,22 @@ public:
     bool checkTrav();
     bool checkResource();
 
-    std::size_t checkEnemyNr();
+    int checkEnemyNr();
 
-    int checkDmgKnight();
-    int checkDmgSwordsman();
-    int checkDmgArcher();
-    int checkDmgPikeman();
-    int checkDmgCatapult();
-    int checkDmgRam();
-    int checkDmgWorker();
+    int checkDmg(char key);
 
     std::vector<int>& getEnemyId();
-    int getEnemyId(std::size_t i);
+    int getEnemyId(int i);
 
     std::vector<int>& getWorkerId();
-    int getWorkerId(std::size_t i);
+    int getWorkerId(int i);
 };
 
 // Empty space tile
 class emptySpace : public gridObj
 {
 public:
-    emptySpace(std::size_t px, std::size_t py);
+    emptySpace();
     ~emptySpace();
 
     std::string print();
@@ -103,45 +88,32 @@ class resource : public gridObj
 protected:
     // Count unused resource nodes. Adding a worker or
     // enemy to this node decreases this value
-    static std::size_t unusedResourceCount;
+    static int unusedResourceCount;
 public:
-    static std::list<std::vector<std::size_t>> resNodeList;
+    static std::list<std::vector<int>> resNodeList;
     
-    resource(std::size_t px, std::size_t py);
+    resource(int px, int py);
     ~resource();
 
     std::string print();
 
-    static std::size_t getUnusedResourceCount();
+    static int getUnusedResourceCount();
 
     void addEnemyId(int id);
     void addWorkerId(int id);
 
     std::vector<int>& getWorkerId();
-    int getWorkerId(std::size_t i);
+    int getWorkerId(int i);
 };
 
 // Barrier class
 class barrier : public gridObj
 {
 public:
-    barrier(std::size_t px, std::size_t py);
+    barrier();
     ~barrier();
 
     std::string print();
 };
-
-// Bredth-first search algorithm for map traversal. Returns false if there is no traversable path between s and t.
-bool bfs_find_path(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-
-// Dijkstra's search algorithm for map traversal. Returns false if there is no traversable path between s and t.
-// Slower than BFS.
-bool dijkstra_find_path_knight(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-bool dijkstra_find_path_swordsman(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-bool dijkstra_find_path_archer(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-bool dijkstra_find_path_pikeman(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-bool dijkstra_find_path_ram(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-bool dijkstra_find_path_catapult(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
-bool dijkstra_find_path_worker(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed);
 
 #endif
