@@ -23,21 +23,16 @@ Unit::Unit(int ident, int end, int px, int py):
 {}
 
 Base::Base():
-    Unit(0, 0, 0, 0), init(false), queue('0')
+    Unit(0, 0, 0, 0), queue('0')
 {}
 
 Base::Base(int ident, int end, int px, int py, char q):
-    Unit(ident, end, px, py), init(true), queue(q)
+    Unit(ident, end, px, py), queue(q)
 {}
 
 Base::Base(int ident, int end, int px, int py, char q, int qT):
-    Unit(ident, end, px, py), init(true), queue(q), qTime(qT)
+    Unit(ident, end, px, py), queue(q), qTime(qT)
 {}
-
-bool Base::isInit()
-{
-    return this->init;
-}
 
 Worker::Worker(int ident, int px, int py):
     Unit(ident, 20, px, py)
@@ -95,134 +90,375 @@ Knight::Knight(int ident, int end, int px, int py):
     Unit(ident, end, px, py)
 {}
 
-bool listUnits::addUnit(Worker &unit)
+bool listUnits::addBase(int ident, int end, int px, int py, char q)
 {
-    int id = unit.id;
+    if (!this->is_unique(ident)) return false;
 
-    this->workers.push_back(unit);
-    this->unitCount++;
+    this->id2typeName[ident] = std::string("base");
+    this->base = Base(ident, end, px, py, q);
+    this->id2arange[ident] = 0;
+    this->id2type[ident] = 'B';
+    this->id2speed[ident] = 0;
 
-    if(!this->is_unique(id)) return false;
+    this->id2dmg[ident]['B'] = 0;
+    this->id2dmg[ident]['W'] = 0;
+    this->id2dmg[ident]['K'] = 0;
+    this->id2dmg[ident]['P'] = 0;
+    this->id2dmg[ident]['C'] = 0;
+    this->id2dmg[ident]['R'] = 0;
+    this->id2dmg[ident]['A'] = 0;
+    this->id2dmg[ident]['S'] = 0;
 
-    this->id2type[id] = 'W';
-    this->id2index[id] = this->workers.size() - 1;
+    return true;
+}
+
+bool listUnits::addBase(int ident, int end, int px, int py, char q, int qT)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->id2typeName[ident] = std::string("base");
+    this->base = Base(ident, end, px, py, q, qT);
+    this->id2arange[ident] = 0;
+    this->id2type[ident] = 'B';
+    this->id2speed[ident] = 0;
+
+    this->id2dmg[ident]['B'] = 0;
+    this->id2dmg[ident]['W'] = 0;
+    this->id2dmg[ident]['K'] = 0;
+    this->id2dmg[ident]['P'] = 0;
+    this->id2dmg[ident]['C'] = 0;
+    this->id2dmg[ident]['R'] = 0;
+    this->id2dmg[ident]['A'] = 0;
+    this->id2dmg[ident]['S'] = 0;
+
+    return true;
+}
+
+bool listUnits::addWorker(int ident, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Worker>(ident, px, py);
+    this->id2typeName[ident] = std::string("worker");
+    this->id2arange[ident] = ATTACK_WORKER;
+    this->id2speed[ident] = SPEED_WORKER;
+    this->id2type[ident] = 'W';
+    this->qWorker += 1;
+
+    this->id2dmg[ident]['B'] = WORKER2BASE;
+    this->id2dmg[ident]['W'] = WORKER2WORKER;
+    this->id2dmg[ident]['K'] = WORKER2KNIGHT;
+    this->id2dmg[ident]['P'] = WORKER2PIKEMAN;
+    this->id2dmg[ident]['C'] = WORKER2CATAPULT;
+    this->id2dmg[ident]['R'] = WORKER2RAM;
+    this->id2dmg[ident]['A'] = WORKER2ARCHER;
+    this->id2dmg[ident]['S'] = WORKER2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addWorker(int ident, int end, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Worker>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("worker");
+    this->id2arange[ident] = ATTACK_WORKER;
+    this->id2speed[ident] = SPEED_WORKER;
+    this->id2type[ident] = 'W';
+    this->qWorker += 1;
+
+    this->id2dmg[ident]['B'] = WORKER2BASE;
+    this->id2dmg[ident]['W'] = WORKER2WORKER;
+    this->id2dmg[ident]['K'] = WORKER2KNIGHT;
+    this->id2dmg[ident]['P'] = WORKER2PIKEMAN;
+    this->id2dmg[ident]['C'] = WORKER2CATAPULT;
+    this->id2dmg[ident]['R'] = WORKER2RAM;
+    this->id2dmg[ident]['A'] = WORKER2ARCHER;
+    this->id2dmg[ident]['S'] = WORKER2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addCatapult(int ident, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Catapult>(ident, px, py);
+    this->id2typeName[ident] = std::string("catapult");
+    this->id2arange[ident] = ATTACK_CATAPULT;
+    this->id2speed[ident] = SPEED_CATAPULT;
+    this->id2type[ident] = 'C';
+    this->qCatapult += 1;
+
+    this->id2dmg[ident]['B'] = CATAPULT2BASE;
+    this->id2dmg[ident]['W'] = CATAPULT2WORKER;
+    this->id2dmg[ident]['K'] = CATAPULT2KNIGHT;
+    this->id2dmg[ident]['P'] = CATAPULT2PIKEMAN;
+    this->id2dmg[ident]['C'] = CATAPULT2CATAPULT;
+    this->id2dmg[ident]['R'] = CATAPULT2RAM;
+    this->id2dmg[ident]['A'] = CATAPULT2ARCHER;
+    this->id2dmg[ident]['S'] = CATAPULT2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addCatapult(int ident, int end, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Catapult>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("catapult");
+    this->id2arange[ident] = ATTACK_CATAPULT;
+    this->id2speed[ident] = SPEED_CATAPULT;
+    this->id2type[ident] = 'C';
+    this->qCatapult += 1;
+
+    this->id2dmg[ident]['B'] = CATAPULT2BASE;
+    this->id2dmg[ident]['W'] = CATAPULT2WORKER;
+    this->id2dmg[ident]['K'] = CATAPULT2KNIGHT;
+    this->id2dmg[ident]['P'] = CATAPULT2PIKEMAN;
+    this->id2dmg[ident]['C'] = CATAPULT2CATAPULT;
+    this->id2dmg[ident]['R'] = CATAPULT2RAM;
+    this->id2dmg[ident]['A'] = CATAPULT2ARCHER;
+    this->id2dmg[ident]['S'] = CATAPULT2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addRam(int ident, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Ram>(ident, px, py);
+    this->id2typeName[ident] = std::string("ram");
+    this->id2arange[ident] = ATTACK_RAM;
+    this->id2speed[ident] = SPEED_RAM;
+    this->id2type[ident] = 'R';
+    this->qRam += 1;
+
+    this->id2dmg[ident]['B'] = RAM2BASE;
+    this->id2dmg[ident]['W'] = RAM2WORKER;
+    this->id2dmg[ident]['K'] = RAM2KNIGHT;
+    this->id2dmg[ident]['P'] = RAM2PIKEMAN;
+    this->id2dmg[ident]['C'] = RAM2CATAPULT;
+    this->id2dmg[ident]['R'] = RAM2RAM;
+    this->id2dmg[ident]['A'] = RAM2ARCHER;
+    this->id2dmg[ident]['S'] = RAM2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addRam(int ident, int end, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
     
-    return true;
-}
+    this->units[ident] = std::make_unique<Ram>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("ram");
+    this->id2arange[ident] = ATTACK_RAM;
+    this->id2speed[ident] = SPEED_RAM;
+    this->id2type[ident] = 'R';
+    this->qRam += 1;
 
-bool listUnits::addUnit(Catapult &unit)
-{
-    int id = unit.id;
-
-    this->catapults.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'C';
-    this->id2index[id] = this->catapults.size() - 1;
-
-    return true;
-}
-
-bool listUnits::addUnit(Ram &unit)
-{
-    int id = unit.id;
-
-    this->rams.push_back(unit);
-    this->unitCount++;
-
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'R';
-    this->id2index[id] = this->rams.size() - 1;
+    this->id2dmg[ident]['B'] = RAM2BASE;
+    this->id2dmg[ident]['W'] = RAM2WORKER;
+    this->id2dmg[ident]['K'] = RAM2KNIGHT;
+    this->id2dmg[ident]['P'] = RAM2PIKEMAN;
+    this->id2dmg[ident]['C'] = RAM2CATAPULT;
+    this->id2dmg[ident]['R'] = RAM2RAM;
+    this->id2dmg[ident]['A'] = RAM2ARCHER;
+    this->id2dmg[ident]['S'] = RAM2SWORDSMAN;
 
     return true;
 }
 
-bool listUnits::addUnit(Pikeman &unit)
+bool listUnits::addPikeman(int ident, int px, int py)
 {
-    int id = unit.id;
+    if (!this->is_unique(ident)) return false;
 
-    this->pikemen.push_back(unit);
-    this->unitCount++;
+    this->units[ident] = std::make_unique<Pikeman>(ident, px, py);
+    this->id2typeName[ident] = std::string("pikeman");
+    this->id2arange[ident] = ATTACK_PIKEMAN;
+    this->id2speed[ident] = SPEED_PIKEMAN;
+    this->id2type[ident] = 'P';
+    this->qPikeman += 1;
 
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'P';
-    this->id2index[id] = this->pikemen.size() - 1;
+    this->id2dmg[ident]['B'] = PIKEMAN2BASE;
+    this->id2dmg[ident]['W'] = PIKEMAN2WORKER;
+    this->id2dmg[ident]['K'] = PIKEMAN2KNIGHT;
+    this->id2dmg[ident]['P'] = PIKEMAN2PIKEMAN;
+    this->id2dmg[ident]['C'] = PIKEMAN2CATAPULT;
+    this->id2dmg[ident]['R'] = PIKEMAN2RAM;
+    this->id2dmg[ident]['A'] = PIKEMAN2ARCHER;
+    this->id2dmg[ident]['S'] = PIKEMAN2SWORDSMAN;
 
     return true;
 }
 
-bool listUnits::addUnit(Archer &unit)
+bool listUnits::addPikeman(int ident, int end, int px, int py)
 {
-    int id = unit.id;
+    if (!this->is_unique(ident)) return false;
 
-    this->archers.push_back(unit);
-    this->unitCount++;
+    this->units[ident] = std::make_unique<Pikeman>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("pikeman");
+    this->id2arange[ident] = ATTACK_PIKEMAN;
+    this->id2speed[ident] = SPEED_PIKEMAN;
+    this->id2type[ident] = 'P';
+    this->qPikeman += 1;
 
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'A';
-    this->id2index[id] = this->archers.size() - 1;
+    this->id2dmg[ident]['B'] = PIKEMAN2BASE;
+    this->id2dmg[ident]['W'] = PIKEMAN2WORKER;
+    this->id2dmg[ident]['K'] = PIKEMAN2KNIGHT;
+    this->id2dmg[ident]['P'] = PIKEMAN2PIKEMAN;
+    this->id2dmg[ident]['C'] = PIKEMAN2CATAPULT;
+    this->id2dmg[ident]['R'] = PIKEMAN2RAM;
+    this->id2dmg[ident]['A'] = PIKEMAN2ARCHER;
+    this->id2dmg[ident]['S'] = PIKEMAN2SWORDSMAN;
 
     return true;
 }
 
-bool listUnits::addUnit(Swordsman &unit)
+bool listUnits::addArcher(int ident, int px, int py)
 {
-    int id = unit.id;
+    if (!this->is_unique(ident)) return false;
 
-    this->swordsmen.push_back(unit);
-    this->unitCount++;
+    this->units[ident] = std::make_unique<Archer>(ident, px, py);
+    this->id2typeName[ident] = std::string("archer");
+    this->id2arange[ident] = ATTACK_ARCHER;
+    this->id2speed[ident] = SPEED_ARCHER;
+    this->id2type[ident] = 'A';
+    this->qArcher += 1;
 
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'S';
-    this->id2index[id] = this->swordsmen.size() - 1;
+    this->id2dmg[ident]['B'] = ARCHER2BASE;
+    this->id2dmg[ident]['W'] = ARCHER2WORKER;
+    this->id2dmg[ident]['K'] = ARCHER2KNIGHT;
+    this->id2dmg[ident]['P'] = ARCHER2PIKEMAN;
+    this->id2dmg[ident]['C'] = ARCHER2CATAPULT;
+    this->id2dmg[ident]['R'] = ARCHER2RAM;
+    this->id2dmg[ident]['A'] = ARCHER2ARCHER;
+    this->id2dmg[ident]['S'] = ARCHER2SWORDSMAN;
 
     return true;
 }
 
-bool listUnits::addUnit(Knight &unit)
+bool listUnits::addArcher(int ident, int end, int px, int py)
 {
-    int id = unit.id;
+    if (!this->is_unique(ident)) return false;
 
-    this->knights.push_back(unit);
-    this->unitCount++;
+    this->units[ident] = std::make_unique<Archer>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("archer");
+    this->id2arange[ident] = ATTACK_ARCHER;
+    this->id2speed[ident] = SPEED_ARCHER;
+    this->id2type[ident] = 'A';
+    this->qArcher += 1;
 
-    if(!this->is_unique(id)) return false;
-
-    this->id2type[id] = 'K';
-    this->id2index[id] = this->knights.size() - 1;
+    this->id2dmg[ident]['B'] = ARCHER2BASE;
+    this->id2dmg[ident]['W'] = ARCHER2WORKER;
+    this->id2dmg[ident]['K'] = ARCHER2KNIGHT;
+    this->id2dmg[ident]['P'] = ARCHER2PIKEMAN;
+    this->id2dmg[ident]['C'] = ARCHER2CATAPULT;
+    this->id2dmg[ident]['R'] = ARCHER2RAM;
+    this->id2dmg[ident]['A'] = ARCHER2ARCHER;
+    this->id2dmg[ident]['S'] = ARCHER2SWORDSMAN;
 
     return true;
 }
 
-bool listUnits::addUnit(Base &unit)
+bool listUnits::addSwordsman(int ident, int px, int py)
 {
-    int id = unit.id;
+    if (!this->is_unique(ident)) return false;
 
-    this->bases.push_back(unit);
-    this->unitCount++;
+    this->units[ident] = std::make_unique<Swordsman>(ident, px, py);
+    this->id2typeName[ident] = std::string("swordsman");
+    this->id2arange[ident] = ATTACK_SWORDSMAN;
+    this->id2speed[ident] = SPEED_SWORDSMAN;
+    this->id2type[ident] = 'S';
+    this->qSwordsman += 1;
 
-    if(!this->is_unique(id)) return false;
+    this->id2dmg[ident]['B'] = SWORDSMAN2BASE;
+    this->id2dmg[ident]['W'] = SWORDSMAN2WORKER;
+    this->id2dmg[ident]['K'] = SWORDSMAN2KNIGHT;
+    this->id2dmg[ident]['P'] = SWORDSMAN2PIKEMAN;
+    this->id2dmg[ident]['C'] = SWORDSMAN2CATAPULT;
+    this->id2dmg[ident]['R'] = SWORDSMAN2RAM;
+    this->id2dmg[ident]['A'] = SWORDSMAN2ARCHER;
+    this->id2dmg[ident]['S'] = SWORDSMAN2SWORDSMAN;
 
-    this->id2type[id] = 'B';
-    this->id2index[id] = this->bases.size() - 1;
+    return true;
+}
+
+bool listUnits::addSwordsman(int ident, int end, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Swordsman>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("swordsman");
+    this->id2arange[ident] = ATTACK_SWORDSMAN;
+    this->id2speed[ident] = SPEED_SWORDSMAN;
+    this->id2type[ident] = 'S';
+    this->qSwordsman += 1;
+
+    this->id2dmg[ident]['B'] = SWORDSMAN2BASE;
+    this->id2dmg[ident]['W'] = SWORDSMAN2WORKER;
+    this->id2dmg[ident]['K'] = SWORDSMAN2KNIGHT;
+    this->id2dmg[ident]['P'] = SWORDSMAN2PIKEMAN;
+    this->id2dmg[ident]['C'] = SWORDSMAN2CATAPULT;
+    this->id2dmg[ident]['R'] = SWORDSMAN2RAM;
+    this->id2dmg[ident]['A'] = SWORDSMAN2ARCHER;
+    this->id2dmg[ident]['S'] = SWORDSMAN2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addKnight(int ident, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Knight>(ident, px, py);
+    this->id2typeName[ident] = std::string("knight");
+    this->id2arange[ident] = ATTACK_KNIGHT;
+    this->id2speed[ident] = SPEED_KNIGHT;
+    this->id2type[ident] = 'K';
+    this->qKnight += 1;
+
+    this->id2dmg[ident]['B'] = KNIGHT2BASE;
+    this->id2dmg[ident]['W'] = KNIGHT2WORKER;
+    this->id2dmg[ident]['K'] = KNIGHT2KNIGHT;
+    this->id2dmg[ident]['P'] = KNIGHT2PIKEMAN;
+    this->id2dmg[ident]['C'] = KNIGHT2CATAPULT;
+    this->id2dmg[ident]['R'] = KNIGHT2RAM;
+    this->id2dmg[ident]['A'] = KNIGHT2ARCHER;
+    this->id2dmg[ident]['S'] = KNIGHT2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::addKnight(int ident, int end, int px, int py)
+{
+    if (!this->is_unique(ident)) return false;
+
+    this->units[ident] = std::make_unique<Knight>(ident, end, px, py);
+    this->id2typeName[ident] = std::string("knight");
+    this->id2arange[ident] = ATTACK_KNIGHT;
+    this->id2speed[ident] = SPEED_KNIGHT;
+    this->id2type[ident] = 'K';
+    this->qKnight += 1;
+
+    this->id2dmg[ident]['B'] = KNIGHT2BASE;
+    this->id2dmg[ident]['W'] = KNIGHT2WORKER;
+    this->id2dmg[ident]['K'] = KNIGHT2KNIGHT;
+    this->id2dmg[ident]['P'] = KNIGHT2PIKEMAN;
+    this->id2dmg[ident]['C'] = KNIGHT2CATAPULT;
+    this->id2dmg[ident]['R'] = KNIGHT2RAM;
+    this->id2dmg[ident]['A'] = KNIGHT2ARCHER;
+    this->id2dmg[ident]['S'] = KNIGHT2SWORDSMAN;
 
     return true;
 }
 
 bool listUnits::is_unique(int id)
 {
-    if(!(this->id2type.find(id) == this->id2type.end()))
-    {
-        std::cerr << "Error! Unit ids are not unique!" << std::endl;
-        return false;
-    }
-    return true;
+    return (this->id2type.find(id) == this->id2type.end());
 }
 
 Unit::~Unit(){}
@@ -242,16 +478,6 @@ Archer::~Archer(){}
 Swordsman::~Swordsman(){}
 
 Knight::~Knight(){}
-
-int Dist(Unit *first, Unit *second)
-{
-    return std::abs(int(first->posx) - int(second->posx)) + std::abs(int(first->posy) - int(second->posy));
-}
-
-int Dist(Unit *first, int xSecond, int ySecond)
-{
-    return std::abs(int(first->posx) - int(xSecond)) + std::abs(int(first->posy) - int(ySecond));
-}
 
 int Dist(int xFirst, int yFirst, int xSecond, int ySecond)
 {

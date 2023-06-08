@@ -48,24 +48,13 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win);
 bool process_base_orders(int id, char task, const std::string &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins);
 bool process_unit_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 
-bool process_worker_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-bool process_knight_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-bool process_swordsman_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-bool process_archer_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-bool process_pikeman_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-bool process_catapult_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-bool process_ram_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
-
 bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins);
 bool add_new_unit(int &max_index, listUnits &units);
 
-std::string unit_output_player(const std::string &name, const listUnits &units);
-std::string unit_output_mediator(const std::string &name, const listUnits &units);
+std::string unit_output_player(const std::string &name, listUnits &units);
+std::string unit_output_mediator(const std::string &name, listUnits &units);
 
-void print_map(const grid &map, int X, int Y);
-void print_status(const listUnits &units_p1, const listUnits &units_p2);
-
-void write_hr_map_status(const grid &map, const listUnits &units_p1, const listUnits &units_p2);
+void write_hr_map_status(const grid &map, listUnits &units_p1, listUnits &units_p2);
 
 bool file_exists(const std::string &name);
 

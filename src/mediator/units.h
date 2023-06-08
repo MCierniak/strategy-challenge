@@ -21,12 +21,15 @@
 
 #include "grid.h"
 
+#include <bits/stdc++.h>
 #include <unordered_map>
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <memory>
 #include <map>
+
+#define hitListType std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>>
 
 // Vector for units
 #define listW std::vector<Worker>
@@ -148,7 +151,6 @@ public:
 class Base : public Unit
 {
 public:
-    const bool init;
     char queue;
     int qTime = 0;
 
@@ -156,8 +158,6 @@ public:
     Base(int ident, int end, int px, int py, char q);
     Base(int ident, int end, int px, int py, char q, int qT);
     ~Base();
-
-    bool isInit();
 };
 
 class Worker : public Unit
@@ -216,41 +216,22 @@ public:
     ~Knight();
 };
 
-// struct listUnits
-// {
-//     listW workers;
-//     listC catapults;
-//     listR rams;
-//     listP pikemen;
-//     listA archers;
-//     listS swordsmen;
-//     listK knights;
-//     listB bases;
-//     int unitCount = 0;
-//     std::unordered_map<int, int> id2index;
-//     std::map<int, char> id2type;
-
-//     bool addUnit(Worker &unit);
-//     bool addUnit(Catapult &unit);
-//     bool addUnit(Ram &unit);
-//     bool addUnit(Pikeman &unit);
-//     bool addUnit(Archer &unit);
-//     bool addUnit(Swordsman &unit);
-//     bool addUnit(Knight &unit);
-//     bool addUnit(Base &unit);
-
-//     bool is_unique(int id);
-// };
-
 struct listUnits
 {
     std::map<int, std::unique_ptr<Unit>> units;
+    std::map<int, std::map<char, int>> id2dmg;
+    std::map<int, std::string> id2typeName;
+    std::map<int, int> id2arange;
     std::map<int, char> id2type;
+    std::map<int, int> id2speed;
 
-    int qWorker, qCatapult, qRam, qPikeman, qArcher;
-    int qSwordsman, qKnight, qBase;
+    hitListType hitList;
 
-    bool addBase();
+    int qWorker = 0, qCatapult = 0, qRam = 0, qPikeman = 0, qArcher = 0;
+    int qSwordsman = 0, qKnight = 0;
+
+    Base base;
+
     bool addBase(int ident, int end, int px, int py, char q);
     bool addBase(int ident, int end, int px, int py, char q, int qT);
 
@@ -260,19 +241,25 @@ struct listUnits
     bool addCatapult(int ident, int px, int py);
     bool addCatapult(int ident, int end, int px, int py);
 
+    bool addRam(int ident, int px, int py);
+    bool addRam(int ident, int end, int px, int py);
 
-    bool addRam(Ram &unit);
-    bool addPikeman(Pikeman &unit);
-    bool addArcher(Archer &unit);
-    bool addSwordsman(Swordsman &unit);
-    bool addKnight(Knight &unit);
+    bool addPikeman(int ident, int px, int py);
+    bool addPikeman(int ident, int end, int px, int py);
+
+    bool addArcher(int ident, int px, int py);
+    bool addArcher(int ident, int end, int px, int py);
+
+    bool addSwordsman(int ident, int px, int py);
+    bool addSwordsman(int ident, int end, int px, int py);
+
+    bool addKnight(int ident, int px, int py);
+    bool addKnight(int ident, int end, int px, int py);
 
     bool is_unique(int id);
 };
 
 //Misc
-int Dist(Unit *first, Unit *second);
-int Dist(Unit *first, int xSecond, int ySecond);
 int Dist(int xFirst, int yFirst, int xSecond, int ySecond);
 
 #endif
