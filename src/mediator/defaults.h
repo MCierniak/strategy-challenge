@@ -11,7 +11,7 @@
 // The chance for barrier tiles is 100% - EMPTY_CHANCE*10% - RESOURCE_CHANCE*10%
 
 #define GRID_MIN 6
-#define GRID_MAX 32
+#define GRID_MAX 16
 
 // Data file location
 #define MAP_LOC "data/mapa.txt"

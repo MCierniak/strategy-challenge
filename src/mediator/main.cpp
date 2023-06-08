@@ -47,7 +47,7 @@ int main(int argc, char **argv)
         // Call player 1 script
         if (++turn; turn % 2 == 1)
         {
-            std::cout << "Turn " << turn << ". Running player 1 script." << std::endl;
+            std::cout << "(Mediator) Turn " << turn << ". Running player 1 script." << std::endl;
             if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
             else ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC << " " << timeout;
             
@@ -60,17 +60,17 @@ int main(int argc, char **argv)
 
             if (!(ret == std::string()))
             {
-                std::cout << "Player 1 timed out!" << std::endl;
-                std::cout << "Player 2 wins!" << std::endl;
+                std::cout << "(Mediator) Player 1 timed out!" << std::endl;
+                std::cout << "(Mediator) Player 2 wins!" << std::endl;
                 return 0;
             }
-            std::cout << "Player 1 submitted orders." << std::endl;
+            std::cout << "(Mediator) Player 1 submitted orders." << std::endl;
         }
 
         // Call player 2 script
         else
         {
-            std::cout << "Turn " << turn << ". Running player 2 script." << std::endl;
+            std::cout << "(Mediator) Turn " << turn << ". Running player 2 script." << std::endl;
             if(timeout == 5) ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC;
             else ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC << " " << timeout;
             
@@ -83,28 +83,28 @@ int main(int argc, char **argv)
 
             if (!(ret == std::string()))
             {
-                std::cout << "Player 2 timed out!" << std::endl;
-                std::cout << "Player 1 wins!" << std::endl;
+                std::cout << "(Mediator) Player 2 timed out!" << std::endl;
+                std::cout << "(Mediator) Player 1 wins!" << std::endl;
                 return 0;
             }
-            std::cout << "Player 2 submitted orders." << std::endl;
+            std::cout << "(Mediator) Player 2 submitted orders." << std::endl;
         }
 
         // Prepare next turn states.
         bool player1Win = false, player2Win = false;
         if(!prep_next_turn(turn, player1Win, player2Win))
         {
-            std::cerr << "prep_next_turn failed!" << std::endl;
+            std::cerr << "(Mediator) prep_next_turn failed!" << std::endl;
             return 0;
         }
         if (player1Win)
         {
-            std::cout << "Player 1 wins!" << std::endl;
+            std::cout << "(Mediator) Player 1 wins!" << std::endl;
             return 0;
         }
         if (player2Win)
         {
-            std::cout << "Player 2 wins!" << std::endl;
+            std::cout << "(Mediator) Player 2 wins!" << std::endl;
             return 0;
         }
         return 0;
@@ -117,10 +117,10 @@ int main(int argc, char **argv)
         int turn = 1;
         if(!start_game())
         {
-            std::cerr << "start_game failed!" << std::endl;
+            std::cerr << "(Mediator) start_game failed!" << std::endl;
             return 0;
         }
-        std::cout << "Turn " << turn << ". Running player 1 script." << std::endl;
+        std::cout << "(Mediator) Turn " << turn << ". Running player 1 script." << std::endl;
 
         // Call player 1 script
         if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
@@ -135,27 +135,27 @@ int main(int argc, char **argv)
         
         if (!(ret == std::string()))
         {
-            std::cout << "Player 1 timed out!" << std::endl;
-            std::cout << "Player 2 wins!" << std::endl;
+            std::cout << "(Mediator) Player 1 timed out!" << std::endl;
+            std::cout << "(Mediator) Player 2 wins!" << std::endl;
             return 0;
         }
         else
         {
-            std::cout << "Player 1 submitted orders." << std::endl;
+            std::cout << "(Mediator) Player 1 submitted orders." << std::endl;
             bool player1Win = false, player2Win = false;
             if(!prep_next_turn(turn, player1Win, player2Win))
             {
-                std::cerr << "prep_next_turn failed!" << std::endl;
+                std::cerr << "(Mediator) prep_next_turn failed!" << std::endl;
                 return 0;
             }
             if (player1Win)
             {
-                std::cout << "Player 1 wins!" << std::endl;
+                std::cout << "(Mediator) Player 1 wins!" << std::endl;
                 return 0;
             }
             if (player2Win)
             {
-                std::cout << "Player 2 wins!" << std::endl;
+                std::cout << "(Mediator) Player 2 wins!" << std::endl;
                 return 0;
             }
             return 0;

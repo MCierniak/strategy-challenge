@@ -82,7 +82,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
         std::ifstream file(status_path);
         if (file.fail())
         {
-            std::cerr << "Can't open mediator.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't open mediator.txt!" << std::endl;
             return false;
         }
 
@@ -94,7 +94,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
         getline(file, line);
         if (line.length() == 0)
         {
-            std::cerr << "Can't parse line 2 of mediator.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't parse line 2 of mediator.txt!" << std::endl;
             return false;
         }
         else
@@ -106,7 +106,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
         getline(file, line);
         if (line.length() == 0)
         {
-            std::cerr << "Can't parse line 3 of mediator.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't parse line 3 of mediator.txt!" << std::endl;
             return false;
         }
         else
@@ -116,7 +116,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
         getline(file, line);
         if (line.length() == 0)
         {
-            std::cerr << "Can't parse line 4 of mediator.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't parse line 4 of mediator.txt!" << std::endl;
             return false;
         }
         else
@@ -141,7 +141,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue >> bqTime >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -159,7 +159,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -177,7 +177,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -195,7 +195,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -213,7 +213,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -231,7 +231,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -249,7 +249,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -267,7 +267,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
                 if (eol_guard.length() != 0)
                 {
-                    std::cerr << "Error in parsing status data!" << std::endl;
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
                 if (alliegence == "P1")
@@ -282,7 +282,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             default: // Error in unit tag, terminate
-                std::cerr << "Error! Unrecognised unit tag!" << std::endl;
+                std::cerr << "(Mediator) Error! Unrecognised unit tag!" << std::endl;
                 return false;
             }
         }
@@ -299,60 +299,54 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
 
 bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits &playerUnits, listUnits &opponentUnits, bool &playerWins, bool &opponentWins)
 {
-    try
+    // Open file in read mode
+    std::ifstream file(orders_path);
+    if (file.fail())
     {
-        // Open file in read mode
-        std::ifstream file(orders_path);
-        if (file.fail())
-        {
-            std::cerr << "Can't open order file!" << std::endl;
-            return false;
-        }
+        std::cerr << "(Mediator) Can't open order file!" << std::endl;
+        return false;
+    }
 
-        // Parse orders
-        std::string line;
-        while(getline(file, line))
+    // Parse orders
+    std::string line;
+    while(getline(file, line))
+    {
+        std::stringstream ss(line);
+        std::string line_leftover;
+        int id;
+        char action;
+        ss >> id >> action;
+        if (!playerUnits.is_unique(id))
         {
-            std::istringstream ss(line);
-            int id;
-            char action;
-            ss >> id >> action;
-            if (!playerUnits.is_unique(id))
+            if (playerUnits.id2type[id] == 'B')
             {
-                if (playerUnits.id2type[id] == 'B')
-                {
-                    getline(ss, line);
-                    if(!process_base_orders(id, action, line, gold, playerUnits, playerWins, opponentWins)) return true;
-                }
-                else
-                {
-                    getline(ss, line);
-                    if(!process_unit_orders(id, action, line, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
-                    continue;
-                }
+                getline(ss, line_leftover);
+                if(!process_base_orders(id, action, line_leftover, gold, playerUnits, playerWins, opponentWins)) return true;
             }
             else
             {
-                std::cout << "Error in orders! Unit with id " << id << " does not exist!" << std::endl;
-                playerWins = false;
-                opponentWins = true;
-                return true;
+                getline(ss, line_leftover);
+                if(!process_unit_orders(id, action, line_leftover, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                continue;
             }
         }
-        return true;
+        else
+        {
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " does not exist!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return true;
+        }
     }
-    catch(...)
-    {
-        // If something unexpected happens, terminate
-        return false;
-    }
+    file.close();
+    return true;
 }
 
 bool start_game()
 {
     try
     {
-        std::cout << "Starting new game" << std::endl;
+        std::cout << "(Mediator) Starting new game" << std::endl;
         // Random engine initialization for map generation
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -410,7 +404,7 @@ bool start_game()
         std::ofstream file(MAP_LOC);
         if (file.fail())
         {
-            std::cerr << "Can't open mapa.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't open mapa.txt!" << std::endl;
             return false;
         }
         for (int i = 0; i < Y; i++)
@@ -429,7 +423,7 @@ bool start_game()
         file.open(STATUS_P1_LOC);
         if (file.fail())
         {
-            std::cerr << "Can't open status1.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't open status1.txt!" << std::endl;
             return false;
         }
         file << gold_1 << '\n';
@@ -440,7 +434,7 @@ bool start_game()
         file.open(STATUS_P2_LOC);
         if (file.fail())
         {
-            std::cerr << "Can't open status2.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't open status2.txt!" << std::endl;
             return false;
         }
         file << gold_2 << '\n';
@@ -451,7 +445,7 @@ bool start_game()
         file.open(MEDIATOR_LOC);
         if (file.fail())
         {
-            std::cerr << "Can't open mediator.txt!" << std::endl;
+            std::cerr << "(Mediator) Can't open mediator.txt!" << std::endl;
             return false;
         }
         file << 1 << '\n';
@@ -495,7 +489,7 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
         {
             if (units_p1.id2type[id] == 'W' && map_p1[units_p1.units[id]->posy][units_p1.units[id]->posx]->checkResource())
             {
-                std::cout << "Unit with id " << id << " (worker) mined gold at " <<  unit->posx << " " << unit->posy << " for Player 1\n";
+                std::cout << "(Mediator) Unit with id " << id << " (worker) mined gold at " <<  unit->posx << " " << unit->posy << " for Player 1\n";
                 gold_p1 += 50;
             }
         }
@@ -517,7 +511,7 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
         {
             if (units_p2.id2type[id] == 'W' && map_p2[units_p2.units[id]->posy][units_p2.units[id]->posx]->checkResource())
             {
-                std::cout << "Unit with id " << id << " (worker) mined gold at " <<  unit->posx << " " << unit->posy << " for Player 2\n";
+                std::cout << "(Mediator) Unit with id " << id << " (worker) mined gold at " <<  unit->posx << " " << unit->posy << " for Player 2\n";
                 gold_p2 += 50;
             }
         }
@@ -534,7 +528,7 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
     std::ofstream file(STATUS_P1_LOC);
     if (file.fail())
     {
-        std::cerr << "Can't open status1.txt!" << std::endl;
+        std::cerr << "(Mediator) Can't open status1.txt!" << std::endl;
         return false;
     }
     file << gold_p1 << '\n';
@@ -545,7 +539,7 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
     file.open(STATUS_P2_LOC);
     if (file.fail())
     {
-        std::cerr << "Can't open status2.txt!" << std::endl;
+        std::cerr << "(Mediator) Can't open status2.txt!" << std::endl;
         return false;
     }
     file << gold_p2 << '\n';
@@ -556,7 +550,7 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
     file.open(MEDIATOR_LOC);
     if (file.fail())
     {
-        std::cerr << "Can't open mediator.txt!" << std::endl;
+        std::cerr << "(Mediator) Can't open mediator.txt!" << std::endl;
         return false;
     }
     file << turn << '\n';
@@ -577,7 +571,7 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
     // Check if order is "build"
     if (task != 'B')
     {
-        std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
         playerWins = false;
         opponentWins = true;
         return false;
@@ -585,7 +579,7 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
     // Order format check
     if (order.length() > 2)
     {
-        std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
         playerWins = false;
         opponentWins = true;
         return false;
@@ -596,18 +590,18 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
         std::vector<char> check_order = {'K', 'S', 'A', 'P', 'R', 'C', 'W'};
         if(std::find(check_order.begin(), check_order.end(), order[1]) == check_order.end())
         {
-            std::cout << "Error in orders! Unit with id " << id << " received invalid target!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid target!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
         }
 
-        std::cout << "Unit with id " << id << " (base) received order to build " << order[1] << "." << std::endl;
+        std::cout << "(Mediator) Unit with id " << id << " (base) received order to build " << order[1] << "." << std::endl;
 
         // Does the unit have an empty build queue
         if(units.base.queue != '0')
         {
-            std::cout << "Error in orders! Unit with id " << id << " is already building!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " is already building!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
@@ -620,7 +614,7 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
         gold -= BUILD_COST(order[1]);
         if (gold < 0)
         {
-            std::cout << "Error in orders! Unit with id " << id << " cannot begin construction! Insufficient funds! " << gold << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " cannot begin construction! Insufficient funds! " << gold << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
@@ -642,7 +636,7 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
 
         if (eol_guard.length() > 0)
         {
-            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
@@ -650,7 +644,7 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
 
         if (tX >= int(map[0].size()) || tX < 0 || tY >= int(map.size()) || tY < 0)
         {
-            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
@@ -658,19 +652,19 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
 
         if (!map[tY][tX]->checkTrav())
         {
-            std::cout << "Error in orders! Unit with id " << id << " attempts an illegal move!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " attempts an illegal move!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
         }
 
-        std::cout << "Unit with id " << id << " (" << units.id2typeName[id];
+        std::cout << "(Mediator) Unit with id " << id << " (" << units.id2typeName[id];
         std::cout << ") received order to move from " << units.units[id]->posx << " " << units.units[id]->posy;
         std::cout << " to " << tX << " " << tY << std::endl;
 
         if (Dist(units.units[id]->posx, units.units[id]->posy, tX, tY) > units.id2speed[id])
         {
-            std::cout << "Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
@@ -692,13 +686,13 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
 
         if (eol_guard.length() > 0)
         {
-            std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
         }
 
-        std::cout << "Unit with id " << id << " (" << units.id2typeName[id];
+        std::cout << "(Mediator) Unit with id " << id << " (" << units.id2typeName[id];
         std::cout << ") received order to attack unit with id " << tId;
         std::cout << " (" << enemies.id2typeName[tId] << ")" << std::endl;
 
@@ -716,7 +710,7 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
         }
         else
         {
-            std::cout << "Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " cannot attack that far!" << std::endl;
             playerWins = false;
             opponentWins = true;
             return false;
@@ -724,7 +718,7 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
     }
     else
     {
-        std::cout << "Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
         playerWins = false;
         opponentWins = true;
         return false;
@@ -741,7 +735,11 @@ bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins)
     }
     for (auto &[key, val] : units.units)
     {
-        if (val->endurance <= 0) units.units.erase(key);
+        if (val->endurance <= 0)
+        {
+            std::cout << "(Mediator) Unit with id " << key << " died." << std::endl;
+            units.units.erase(key);
+        }
     }
     return true;
 }
@@ -789,7 +787,7 @@ bool add_new_unit(int &max_index, listUnits &units)
             break;
         }
         default:
-            std::cerr << "Error in base queue!" << std::endl;
+            std::cerr << "(Mediator) Error in base queue!" << std::endl;
             return false;
         }
         units.base.queue = '0';
