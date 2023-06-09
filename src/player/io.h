@@ -19,6 +19,8 @@
 #ifndef PLAYER_IO_H
 #define PLAYER_IO_H
 
+#include "defaults.h"
+
 #include "units/misc.h"
 #include "utils.h"
 

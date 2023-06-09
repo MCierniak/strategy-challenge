@@ -19,6 +19,8 @@
 #ifndef PLAYER_GRID_H
 #define PLAYER_GRID_H
 
+#include "defaults.h"
+
 #include "utils.h"
 
 #include <bits/stdc++.h>
@@ -56,6 +58,7 @@ public:
 
     void addEnemyId(int id);
     void addWorkerId(int id);
+    void removeWorkerId(int id);
 
     // Check if unit can stop on this node
     bool checkTrav();
@@ -89,6 +92,7 @@ protected:
     // Count unused resource nodes. Adding a worker or
     // enemy to this node decreases this value
     static int unusedResourceCount;
+    int posx, posy;
 public:
     static std::list<std::vector<int>> resNodeList;
     
@@ -101,6 +105,8 @@ public:
 
     void addEnemyId(int id);
     void addWorkerId(int id);
+
+    void removeWorkerId(int id);
 };
 
 // Barrier class

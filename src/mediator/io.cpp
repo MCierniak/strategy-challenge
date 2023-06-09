@@ -130,16 +130,29 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
         int id, posx, posy, endurance;
         while(getline(file, line))
         {
-            std::istringstream ss(line);
+            std::stringstream ss(line);
             std::string eol_guard;
 
+            ss >> alliegence >> type;
+            if (!ss)
+            {
+                std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                return false;
+            }
+
             // Determine type of unit first, alliegence last.
-            switch (line[3])
+            switch (type)
             {
             case 'B': // Base unit, assume line has extra queue param
                 int bqTime;
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> bQueue >> bqTime >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance >> bQueue >> bqTime;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -156,8 +169,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'K': // Knight unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -174,8 +193,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'S': // Swordsman unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -192,8 +217,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'A': // Archer unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -210,8 +241,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'P': // Pikeman unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -228,8 +265,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'C': // Catapult unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -246,8 +289,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'R': // Ram unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -264,8 +313,14 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 continue;
             case 'W': // Worker unit
-                ss >> alliegence >> type >> id >> posx >> posy >> endurance >> eol_guard;
-                if (eol_guard.length() != 0)
+                ss >> id >> posx >> posy >> endurance;
+                if (!ss)
+                {
+                    std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
+                    return false;
+                }
+                ss >> eol_guard;
+                if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
@@ -312,21 +367,25 @@ bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits
     while(getline(file, line))
     {
         std::stringstream ss(line);
-        std::string line_leftover;
         int id;
         char action;
         ss >> id >> action;
+        if(!ss)
+        {
+            std::cout << "(Mediator) Error in orders! Incomplete order!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return true;
+        }
         if (!playerUnits.is_unique(id))
         {
             if (playerUnits.id2type[id] == 'B')
             {
-                getline(ss, line_leftover);
-                if(!process_base_orders(id, action, line_leftover, gold, playerUnits, playerWins, opponentWins)) return true;
+                if(!process_base_orders(id, action, ss, gold, playerUnits, playerWins, opponentWins)) return true;
             }
             else
             {
-                getline(ss, line_leftover);
-                if(!process_unit_orders(id, action, line_leftover, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
+                if(!process_unit_orders(id, action, ss, map, playerUnits, opponentUnits, playerWins, opponentWins)) return true;
                 continue;
             }
         }
@@ -464,7 +523,7 @@ bool start_game()
     }
 }
 
-bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
+bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win, bool &draw)
 {
     // Load raw map into memory. Ignore units.
     int X = 0, Y = 0;
@@ -524,6 +583,14 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
         if (player1Win || player2Win) return true;
     }
 
+    if (turn > 2000)
+    {
+        draw = units_p1.qAll == units_p2.qAll;
+        player1Win = units_p1.qAll > units_p2.qAll;
+        player2Win = units_p1.qAll < units_p2.qAll;
+        return true;
+    }
+
     // Update mediator.txt, prep new statusX.txt file.
     std::ofstream file(STATUS_P1_LOC);
     if (file.fail())
@@ -566,18 +633,28 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win)
     return true;
 }
 
-bool process_base_orders(int id, char task, const std::string &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins)
+bool process_base_orders(int id, char task, std::stringstream &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins)
 {
     // Check if order is "build"
-    if (task != 'B')
+    std::string eol_guard;
+    char target;
+    order >> target;
+    if (!order)
     {
-        std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+        std::cout << "(Mediator) Error in orders! Incomplete order!" << std::endl;
         playerWins = false;
         opponentWins = true;
         return false;
     }
-    // Order format check
-    if (order.length() > 2)
+    order >> eol_guard;
+    if(order)
+    {
+        std::cout << "(Mediator) Error in orders! Invalid format!" << std::endl;
+        playerWins = false;
+        opponentWins = true;
+        return false;
+    }
+    if (task != 'B')
     {
         std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
         playerWins = false;
@@ -586,9 +663,9 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
     }
     else
     {
-        // Does the order contain valid targets
+        // Is the target valid
         std::vector<char> check_order = {'K', 'S', 'A', 'P', 'R', 'C', 'W'};
-        if(std::find(check_order.begin(), check_order.end(), order[1]) == check_order.end())
+        if(std::find(check_order.begin(), check_order.end(), target) == check_order.end())
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid target!" << std::endl;
             playerWins = false;
@@ -596,7 +673,7 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
             return false;
         }
 
-        std::cout << "(Mediator) Unit with id " << id << " (base) received order to build " << order[1] << "." << std::endl;
+        std::cout << "(Mediator) Unit with id " << id << " (base) received order to build " << target << "." << std::endl;
 
         // Does the unit have an empty build queue
         if(units.base.queue != '0')
@@ -607,11 +684,11 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
             return false;
         }
 
-        units.base.queue = order[1];
-        units.base.qTime = BUILD_TIME(order[1]);
+        units.base.queue = target;
+        units.base.qTime = BUILD_TIME(target);
 
         // Does the player have enough gold
-        gold -= BUILD_COST(order[1]);
+        gold -= BUILD_COST(target);
         if (gold < 0)
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " cannot begin construction! Insufficient funds! " << gold << std::endl;
@@ -623,18 +700,31 @@ bool process_base_orders(int id, char task, const std::string &order, long &gold
     return true;
 }
 
-bool process_unit_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins)
+bool process_unit_orders(int id, char task, std::stringstream &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins)
 {
     // Move action
     if (task == 'M')
     {
-        std::stringstream parser(order);
-        std::string eol_guard;
-
         int tX, tY;
-        parser >> tX >> tY >> eol_guard;
+        std::string eol_guard;
+        order >> tX >> tY;
+        if (!order)
+        {
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+        order >> eol_guard;
+        if (order)
+        {
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
 
-        if (eol_guard.length() > 0)
+        if (order)
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
@@ -660,7 +750,8 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
 
         std::cout << "(Mediator) Unit with id " << id << " (" << units.id2typeName[id];
         std::cout << ") received order to move from " << units.units[id]->posx << " " << units.units[id]->posy;
-        std::cout << " to " << tX << " " << tY << std::endl;
+        std::cout << " to " << tX << " " << tY << " (distance ";
+        std::cout << Dist(units.units[id]->posx, units.units[id]->posy, tX, tY) << ")" << std::endl;
 
         if (Dist(units.units[id]->posx, units.units[id]->posy, tX, tY) > units.id2speed[id])
         {
@@ -678,13 +769,18 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
     // Attack action
     else if (task == 'A')
     {
-        std::stringstream parser(order);
+        int tId;
         std::string eol_guard;
-
-        int tId;;
-        parser >> tId >> eol_guard;
-
-        if (eol_guard.length() > 0)
+        order >> tId;
+        if (!order)
+        {
+            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
+            playerWins = false;
+            opponentWins = true;
+            return false;
+        }
+        order >> eol_guard;
+        if (order)
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
@@ -694,18 +790,30 @@ bool process_unit_orders(int id, char task, const std::string &order, const grid
 
         std::cout << "(Mediator) Unit with id " << id << " (" << units.id2typeName[id];
         std::cout << ") received order to attack unit with id " << tId;
-        std::cout << " (" << enemies.id2typeName[tId] << ")" << std::endl;
+        std::cout << " (" << enemies.id2typeName[tId] << ", distance ";
+        std::cout << Dist(units.units[id]->posx, units.units[id]->posy, enemies.units[tId]->posx, enemies.units[tId]->posy) <<")" << std::endl;
 
-        if
-        (
-            Dist
+        bool condition;
+        if (enemies.id2type[tId] == 'B')
+        {
+            condition = Dist
+            (
+                units.units[id]->posx, units.units[id]->posy,
+                enemies.base.posx, enemies.base.posy
+            ) <= units.id2arange[id];
+        }
+        else
+        {
+            condition = Dist
             (
                 units.units[id]->posx, units.units[id]->posy,
                 enemies.units[tId]->posx, enemies.units[tId]->posy
-            ) <= units.id2arange[id]
-        )
+            ) <= units.id2arange[id];
+        }
+        if(condition)
         {
-            enemies.units[tId]->endurance -= units.id2dmg[id][enemies.id2type[tId]];
+            if (enemies.id2type[tId] == 'B') enemies.base.endurance -= units.id2dmg[id]['B'];
+            else enemies.units[tId]->endurance -= units.id2dmg[id][enemies.id2type[tId]];
             return true;
         }
         else
@@ -733,13 +841,18 @@ bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins)
         opponentWins = false;
         return true;
     }
+    std::vector<int> deadBox;
     for (auto &[key, val] : units.units)
     {
         if (val->endurance <= 0)
         {
             std::cout << "(Mediator) Unit with id " << key << " died." << std::endl;
-            units.units.erase(key);
+            deadBox.push_back(key);
         }
+    }
+    for (auto &&id : deadBox)
+    {
+        units.removeUnit(id);
     }
     return true;
 }
@@ -825,7 +938,18 @@ void write_hr_map_status(const grid &map, listUnits &units_p1, listUnits &units_
     {
         for (int j = 0; j < int(map[0].size()); j++)
         {
+            int p1_count = 0, p2_count = 0;
+            for (auto &[key, value] : units_p1.units)
+            {
+                if (value->posx == j && value->posy == i) p1_count += 1;
+            }
+            for (auto &[key, value] : units_p2.units)
+            {
+                if (value->posx == j && value->posy == i) p2_count += 1;
+            }
+
             file << "(" << j << "," << i << "," << map[i][j]->print();
+            file << "," << p1_count << "," << p2_count;
             if (units_p1.base.posx == j && units_p1.base.posy == i) file << ",B1";
             if (units_p2.base.posx == j && units_p2.base.posy == i) file << ",B2";
             for (auto &[id, unit] : units_p1.units)

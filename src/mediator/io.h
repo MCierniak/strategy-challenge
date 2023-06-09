@@ -43,10 +43,10 @@ bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits
 bool start_game();
 
 // Function evaluating last order and updating status for the next player.
-bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win);
+bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win, bool &draw);
 
-bool process_base_orders(int id, char task, const std::string &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins);
-bool process_unit_orders(int id, char task, const std::string &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
+bool process_base_orders(int id, char task, std::stringstream &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins);
+bool process_unit_orders(int id, char task, std::stringstream &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 
 bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins);
 bool add_new_unit(int &max_index, listUnits &units);

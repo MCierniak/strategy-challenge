@@ -19,7 +19,9 @@
 #ifndef PLAYER_UNITS_MISC_FWD_H
 #define PLAYER_UNITS_MISC_FWD_H
 
-#include "grid.h"
+#include "../defaults.h"
+
+#include "../grid.h"
 
 struct listUnits;
 

@@ -19,6 +19,8 @@
 #ifndef PLAYER_PATH_DIJKSTRA_H
 #define PLAYER_PATH_DIJKSTRA_H
 
+#include "../defaults.h"
+
 #include "../units/misc.h"
 
 #include "../grid.h"

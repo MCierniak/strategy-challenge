@@ -16,6 +16,8 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
+#include "defaults.h"
+
 #include "io.h"
 #include "grid.h"
 #include "units/misc.h"
@@ -24,31 +26,37 @@
 #include <algorithm>
 #include <chrono>
 
-// Macros for wall time monitoring
-#define DURATION(x) std::chrono::duration_cast<MICROSECONDS>(x).count()
-#define CURRENT_TIME std::chrono::high_resolution_clock::now()
-#define MICROSECONDS std::chrono::microseconds
-#define SECONDS std::chrono::seconds
-// Time (in microseconds) needed for final cleanup
-#define CLEANUP_TIME 100
-
 // Main player function.
 void make_moves(char* argv[], int time_limit);
 
 int main(int argc, char* argv[])
 {
-    // If optional execution time parameter is passed, use it,
-    // otherwise assume time limit is 5 seconds
-    // do nothing if argc is different than 4 or 5
-    if (argc == 5)
-    {
-        make_moves(argv, atoi(argv[4]));
-    }
-    else if (argc == 4)
-    {
-        make_moves(argv, 5);
-    }
-    return 0;
+    #ifndef TESTING_TRUE
+        // If optional execution time parameter is passed, use it,
+        // otherwise assume time limit is 5 seconds
+        // do nothing if argc is different than 4 or 5
+        if (argc == 5)
+        {
+            make_moves(argv, atoi(argv[4]));
+        }
+        else if (argc == 4)
+        {
+            make_moves(argv, 5);
+        }
+        return 0;
+    #else
+        #include "tests.h"
+        test_io_get_map();
+        test_io_get_status();
+        test_units_units_worker_find_target();
+        test_units_actions_action_unit();
+        test_main_resNodeList_sort();
+        test_units_misc_listUnits();
+        test_units_actions_evade();
+        test_units_actions_attack();
+        test_grid_addId();
+        test_path_dijkstra_priority_queue();
+    #endif
 }
 
 void make_moves(char *argv[], int time_limit)
@@ -122,7 +130,9 @@ void make_moves(char *argv[], int time_limit)
     int duration = DURATION(CURRENT_TIME - start);
     for (auto &[key, value] : myUnits.units)
     {
-        std::cout << "(Player) I am making decisions for unit id " << key <<std::endl;
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) I am making decisions for unit id " << key <<std::endl;
+        #endif
         if (action_unit(temp, key, map, myUnits, enemyUnits))
         {
             file << temp;
@@ -130,11 +140,15 @@ void make_moves(char *argv[], int time_limit)
         }
         if (duration > time_limit_us - CLEANUP_TIME)
         {
-            std::cout << "(Player) I have no time for more." <<std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) I have no time for more." <<std::endl;
+            #endif
             break;
         }
     }
-    std::cout << "(Player) I am finished." <<std::endl;
+    #ifdef VERBOSE_TRUE
+        std::cout << "(Player) I am finished." <<std::endl;
+    #endif
     // cleanup
     file.close();
 }

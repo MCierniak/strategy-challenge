@@ -38,10 +38,11 @@ emptySpace::emptySpace():
 {}
 
 resource::resource(int px, int py):
-    gridObj(true, true)
+    gridObj(true, true), posx(px), posy(py)
 {
-    resource::resNodeList.push_back(std::vector<int>{py, px});
-    resource::unusedResourceCount += 1;
+    resource::resNodeList.push_back(std::vector<int>{posy, posx});
+    unusedResourceCount += 1;
+    // std::cout << "(unusedResourceCount) Incrementing unusedResourceCount in resource constructor "<< unusedResourceCount << std::endl;
 }
 
 barrier::barrier():
@@ -65,6 +66,7 @@ void gridObj::addDmg(char key, int val)
 
 void gridObj::addEnemyId(int id)
 {
+    for (auto &&el : this->enemyIds) if (el == id) return;
     this->enemyIds.push_back(id);
     this->isTraversable = false;
 }
@@ -91,20 +93,49 @@ int gridObj::getEnemyId(int i)
 
 void resource::addEnemyId(int id)
 {
+    for (auto &&el : this->enemyIds) if (el == id) return;
     this->enemyIds.push_back(id);
     this->isTraversable = false;
-    unusedResourceCount -= 1;
+    if (this->enemyIds.size() == 1)
+    {
+        unusedResourceCount -= 1;
+        // std::cout << "(unusedResourceCount) Decrementing unusedResourceCount in addEnemyId " << unusedResourceCount << std::endl;
+    }
+    // else std::cout << "(unusedResourceCount) Not decrementing unusedResourceCount in addEnemyId. Resource already occupied. " << unusedResourceCount << std::endl;
 }
 
 void gridObj::addWorkerId(int id)
 {
+    for (auto &&el : this->workerIds) if (el == id) return;
     this->workerIds.push_back(id);
+}
+
+void gridObj::removeWorkerId(int id)
+{
+    this->workerIds.erase(std::remove(this->workerIds.begin(), this->workerIds.end(), id), this->workerIds.end());
 }
 
 void resource::addWorkerId(int id)
 {
+    for (auto &&el : this->workerIds) if (el == id) return;
     this->workerIds.push_back(id);
-    unusedResourceCount -= 1;
+    if (this->isTraversable && this->workerIds.size() == 1)
+    {
+        unusedResourceCount -= 1;
+        // std::cout << "(unusedResourceCount) Decrementing unusedResourceCount in addWorkerId "  << unusedResourceCount << std::endl;
+    }
+    // else std::cout << "(unusedResourceCount) Not decrementing unusedResourceCount in addWorkerId. Resource was already used. " << unusedResourceCount << std::endl;
+}
+
+void resource::removeWorkerId(int id)
+{
+    this->workerIds.erase(std::remove(this->workerIds.begin(), this->workerIds.end(), id), this->workerIds.end());
+    if (this->workerIds.size() == 0)
+    {
+        unusedResourceCount += 1;
+        // std::cout << "(unusedResourceCount) Incrementing unusedResourceCount in removeWorkerId " << unusedResourceCount << std::endl;
+    }
+    // else std::cout << "(unusedResourceCount) Not incrementing unusedResourceCount in removeWorkerId. More workers on node. " << unusedResourceCount << std::endl;
 }
 
 std::vector<int>& gridObj::getWorkerId()
@@ -141,6 +172,17 @@ std::string barrier::print()
 
 emptySpace::~emptySpace(){}
 
-resource::~resource(){}
+resource::~resource(){
+    if (this->workerIds.size() == 0 && this->enemyIds.size() == 0 && this->isTraversable)
+    {
+        unusedResourceCount -= 1;
+        // std::cout << "(unusedResourceCount) Decrementing unusedResourceCount in destructor " << unusedResourceCount << std::endl;
+    }
+    // else
+    // {
+    //     std::cout << "(unusedResourceCount) Not decrementing unusedResourceCount in destructor, resource was used " << unusedResourceCount << std::endl;
+    // }
+    resNodeList.remove(std::vector<int>{posy, posx});
+}
 
 barrier::~barrier(){}

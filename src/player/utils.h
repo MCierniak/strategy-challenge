@@ -19,6 +19,8 @@
 #ifndef PLAYER_UTILS_H
 #define PLAYER_UTILS_H
 
+#include "defaults.h"
+
 #include <vector>
 
 // posy at index 0, posx at index 1

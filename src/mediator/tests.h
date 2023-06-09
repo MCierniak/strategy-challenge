@@ -16,23 +16,17 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_UNITS_ACTIONS_H
-#define PLAYER_UNITS_ACTIONS_H
+#ifndef MEDIATOR_TESTS_H
+#define MEDIATOR_TESTS_H
 
-#include "../defaults.h"
+#include "units.h"
+#include "io.h"
 
-#include "../path/bfs.h"
-#include "misc.h"
+#define BOLDRED "\033[1m\033[31m"
+#define BOLDGREEN "\033[1m\033[32m"
+#define BOLDWHITE "\033[1m\033[37m"
+#define RESET "\033[0m"
 
-#define coord std::pair<int, int>
-#define evade_queue_item std::pair<int, coord>
-#define evade_queue std::priority_queue<evade_queue_item, std::vector<evade_queue_item>, std::greater<evade_queue_item>>
-
-bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
-bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
-
-//Decision making functions
-bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies);
-bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies);
+void test_remove_dead_units();
 
 #endif

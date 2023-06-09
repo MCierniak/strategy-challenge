@@ -16,23 +16,22 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_UNITS_ACTIONS_H
-#define PLAYER_UNITS_ACTIONS_H
+#ifndef PLAYER_DEFAULTS_H
+#define PLAYER_DEFAULTS_H
 
-#include "../defaults.h"
+// Uncomment for unit tests
+// #define TESTING_TRUE
 
-#include "../path/bfs.h"
-#include "misc.h"
+// Uncomment for verbosity
+#define VERBOSE_TRUE
 
-#define coord std::pair<int, int>
-#define evade_queue_item std::pair<int, coord>
-#define evade_queue std::priority_queue<evade_queue_item, std::vector<evade_queue_item>, std::greater<evade_queue_item>>
+// Time (in microseconds) needed for final cleanup
+#define CLEANUP_TIME 100
 
-bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
-bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
-
-//Decision making functions
-bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies);
-bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies);
+// Macros for wall time monitoring
+#define DURATION(x) std::chrono::duration_cast<MICROSECONDS>(x).count()
+#define CURRENT_TIME std::chrono::high_resolution_clock::now()
+#define MICROSECONDS std::chrono::microseconds
+#define SECONDS std::chrono::seconds
 
 #endif

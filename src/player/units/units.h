@@ -19,6 +19,8 @@
 #ifndef PLAYER_UNITS_UNITS_H
 #define PLAYER_UNITS_UNITS_H
 
+#include "../defaults.h"
+
 #include "misc.fwd.h"
 
 #include "../utils.h"

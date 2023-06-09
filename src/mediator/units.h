@@ -228,33 +228,42 @@ struct listUnits
     hitListType hitList;
 
     int qWorker = 0, qCatapult = 0, qRam = 0, qPikeman = 0, qArcher = 0;
-    int qSwordsman = 0, qKnight = 0;
+    int qSwordsman = 0, qKnight = 0, qAll = 0;
 
     Base base;
 
     bool addBase(int ident, int end, int px, int py, char q);
     bool addBase(int ident, int end, int px, int py, char q, int qT);
 
+    bool removeUnit(int id);
+
     bool addWorker(int ident, int px, int py);
     bool addWorker(int ident, int end, int px, int py);
+    bool removeWorker(int id);
 
     bool addCatapult(int ident, int px, int py);
     bool addCatapult(int ident, int end, int px, int py);
+    bool removeCatapult(int id);
 
     bool addRam(int ident, int px, int py);
     bool addRam(int ident, int end, int px, int py);
+    bool removeRam(int id);
 
     bool addPikeman(int ident, int px, int py);
     bool addPikeman(int ident, int end, int px, int py);
+    bool removePikeman(int id);
 
     bool addArcher(int ident, int px, int py);
     bool addArcher(int ident, int end, int px, int py);
+    bool removeArcher(int id);
 
     bool addSwordsman(int ident, int px, int py);
     bool addSwordsman(int ident, int end, int px, int py);
+    bool removeSwordsman(int id);
 
     bool addKnight(int ident, int px, int py);
     bool addKnight(int ident, int end, int px, int py);
+    bool removeKnight(int id);
 
     bool is_unique(int id);
 };

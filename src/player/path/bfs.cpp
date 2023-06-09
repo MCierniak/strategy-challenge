@@ -20,6 +20,10 @@
 
 bool bfs_find_path(const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY, const std::vector<std::vector<int>> &speed)
 {
+    if (sY < 0 || sY >= int(map.size())) return false;
+    if (sX < 0 || sX >= int(map[0].size())) return false;
+    if (tY < 0 || tY >= int(map.size())) return false;
+    if (tX < 0 || tX >= int(map[0].size())) return false;
     std::vector<std::vector<bool>> visited(map.size(), std::vector<bool>(map[0].size(), false));
     std::queue<std::vector<int>> gridQ;
 

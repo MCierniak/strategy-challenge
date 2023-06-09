@@ -95,7 +95,11 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
     (void)enemies;
     // If already on empty resource node, stay there
     // The third condition ensures that at most one worker will stay
-    std::cout << "(Player) (Worker) Looking for resource..." << std::endl;
+    if (this->posy < 0 || this->posy >= int(map.size())) return false;
+    if (this->posx < 0 || this->posx >= int(map[0].size())) return false;
+    #ifdef VERBOSE_TRUE
+        std::cout << "(Player) (Worker) Looking for resource..." << std::endl;
+    #endif
     if (
         map[this->posy][this->posx]->checkResource() && 
         (
@@ -104,7 +108,9 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
         )
     )
     {
-        std::cout << "(Player) (Worker) Already on resource node. Staying in place." << std::endl;
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) (Worker) Already on resource node. Staying in place." << std::endl;
+        #endif
         this->trgtY = this->posy;
         this->trgtX = this->posx;
         return true;
@@ -112,9 +118,13 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
     // If not, find nearest empty resource node
     for (auto &&el : resource::resNodeList)
     {
+        if (el[0] < 0 || el[0] >= int(map.size())) return false;
+        if (el[1] < 0 || el[1] >= int(map[0].size())) return false;
         if (map[el[0]][el[1]]->checkTrav() && map[el[0]][el[1]]->getWorkerId().size() == 0)
         {
-            std::cout << "(Player) (Worker) Found empty resource node. Moving." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Worker) Found empty resource node. Moving." << std::endl;
+            #endif
             this->trgtY = el[0];
             this->trgtX = el[1];
             return true;
@@ -123,7 +133,9 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
     // If none and unit already on resource node, stay there
     if (map[this->posy][this->posx]->checkResource())
     {
-        std::cout << "(Player) (Worker) No empty resource nodes. Staying in place." << std::endl;
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) (Worker) No empty resource nodes. Staying in place." << std::endl;
+        #endif
         this->trgtY = this->posy;
         this->trgtX = this->posx;
         return true;
@@ -131,7 +143,11 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
     // If not, find nearest resource node without enemies
     for (auto &&el : resource::resNodeList)
     {
-        std::cout << "(Player) (Worker) No empty resource nodes. Moving." << std::endl;
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) (Worker) No empty resource nodes. Moving." << std::endl;
+        #endif
+        if (el[0] < 0 || el[0] >= int(map.size())) return false;
+        if (el[1] < 0 || el[1] >= int(map[0].size())) return false;
         if (map[el[0]][el[1]]->checkTrav())
         {
             this->trgtY = el[0];
@@ -140,7 +156,9 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
         }
     }
     // If all taken by the enemy, return false
-    std::cout << "(Player) (Worker) All resource nodes in enemy hands." << std::endl;
+    #ifdef VERBOSE_TRUE
+        std::cout << "(Player) (Worker) All resource nodes in enemy hands." << std::endl;
+    #endif
     return false;
 }
 

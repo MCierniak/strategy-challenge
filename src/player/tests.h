@@ -16,23 +16,24 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_UNITS_ACTIONS_H
-#define PLAYER_UNITS_ACTIONS_H
+#include "defaults.h"
 
-#include "../defaults.h"
+#include "path/dijkstra.h"
+#include "units/misc.h"
+#include "io.h"
 
-#include "../path/bfs.h"
-#include "misc.h"
+#define BOLDRED "\033[1m\033[31m"
+#define BOLDGREEN "\033[1m\033[32m"
+#define BOLDWHITE "\033[1m\033[37m"
+#define RESET "\033[0m"
 
-#define coord std::pair<int, int>
-#define evade_queue_item std::pair<int, coord>
-#define evade_queue std::priority_queue<evade_queue_item, std::vector<evade_queue_item>, std::greater<evade_queue_item>>
-
-bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
-bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
-
-//Decision making functions
-bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies);
-bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies);
-
-#endif
+void test_io_get_map();
+void test_io_get_status();
+void test_units_units_worker_find_target();
+void test_units_actions_action_unit();
+void test_main_resNodeList_sort();
+void test_units_misc_listUnits();
+void test_units_actions_evade();
+void test_units_actions_attack();
+void test_grid_addId();
+void test_path_dijkstra_priority_queue();

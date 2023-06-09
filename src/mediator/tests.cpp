@@ -16,23 +16,20 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PLAYER_UNITS_ACTIONS_H
-#define PLAYER_UNITS_ACTIONS_H
+#include "tests.h"
 
-#include "../defaults.h"
-
-#include "../path/bfs.h"
-#include "misc.h"
-
-#define coord std::pair<int, int>
-#define evade_queue_item std::pair<int, coord>
-#define evade_queue std::priority_queue<evade_queue_item, std::vector<evade_queue_item>, std::greater<evade_queue_item>>
-
-bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
-bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
-
-//Decision making functions
-bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies);
-bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies);
-
-#endif
+void test_remove_dead_units()
+{
+    bool pWins, oWins;
+    listUnits units;
+    units.addBase(1, 200, 0, 0, '0');
+    units.addArcher(0, -1, 0, 0);
+    units.addArcher(2, 2, 0, 0);
+    std::cout << RESET << "(Mediator) io.h remove_dead_units kill test ";
+    if (!remove_dead_units(units, pWins, oWins)) std::cout << BOLDRED << "FAILED" << RESET << std::endl;
+    else
+    {
+        if (units.qArcher > 1 || !units.is_unique(0)) std::cout << BOLDRED << "FAILED" << RESET << std::endl;
+        else std::cout << BOLDGREEN << "PASSED" << RESET << std::endl;
+    }
+}

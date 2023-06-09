@@ -20,7 +20,9 @@
 
 bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies)
 {
-    std::cout << "(Player) Choosing attack target" << std::endl;
+    #ifdef VERBOSE_TRUE
+        std::cout << "(Player) Choosing attack target" << std::endl;
+    #endif
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> enemiesInRange;
     std::stringstream ss;
     for (auto &&mod : allies.id2attackV[sId])
@@ -33,7 +35,9 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
         {
             for (int i = 0; i < map[newY][newX]->checkEnemyNr(); i++)
             {
-                std::cout << "(Player) Found one!" << std::endl;
+                #ifdef VERBOSE_TRUE
+                    std::cout << "(Player) Found one!" << std::endl;
+                #endif
                 int eid = map[newY][newX]->getEnemyId(i);
                 int ehp;
                 if (enemies.id2type[eid] == 'B') ehp = enemies.base.endurance;
@@ -42,13 +46,17 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
                 {
                     enemiesInRange.push(std::pair<int, int>(ehp, eid));
                 }
-                else std::cout << "(Player) Nevermind..." << std::endl;
+                #ifdef VERBOSE_TRUE
+                    else std::cout << "(Player) Nevermind..." << std::endl;
+                #endif
             }
         }
     }
     if (!enemiesInRange.empty())
     {
-        std::cout << "(Player) Target acquired." << std::endl;
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) Target acquired." << std::endl;
+        #endif
         int trgt_id = enemiesInRange.top().second;
         ss << sId << " A " << trgt_id << '\n';
         payload += ss.str();
@@ -56,21 +64,29 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
         if (enemies.id2type[trgt_id] == 'B') enemies.base.endurance -= allies.id2dmg[sId]['B'];
         else enemies.units[trgt_id]->endurance -= allies.id2dmg[sId][enemies.id2type[trgt_id]];
 
-        std::cout << "(Player) Attacking!" << std::endl;
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) Attacking!" << std::endl;
+        #endif
         return true;
     }
-    std::cout << "(Player) Aborting attack" << std::endl;
+    #ifdef VERBOSE_TRUE
+        std::cout << "(Player) No viable targets in range" << std::endl;
+    #endif
     return false;
 }
 
 bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
 {
-    std::cout << "(Player) Engaging evasive maneuvers!" << std::endl;
+    #ifdef VERBOSE_TRUE
+        std::cout << "(Player) Engaging evasive maneuvers!" << std::endl;
+    #endif
     evade_queue eQueue;
 
     char type = allies.id2type[sId];
     int cX = allies.units[sId]->posx;
     int cY = allies.units[sId]->posy;
+    if (cY < 0 || cY >= int(map.size())) return false;
+    if (cX < 0 || cX >= int(map[0].size())) return false;
     int dmg = map[cY][cX]->checkDmg(type);
 
     eQueue.push(evade_queue_item(dmg, coord(cY, cX)));
@@ -88,21 +104,37 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
 
         dmg = map[newY][newX]->checkDmg(type);
 
+        eQueue.push(evade_queue_item(dmg, coord(newY, newX)));
+
         // If target node out of range of any enemy, no point to iterate, just move to it
         if (dmg == 1)
         {
-            std::ostringstream ss;
+            std::stringstream ss;
             ss << sId << " M " << newX << ' ' << newY << '\n';
             payload = ss.str();
+            if (allies.id2type[sId] == 'W')
+            {
+                map[newY][newX]->addWorkerId(sId);
+                map[allies.units[sId]->posy][allies.units[sId]->posx]->removeWorkerId(sId);
+            }
+            allies.units[sId]->posx = newX;
+            allies.units[sId]->posy = newY;
             return true;
         }
     }
     if (!eQueue.empty())
     {
-        std::ostringstream ss;
+        std::stringstream ss;
         coord next = eQueue.top().second;
         ss << sId << " M " << next.second << ' ' << next.first << '\n';
         payload = ss.str();
+        if (allies.id2type[sId] == 'W')
+        {
+            map[next.first][next.second]->addWorkerId(sId);
+            map[allies.units[sId]->posy][allies.units[sId]->posx]->removeWorkerId(sId);
+        }
+        allies.units[sId]->posx = next.second;
+        allies.units[sId]->posy = next.first;
         return true;
     }
     else return false;
@@ -110,7 +142,7 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
 
 bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies)
 {
-    std::ostringstream ss;
+    std::stringstream ss;
 
     if (allies.base.queue == '0')
     {
@@ -118,7 +150,7 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         bool firstTurn = (allies.qAll == 1 && enemies.qAll == 1);
 
         // Second queue, once the first turn choice is completed.
-        bool secondQueue = (allies.qAll == 2 && allies.qArcher == 1);
+        bool secondQueue = (allies.qAll == 2 && allies.qArcher == 1 && resource::getUnusedResourceCount() > 0);
 
         // Pikemen are a cheap hard counter to knights.
         bool needPikemen = (allies.qPikeman < enemies.qKnight);
@@ -149,7 +181,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // First turn. Build an archer.
         if (firstTurn && CAN_GET_ARCHER(gold))
         {
-            std::cout << "(Player) (Base) I will build archer, because it is turn 1." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build archer, because it is turn 1." << std::endl;
+            #endif
             ss << allies.base.id << " B A\n";
             payload = ss.str();
             return true;
@@ -157,7 +191,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // Once the archer is ready, build a worker
         else if (secondQueue && CAN_GET_WORKER(gold))
         {
-            std::cout << "(Player) (Base) I will build worker, because it is turn 2." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build worker, because it is turn 2." << std::endl;
+            #endif
             ss << allies.base.id << " B W\n";
             payload = ss.str();
             return true;
@@ -165,7 +201,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         //If you have no workers, build them immediately!
         else if (noWorkers && CAN_GET_WORKER(gold))
         {
-            std::cout << "(Player) (Base) I will build worker, because I have none." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build worker, because I have none." << std::endl;
+            #endif
             ss << allies.base.id << " B W\n";
             payload = ss.str();
             return true;
@@ -173,7 +211,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // If gold >= 800 build catapults.
         else if (CAN_GET_CATAPULT(gold))
         {
-            std::cout << "(Player) (Base) I will build catapults, because I can." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build catapults, because I can." << std::endl;
+            #endif
             ss << allies.base.id << " B C\n";
             payload = ss.str();
             return true;
@@ -181,7 +221,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // If 800 > gold >= 500 and enemy has no units left, build rams.
         else if (!CAN_GET_CATAPULT(gold) && CAN_GET_RAM(gold) && needRams)
         {
-            std::cout << "(Player) (Base) I will build rams, because the enemy has no untis left and I can't afford a catapult." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build rams, because the enemy has no untis left and I can't afford a catapult." << std::endl;
+            #endif
             ss << allies.base.id << " B R\n";
             payload = ss.str();
             return true;
@@ -190,7 +232,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // build knights.
         else if (CAN_GET_KNIGHT(gold) && needKnights)
         {
-            std::cout << "(Player) (Base) I will build knight, because the enemy has many catapults/rams/archers/workers." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build knight, because the enemy has many catapults/rams/archers/workers." << std::endl;
+            #endif
             ss << allies.base.id << " B K\n";
             payload = ss.str();
             return true;
@@ -198,7 +242,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // If gold >= 200 and enemy has many knights, build pikemen
         else if (CAN_GET_PIKEMAN(gold) && needPikemen)
         {
-            std::cout << "(Player) (Base) I will build pikeman, because the enemy has many knights." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build pikeman, because the enemy has many knights." << std::endl;
+            #endif
             ss << allies.base.id << " B P\n";
             payload = ss.str();
             return true;
@@ -206,7 +252,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // If you have few workers (but not 0), built them now.
         else if (CAN_GET_WORKER(gold) && needWorkers)
         {
-            std::cout << "(Player) (Base) I will build worker, because I need more gold." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build worker, because I need more gold." << std::endl;
+            #endif
             ss << allies.base.id << " B W\n";
             payload = ss.str();
             return true;
@@ -214,7 +262,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // If enemy has many workers, build archers.
         else if (CAN_GET_ARCHER(gold) && needArchers)
         {
-            std::cout << "(Player) (Base) I will build archer, to kill enemy workers." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build archer, to kill enemy workers." << std::endl;
+            #endif
             ss << allies.base.id << " B A\n";
             payload = ss.str();
             return true;
@@ -222,7 +272,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
         // Finally, if nothing else applies, build swordsmen.
         else if (CAN_GET_SWORDSMAN(gold))
         {
-            std::cout << "(Player) (Base) I will build swordsman." << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Base) I will build swordsman." << std::endl;
+            #endif
             ss << allies.base.id << " B S\n";
             payload = ss.str();
             return true;
@@ -233,8 +285,12 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
 
 bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies)
 {
+    if (allies.units[unitId]->posy < 0 || allies.units[unitId]->posy >= int(map.size())) return false;
+    if (allies.units[unitId]->posx < 0 || allies.units[unitId]->posx >= int(map[0].size())) return false;
     if(allies.units[unitId]->find_target(map, allies, enemies))
     {
+        if (allies.units[unitId]->trgtY < 0 || allies.units[unitId]->trgtY >= int(map.size())) return false;
+        if (allies.units[unitId]->trgtX < 0 || allies.units[unitId]->trgtX >= int(map[0].size())) return false;
         // Already on target, attack in place
         if
         (
@@ -251,10 +307,19 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
             ) == allies.id2speed[unitId]
         )
         {
-            std::cout << "(Player) Moving full range" << std::endl;
-            std::ostringstream ss;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) Moving full range" << std::endl;
+            #endif
+            std::stringstream ss;
             ss << unitId << " M " << allies.units[unitId]->trgtX << ' ' << allies.units[unitId]->trgtY << '\n';
             payload = ss.str();
+            if (allies.id2type[unitId] == 'W')
+            {
+                map[allies.units[unitId]->trgtY][allies.units[unitId]->trgtX]->addWorkerId(unitId);
+                map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+            }
+            allies.units[unitId]->posx = allies.units[unitId]->trgtX;
+            allies.units[unitId]->posy = allies.units[unitId]->trgtY;
             return true;
         }
         // Target in range, move to it, attack
@@ -267,10 +332,19 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
             ) == allies.id2speed[unitId] - 1
         )
         {
-            std::cout << "(Player) Moving to attack." << std::endl;
-            std::ostringstream ss;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) Moving to attack." << std::endl;
+            #endif
+            std::stringstream ss;
             ss << unitId << " M " << allies.units[unitId]->trgtX << ' ' << allies.units[unitId]->trgtY << '\n';
             payload = ss.str();
+            if (allies.id2type[unitId] == 'W')
+            {
+                map[allies.units[unitId]->trgtY][allies.units[unitId]->trgtX]->addWorkerId(unitId);
+                map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+            }
+            allies.units[unitId]->posx = allies.units[unitId]->trgtX;
+            allies.units[unitId]->posy = allies.units[unitId]->trgtY;
             attack(payload, unitId, map, allies, enemies);
             return true;
         }
@@ -278,7 +352,9 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
         // Use BFS algorithm
         else
         {
-            std::cout << "(Player) Consulting BFS" << std::endl;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) Consulting BFS" << std::endl;
+            #endif
             int stepX, stepY;
             if(!bfs_find_path(
                 map,
@@ -286,10 +362,19 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 allies.units[unitId]->trgtX, allies.units[unitId]->trgtY,
                 stepX, stepY, allies.id2moveV[unitId]
             )) return false;
-            std::cout << "(Player) Moving full range" << std::endl;
-            std::ostringstream ss;
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) BFS-directed move." << std::endl;
+            #endif
+            std::stringstream ss;
             ss << unitId << " M " << stepX << ' ' << stepY << '\n';
             payload = ss.str();
+            if (allies.id2type[unitId] == 'W')
+            {
+                map[stepY][stepX]->addWorkerId(unitId);
+                map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+            }
+            allies.units[unitId]->posx = stepX;
+            allies.units[unitId]->posy = stepY;
             return true;
         }
     }

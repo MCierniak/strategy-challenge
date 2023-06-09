@@ -121,6 +121,7 @@ bool listUnits::addBase(int ident, int end, int px, int py, char q, int qT)
     this->id2arange[ident] = 0;
     this->id2type[ident] = 'B';
     this->id2speed[ident] = 0;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = 0;
     this->id2dmg[ident]['W'] = 0;
@@ -134,6 +135,29 @@ bool listUnits::addBase(int ident, int end, int px, int py, char q, int qT)
     return true;
 }
 
+bool listUnits::removeUnit(int id)
+{
+    switch (this->id2type[id])
+    {
+    case 'W':
+        return this->removeWorker(id);
+    case 'C':
+        return this->removeCatapult(id);
+    case 'R':
+        return this->removeRam(id);
+    case 'P':
+        return this->removePikeman(id);
+    case 'A':
+        return this->removeArcher(id);
+    case 'S':
+        return this->removeSwordsman(id);
+    case 'K':
+        return this->removeKnight(id);
+    default:
+        return false;
+    }
+}
+
 bool listUnits::addWorker(int ident, int px, int py)
 {
     if (!this->is_unique(ident)) return false;
@@ -144,6 +168,7 @@ bool listUnits::addWorker(int ident, int px, int py)
     this->id2speed[ident] = SPEED_WORKER;
     this->id2type[ident] = 'W';
     this->qWorker += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = WORKER2BASE;
     this->id2dmg[ident]['W'] = WORKER2WORKER;
@@ -167,6 +192,7 @@ bool listUnits::addWorker(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_WORKER;
     this->id2type[ident] = 'W';
     this->qWorker += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = WORKER2BASE;
     this->id2dmg[ident]['W'] = WORKER2WORKER;
@@ -176,6 +202,23 @@ bool listUnits::addWorker(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = WORKER2RAM;
     this->id2dmg[ident]['A'] = WORKER2ARCHER;
     this->id2dmg[ident]['S'] = WORKER2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removeWorker(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qWorker -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }
@@ -190,6 +233,7 @@ bool listUnits::addCatapult(int ident, int px, int py)
     this->id2speed[ident] = SPEED_CATAPULT;
     this->id2type[ident] = 'C';
     this->qCatapult += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = CATAPULT2BASE;
     this->id2dmg[ident]['W'] = CATAPULT2WORKER;
@@ -213,6 +257,7 @@ bool listUnits::addCatapult(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_CATAPULT;
     this->id2type[ident] = 'C';
     this->qCatapult += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = CATAPULT2BASE;
     this->id2dmg[ident]['W'] = CATAPULT2WORKER;
@@ -222,6 +267,23 @@ bool listUnits::addCatapult(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = CATAPULT2RAM;
     this->id2dmg[ident]['A'] = CATAPULT2ARCHER;
     this->id2dmg[ident]['S'] = CATAPULT2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removeCatapult(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qCatapult -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }
@@ -236,6 +298,7 @@ bool listUnits::addRam(int ident, int px, int py)
     this->id2speed[ident] = SPEED_RAM;
     this->id2type[ident] = 'R';
     this->qRam += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = RAM2BASE;
     this->id2dmg[ident]['W'] = RAM2WORKER;
@@ -259,6 +322,7 @@ bool listUnits::addRam(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_RAM;
     this->id2type[ident] = 'R';
     this->qRam += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = RAM2BASE;
     this->id2dmg[ident]['W'] = RAM2WORKER;
@@ -268,6 +332,23 @@ bool listUnits::addRam(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = RAM2RAM;
     this->id2dmg[ident]['A'] = RAM2ARCHER;
     this->id2dmg[ident]['S'] = RAM2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removeRam(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qRam -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }
@@ -282,6 +363,7 @@ bool listUnits::addPikeman(int ident, int px, int py)
     this->id2speed[ident] = SPEED_PIKEMAN;
     this->id2type[ident] = 'P';
     this->qPikeman += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = PIKEMAN2BASE;
     this->id2dmg[ident]['W'] = PIKEMAN2WORKER;
@@ -305,6 +387,7 @@ bool listUnits::addPikeman(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_PIKEMAN;
     this->id2type[ident] = 'P';
     this->qPikeman += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = PIKEMAN2BASE;
     this->id2dmg[ident]['W'] = PIKEMAN2WORKER;
@@ -314,6 +397,23 @@ bool listUnits::addPikeman(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = PIKEMAN2RAM;
     this->id2dmg[ident]['A'] = PIKEMAN2ARCHER;
     this->id2dmg[ident]['S'] = PIKEMAN2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removePikeman(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qPikeman -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }
@@ -328,6 +428,7 @@ bool listUnits::addArcher(int ident, int px, int py)
     this->id2speed[ident] = SPEED_ARCHER;
     this->id2type[ident] = 'A';
     this->qArcher += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = ARCHER2BASE;
     this->id2dmg[ident]['W'] = ARCHER2WORKER;
@@ -351,6 +452,7 @@ bool listUnits::addArcher(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_ARCHER;
     this->id2type[ident] = 'A';
     this->qArcher += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = ARCHER2BASE;
     this->id2dmg[ident]['W'] = ARCHER2WORKER;
@@ -360,6 +462,23 @@ bool listUnits::addArcher(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = ARCHER2RAM;
     this->id2dmg[ident]['A'] = ARCHER2ARCHER;
     this->id2dmg[ident]['S'] = ARCHER2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removeArcher(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qArcher -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }
@@ -374,6 +493,7 @@ bool listUnits::addSwordsman(int ident, int px, int py)
     this->id2speed[ident] = SPEED_SWORDSMAN;
     this->id2type[ident] = 'S';
     this->qSwordsman += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = SWORDSMAN2BASE;
     this->id2dmg[ident]['W'] = SWORDSMAN2WORKER;
@@ -397,6 +517,7 @@ bool listUnits::addSwordsman(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_SWORDSMAN;
     this->id2type[ident] = 'S';
     this->qSwordsman += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = SWORDSMAN2BASE;
     this->id2dmg[ident]['W'] = SWORDSMAN2WORKER;
@@ -406,6 +527,23 @@ bool listUnits::addSwordsman(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = SWORDSMAN2RAM;
     this->id2dmg[ident]['A'] = SWORDSMAN2ARCHER;
     this->id2dmg[ident]['S'] = SWORDSMAN2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removeSwordsman(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qSwordsman -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }
@@ -420,6 +558,7 @@ bool listUnits::addKnight(int ident, int px, int py)
     this->id2speed[ident] = SPEED_KNIGHT;
     this->id2type[ident] = 'K';
     this->qKnight += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = KNIGHT2BASE;
     this->id2dmg[ident]['W'] = KNIGHT2WORKER;
@@ -443,6 +582,7 @@ bool listUnits::addKnight(int ident, int end, int px, int py)
     this->id2speed[ident] = SPEED_KNIGHT;
     this->id2type[ident] = 'K';
     this->qKnight += 1;
+    this->qAll += 1;
 
     this->id2dmg[ident]['B'] = KNIGHT2BASE;
     this->id2dmg[ident]['W'] = KNIGHT2WORKER;
@@ -452,6 +592,23 @@ bool listUnits::addKnight(int ident, int end, int px, int py)
     this->id2dmg[ident]['R'] = KNIGHT2RAM;
     this->id2dmg[ident]['A'] = KNIGHT2ARCHER;
     this->id2dmg[ident]['S'] = KNIGHT2SWORDSMAN;
+
+    return true;
+}
+
+bool listUnits::removeKnight(int id)
+{
+    if (this->is_unique(id)) return false;
+
+    this->units.erase(id);
+    this->id2typeName.erase(id);
+    this->id2arange.erase(id);
+    this->id2speed.erase(id);
+    this->id2type.erase(id);
+    this->qKnight -= 1;
+    this->qAll -= 1;
+
+    this->id2dmg.erase(id);
 
     return true;
 }

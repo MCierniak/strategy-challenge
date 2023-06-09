@@ -20,6 +20,10 @@
 
 bool dijkstra_find_path(int unitId, listUnits &units, const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY)
 {
+    if (sY < 0 || sY >= int(map.size())) return false;
+    if (sX < 0 || sX >= int(map[0].size())) return false;
+    if (tY < 0 || tY >= int(map.size())) return false;
+    if (tX < 0 || tX >= int(map[0].size())) return false;
     std::vector<std::vector<int>> weight(map.size(), std::vector<int>(map[0].size(), 100000000));
     std::priority_queue<std::vector<int>, std::vector<std::vector<int>>, my_comparator> gridQ;
 

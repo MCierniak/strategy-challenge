@@ -19,6 +19,8 @@
 #ifndef PLAYER_PATH_BFS_H
 #define PLAYER_PATH_BFS_H
 
+#include "../defaults.h"
+
 #include "../grid.h"
 
 // Bredth-first search algorithm for map traversal. Returns false if there is no traversable path between s and t.
