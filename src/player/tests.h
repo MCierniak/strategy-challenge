@@ -18,10 +18,13 @@
 
 #include "defaults.h"
 
+// Unit tests
+
 #include "path/dijkstra.h"
 #include "units/misc.h"
 #include "io.h"
 
+// Color macros
 #define BOLDRED "\033[1m\033[31m"
 #define BOLDGREEN "\033[1m\033[32m"
 #define BOLDWHITE "\033[1m\033[37m"
@@ -36,4 +39,5 @@ void test_units_misc_listUnits();
 void test_units_actions_evade();
 void test_units_actions_attack();
 void test_grid_addId();
+void test_grid_resource_resNodeList();
 void test_path_dijkstra_priority_queue();

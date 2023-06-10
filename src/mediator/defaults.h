@@ -10,6 +10,7 @@
 #define RESOURCE_CHANCE 1
 // The chance for barrier tiles is 100% - EMPTY_CHANCE*10% - RESOURCE_CHANCE*10%
 
+// Minimum and maximum possible size of the map
 #define GRID_MIN 16
 #define GRID_MAX 32
 
@@ -24,5 +25,13 @@
 // Path to player scripts
 #define P1_SCRIPT "bin/player"
 #define P2_SCRIPT "bin/player"
+
+// Uncomment for unit tests
+// #define TESTING_TRUE
+
+// Uncomment for player script debug mode
+// (this will permit player output to stdout and 
+// will not timeout the scripts)
+// #define DEBUG_TRUE
 
 #endif

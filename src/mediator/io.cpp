@@ -791,7 +791,8 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
         std::cout << "(Mediator) Unit with id " << id << " (" << units.id2typeName[id];
         std::cout << ") received order to attack unit with id " << tId;
         std::cout << " (" << enemies.id2typeName[tId] << ", distance ";
-        std::cout << Dist(units.units[id]->posx, units.units[id]->posy, enemies.units[tId]->posx, enemies.units[tId]->posy) <<")" << std::endl;
+        if (enemies.id2type[tId] == 'B') std::cout << Dist(units.units[id]->posx, units.units[id]->posy, enemies.base.posx, enemies.base.posy) <<")" << std::endl;
+        else std::cout << Dist(units.units[id]->posx, units.units[id]->posy, enemies.units[tId]->posx, enemies.units[tId]->posy) <<")" << std::endl;
 
         bool condition;
         if (enemies.id2type[tId] == 'B')

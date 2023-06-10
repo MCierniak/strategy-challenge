@@ -133,12 +133,13 @@ public:
     int endurance;
     // Unit position
     int posx, posy;
-    // Coordinates of the target
+    // Coordinates of the target gridObj
     int trgtX, trgtY;
     
     Unit(int ident, int end, int px, int py);
     virtual ~Unit() = 0;
 
+    // Function to set trgtX, trgtY => rid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     virtual bool find_target(const grid &map, listUnits &allies, listUnits &enemies) = 0;
 };
 
@@ -148,10 +149,12 @@ public:
     char queue;
     bool init;
 
+    // Default constructor needed for listUnits struct initialziation
     Base();
     Base(int ident, int end, int px, int py, char q);
     ~Base();
 
+    // Guard against using base constructed with a default constructor
     bool isInit();
 
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);

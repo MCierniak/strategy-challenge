@@ -83,15 +83,15 @@ bool Base::isInit()
 
 bool Base::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    (void)map;
+    (void)map; // voids to avoid compiler warnings
     (void)allies;
     (void)enemies;
-    return false;
+    return false; // base does not seek any targets
 }
 
 bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    (void)allies;
+    (void)allies; // voids to avoid compiler warnings
     (void)enemies;
     // If already on empty resource node, stay there
     // The third condition ensures that at most one worker will stay
@@ -164,7 +164,7 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 
 bool Swordsman::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    return find_target_swordsman(this->id, map, allies, enemies);
+    return find_target_swordsman(this->id, map, allies, enemies); // call external function logic function (misc.cpp)
 }
 
 bool Archer::find_target(const grid &map, listUnits &allies, listUnits &enemies)

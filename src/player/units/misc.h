@@ -19,6 +19,8 @@
 #ifndef PLAYER_UNITS_MISC_H
 #define PLAYER_UNITS_MISC_H
 
+// Misc functions, target finders and listUnits struct
+
 #include "misc.fwd.h"
 
 #include "actions.h"
@@ -26,25 +28,39 @@
 
 #include <queue>
 
+// List of own/enemy units
 struct listUnits
 {
+    // Translate id to permutation vector (utils.h) for movement+attack
     std::map<int, std::vector<std::vector<int>>> id2moveattackV;
+    // Translate id to permutation vector (utils.h) for movement-1
     std::map<int, std::vector<std::vector<int>>> id2slowMoveV;
+    // Translate id to permutation vector (utils.h) for attack range
     std::map<int, std::vector<std::vector<int>>> id2attackV;
+    // Translate id to permutation vector (utils.h) for movement
     std::map<int, std::vector<std::vector<int>>> id2moveV;
+    // Main list of units (except base)
     std::map<int, std::unique_ptr<Unit>> units;
+    // Damage map for each unit (used to decrement enemy endurance after attack has been issued)
     std::map<int, std::map<char, int>> id2dmg;
+    // Translate id to attack range
     std::map<int, int> id2arange;
+    // Translate id to unit type
     std::map<int, char> id2type;
+    // Translate id to unit speed
     std::map<int, int> id2speed;
 
+    // Only for list of enemy units, the hitList is sorted by distance to own base, ascending
     std::list<int> hitList;
 
+    // Total number of each unit and all units
     int qWorker = 0, qCatapult = 0, qRam = 0, qPikeman = 0, qArcher = 0;
     int qSwordsman = 0, qKnight = 0, qAll = 0;
 
+    // The base
     Base base;
 
+    // Methods to add a base or other unit types. Id uniqness is ensured
     bool addBase(int ident, int end, int px, int py, char q);
 
     bool addUnit(char type, int ident, int end, int px, int py);
@@ -59,6 +75,7 @@ struct listUnits
     bool is_unique(int id);
 };
 
+// Distance between First and Second
 int Dist(int xFirst, int yFirst, int xSecond, int ySecond);
 
 #endif

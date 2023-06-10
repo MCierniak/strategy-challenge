@@ -23,15 +23,16 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
     #ifdef VERBOSE_TRUE
         std::cout << "(Player) Choosing attack target" << std::endl;
     #endif
+    // queue object for sorting potential targets by endurance, ascending
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> enemiesInRange;
-    std::stringstream ss;
+    std::stringstream ss; // payload buffer
     for (auto &&mod : allies.id2attackV[sId])
     {
-        int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
-        if (newY < 0 || newY >= int(map.size())) continue;
+        int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1]; // check all gridObj within attack range permutation vector
+        if (newY < 0 || newY >= int(map.size())) continue; // out of bounds guard
         if (newX < 0 || newX >= int(map[newY].size())) continue;
 
-        if (map[newY][newX]->checkEnemyNr() > 0)
+        if (map[newY][newX]->checkEnemyNr() > 0) // found enemies
         {
             for (int i = 0; i < map[newY][newX]->checkEnemyNr(); i++)
             {
@@ -40,11 +41,11 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
                 #endif
                 int eid = map[newY][newX]->getEnemyId(i);
                 int ehp;
-                if (enemies.id2type[eid] == 'B') ehp = enemies.base.endurance;
+                if (enemies.id2type[eid] == 'B') ehp = enemies.base.endurance; // SegFault guard
                 else ehp = enemies.units[eid]->endurance;
                 if (ehp > 0)
                 {
-                    enemiesInRange.push(std::pair<int, int>(ehp, eid));
+                    enemiesInRange.push(std::pair<int, int>(ehp, eid)); // sort enemies by endurance, exclude dead enemies
                 }
                 #ifdef VERBOSE_TRUE
                     else std::cout << "(Player) Nevermind..." << std::endl;
@@ -52,13 +53,13 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
             }
         }
     }
-    if (!enemiesInRange.empty())
+    if (!enemiesInRange.empty()) 
     {
         #ifdef VERBOSE_TRUE
             std::cout << "(Player) Target acquired." << std::endl;
         #endif
-        int trgt_id = enemiesInRange.top().second;
-        ss << sId << " A " << trgt_id << '\n';
+        int trgt_id = enemiesInRange.top().second;  // if queue not empty, output attack command to payload,
+        ss << sId << " A " << trgt_id << '\n';      // decrement endurance so that other units won't needlesly target dead enemies
         payload += ss.str();
 
         if (enemies.id2type[trgt_id] == 'B') enemies.base.endurance -= allies.id2dmg[sId]['B'];
@@ -80,12 +81,12 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
     #ifdef VERBOSE_TRUE
         std::cout << "(Player) Engaging evasive maneuvers!" << std::endl;
     #endif
-    evade_queue eQueue;
+    evade_queue eQueue; // sort all nodes in range by potential damage next turn. top will be the best node to stand on.
 
     char type = allies.id2type[sId];
     int cX = allies.units[sId]->posx;
     int cY = allies.units[sId]->posy;
-    if (cY < 0 || cY >= int(map.size())) return false;
+    if (cY < 0 || cY >= int(map.size())) return false; // sanity check
     if (cX < 0 || cX >= int(map[0].size())) return false;
     int dmg = map[cY][cX]->checkDmg(type);
 
@@ -111,13 +112,13 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
         {
             std::stringstream ss;
             ss << sId << " M " << newX << ' ' << newY << '\n';
-            payload = ss.str();
-            if (allies.id2type[sId] == 'W')
+            payload = ss.str(); // output command payload
+            if (allies.id2type[sId] == 'W') // If unit is a worker, modify workerid flags in map gridObj
             {
                 map[newY][newX]->addWorkerId(sId);
                 map[allies.units[sId]->posy][allies.units[sId]->posx]->removeWorkerId(sId);
             }
-            allies.units[sId]->posx = newX;
+            allies.units[sId]->posx = newX; // make moves
             allies.units[sId]->posy = newY;
             return true;
         }
@@ -126,18 +127,93 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
     {
         std::stringstream ss;
         coord next = eQueue.top().second;
+        if (next.second == cX && next.first == cY) return false;
         ss << sId << " M " << next.second << ' ' << next.first << '\n';
-        payload = ss.str();
-        if (allies.id2type[sId] == 'W')
+        payload = ss.str(); // output command payload
+        if (allies.id2type[sId] == 'W') // If unit is a worker, modify workerid flags in map gridObj
         {
             map[next.first][next.second]->addWorkerId(sId);
             map[allies.units[sId]->posy][allies.units[sId]->posx]->removeWorkerId(sId);
         }
-        allies.units[sId]->posx = next.second;
+        allies.units[sId]->posx = next.second; // make moves
         allies.units[sId]->posy = next.first;
         return true;
     }
     else return false;
+}
+
+bool cover(int sId, const grid &map, listUnits &allies, int &stepX, int &stepY)
+{
+    if 
+    (
+        (map[stepY][stepX]->checkDmg(allies.id2type[sId]) > 1 &&                                    // If moving to within range of an enemy,
+        map[allies.units[sId]->posy][allies.units[sId]->posx]->checkDmg(allies.id2type[sId]) == 1)  // find closest safe ndoe instead
+    )
+    {
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) Taking cover! Moving to a better position than " << stepX << " " << stepY << std::endl;
+        #endif
+        int distToStep = Dist(allies.units[sId]->posx, allies.units[sId]->posy, stepX, stepY); // Distance to original target gridObj
+        int cX = allies.units[sId]->posx, cY = allies.units[sId]->posy; // coordinates of the original target gridObj
+        for (auto &&mod : allies.id2moveV[sId])
+        {
+            int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
+            if (newY < 0 || newY >= int(map.size())) continue; // out of bounds and traverse check
+            if (newX < 0 || newX >= int(map[newY].size())) continue;
+            if (!map[newY][newX]->checkTrav()) continue;
+            if 
+            (
+                map[newY][newX]->checkDmg(allies.id2type[sId]) == 1 &&                                          // try to find a safe gridObj
+                Dist(newX, newY, allies.units[sId]->posx, allies.units[sId]->posy) <= allies.id2speed[sId] &&   // sanity test
+                Dist(newX, newY, stepX, stepX) < distToStep                                                     // make sure the unit is not moving backwards
+            )
+            {
+                distToStep = Dist(newX, newY, stepX, stepX);
+                cX = newX;
+                cY = newY;
+            }
+        }
+        if (cX == allies.units[sId]->posx && cY == allies.units[sId]->posy) return false; // output no commands if safest node is the units current position
+        else
+        {
+            stepX = cX; // otherwise, output coordinates
+            stepY = cY;
+        }
+        return true;
+    }
+    else if (map[stepY][stepX]->checkDmg(allies.id2type[sId]) >= allies.units[sId]->endurance) // if unit would die next turn, repeat the above but allow to move backwards if needed
+    {
+        #ifdef VERBOSE_TRUE
+            std::cout << "(Player) Taking cover! Avoiding imminent death on " << stepX << " " << stepY << std::endl;
+        #endif
+        int cX = allies.units[sId]->posx, cY = allies.units[sId]->posy;
+        int dmg = map[cY][cX]->checkDmg(allies.id2type[sId]);
+        for (auto &&mod : allies.id2moveV[sId])
+        {
+            int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
+            if (newY < 0 || newY >= int(map.size())) continue;
+            if (newX < 0 || newX >= int(map[newY].size())) continue;
+            if (!map[newY][newX]->checkTrav()) continue;
+            if 
+            (
+                Dist(newX, newY, allies.units[sId]->posx, allies.units[sId]->posy) <= allies.id2speed[sId] && // sanity check
+                map[newY][newX]->checkDmg(allies.id2type[sId]) < dmg // pick grid with the lowest potential damage next turn
+            )
+            {
+                dmg = map[newY][newX]->checkDmg(allies.id2type[sId]);
+                cX = newX;
+                cY = newY;
+            }
+        }
+        if (cX == allies.units[sId]->posx && cY == allies.units[sId]->posy) return false; // output no commands if safest node is the units current position
+        else
+        {
+            stepX = cX;
+            stepY = cY;
+            return true;
+        }
+    }
+    return true;
 }
 
 bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies)
@@ -285,9 +361,9 @@ bool action_base(std::string &payload, long gold, const listUnits &allies, const
 
 bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies)
 {
-    if (allies.units[unitId]->posy < 0 || allies.units[unitId]->posy >= int(map.size())) return false;
+    if (allies.units[unitId]->posy < 0 || allies.units[unitId]->posy >= int(map.size())) return false; // sanity test, ignore out of bound units (error in status file)
     if (allies.units[unitId]->posx < 0 || allies.units[unitId]->posx >= int(map[0].size())) return false;
-    if(allies.units[unitId]->find_target(map, allies, enemies))
+    if (allies.units[unitId]->find_target(map, allies, enemies))
     {
         if (allies.units[unitId]->trgtY < 0 || allies.units[unitId]->trgtY >= int(map.size())) return false;
         if (allies.units[unitId]->trgtX < 0 || allies.units[unitId]->trgtX >= int(map[0].size())) return false;
@@ -296,7 +372,8 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
         (
             allies.units[unitId]->trgtX == allies.units[unitId]->posx &&
             allies.units[unitId]->trgtY == allies.units[unitId]->posy
-        ) return attack(payload, unitId, map, allies, enemies);
+        )
+        return attack(payload, unitId, map, allies, enemies);
         // Target in range, move to it
         else if 
         (
@@ -311,16 +388,20 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 std::cout << "(Player) Moving full range" << std::endl;
             #endif
             std::stringstream ss;
-            ss << unitId << " M " << allies.units[unitId]->trgtX << ' ' << allies.units[unitId]->trgtY << '\n';
-            payload = ss.str();
-            if (allies.id2type[unitId] == 'W')
+            if (cover(unitId, map, allies, allies.units[unitId]->trgtX, allies.units[unitId]->trgtY))
             {
-                map[allies.units[unitId]->trgtY][allies.units[unitId]->trgtX]->addWorkerId(unitId);
-                map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+                ss << unitId << " M " << allies.units[unitId]->trgtX << ' ' << allies.units[unitId]->trgtY << '\n';
+                payload = ss.str();
+                if (allies.id2type[unitId] == 'W')
+                {
+                    map[allies.units[unitId]->trgtY][allies.units[unitId]->trgtX]->addWorkerId(unitId);
+                    map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+                }
+                allies.units[unitId]->posx = allies.units[unitId]->trgtX;
+                allies.units[unitId]->posy = allies.units[unitId]->trgtY;
+                return true;
             }
-            allies.units[unitId]->posx = allies.units[unitId]->trgtX;
-            allies.units[unitId]->posy = allies.units[unitId]->trgtY;
-            return true;
+            else return false;
         }
         // Target in range, move to it, attack
         else if 
@@ -366,16 +447,20 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 std::cout << "(Player) BFS-directed move." << std::endl;
             #endif
             std::stringstream ss;
-            ss << unitId << " M " << stepX << ' ' << stepY << '\n';
-            payload = ss.str();
-            if (allies.id2type[unitId] == 'W')
+            if (cover(unitId, map, allies, stepX, stepY))
             {
-                map[stepY][stepX]->addWorkerId(unitId);
-                map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+                ss << unitId << " M " << stepX << ' ' << stepY << '\n';
+                payload = ss.str();
+                if (allies.id2type[unitId] == 'W')
+                {
+                    map[stepY][stepX]->addWorkerId(unitId);
+                    map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
+                }
+                allies.units[unitId]->posx = stepX;
+                allies.units[unitId]->posy = stepY;
+                return true;
             }
-            allies.units[unitId]->posx = stepX;
-            allies.units[unitId]->posy = stepY;
-            return true;
+            else return false;
         }
     }
     // No valid targets, evade damage and wait

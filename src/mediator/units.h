@@ -19,6 +19,9 @@
 #ifndef MEDIATOR_UNITS_H
 #define MEDIATOR_UNITS_H
 
+// Analog to player's units/units.h
+// listUnits has additional remove methods to process dead units
+
 #include "grid.h"
 
 #include <bits/stdc++.h>
@@ -30,16 +33,6 @@
 #include <map>
 
 #define hitListType std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>>
-
-// Vector for units
-#define listW std::vector<Worker>
-#define listC std::vector<Catapult>
-#define listR std::vector<Ram>
-#define listP std::vector<Pikeman>
-#define listA std::vector<Archer>
-#define listS std::vector<Swordsman>
-#define listK std::vector<Knight>
-#define listB std::vector<Base>
 
 // Build cost logic
 #define CAN_GET_WORKER(x) (x >= 100)

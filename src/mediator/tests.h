@@ -19,6 +19,8 @@
 #ifndef MEDIATOR_TESTS_H
 #define MEDIATOR_TESTS_H
 
+// Unit tests
+
 #include "units.h"
 #include "io.h"
 
@@ -28,5 +30,6 @@
 #define RESET "\033[0m"
 
 void test_remove_dead_units();
+void test_process_unit_orders();
 
 #endif

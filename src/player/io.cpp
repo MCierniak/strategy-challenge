@@ -64,6 +64,7 @@ bool get_map(const std::string &map_path, grid &map, int &X, int &Y)
     }
     catch (...)
     {
+        // If something unexpected happens, terminate without feedback. Any error here means a faulty input.
         return false;
     }
 }
@@ -98,52 +99,52 @@ bool get_status(const std::string &status_path, grid &map, long &gold, listUnits
         if (alliegence == 'P' && type == 'B')
         {
             ss >> id >> posx >> posy >> endurance >> bQueue;
-            if (!ss) return false;
-            ss >> eol_guard;
+            if (!ss) return false; // if not enought values to unpack, return
+            ss >> eol_guard; // test if more inputs remain on line
             if (ss) return false;
-            if (posy < 0 || posy >= int(map.size())) return false;
+            if (posy < 0 || posy >= int(map.size())) return false; // test if input makes sense
             if (posx < 0 || posx >= int(map[0].size())) return false;
-            if(!(myTeam.addBase(id, endurance, posx, posy, bQueue))) return false;
+            if(!(myTeam.addBase(id, endurance, posx, posy, bQueue))) return false; // add base
         }
         // Add enemy base
         else if (alliegence == 'E' && type == 'B')
         {
             ss >> id >> posx >> posy >> endurance >> bQueue;
-            if (!ss) return false;
-            ss >> eol_guard;
+            if (!ss) return false; // if not enought values to unpack, return
+            ss >> eol_guard; // test if more inputs remain on line
             if (ss) return false;
-            if (posy < 0 || posy >= int(map.size())) return false;
+            if (posy < 0 || posy >= int(map.size())) return false; // test if input makes sense
             if (posx < 0 || posx >= int(map[0].size())) return false;
-            if(!(enemy.addBase(id, endurance, posx, posy, bQueue))) return false;
-            map[posy][posx]->addEnemyId(id);
+            if(!(enemy.addBase(id, endurance, posx, posy, bQueue))) return false; // add base
+            map[posy][posx]->addEnemyId(id); // register enemy on map
         }
         // Add other own units
         else if (alliegence == 'P' && type != 'B')
         {
             ss >> id >> posx >> posy >> endurance;
-            if (!ss) return false;
-            ss >> eol_guard;
+            if (!ss) return false; // if not enought values to unpack, return
+            ss >> eol_guard; // test if more inputs remain on line
             if (ss) return false;
-            if (posy < 0 || posy >= int(map.size())) return false;
+            if (posy < 0 || posy >= int(map.size())) return false; // test if input makes sense
             if (posx < 0 || posx >= int(map[0].size())) return false;
-            if(!(myTeam.addUnit(type, id, endurance, posx, posy))) return false;
-            if (type == 'W') map[posy][posx]->addWorkerId(id);
+            if(!(myTeam.addUnit(type, id, endurance, posx, posy))) return false; // add unit
+            if (type == 'W') map[posy][posx]->addWorkerId(id); // register worker on map
         }
         // Add other enemy units
         else if (alliegence == 'E' && type != 'B')
         {
             ss >> id >> posx >> posy >> endurance;
-            if (!ss) return false;
-            ss >> eol_guard;
+            if (!ss) return false; // if not enought values to unpack, return
+            ss >> eol_guard; // test if more inputs remain on line
             if (ss) return false;
-            if (posy < 0 || posy >= int(map.size())) return false;
+            if (posy < 0 || posy >= int(map.size())) return false; // test if input makes sense
             if (posx < 0 || posx >= int(map[0].size())) return false;
-            if(!(enemy.addUnit(type, id, endurance, posx, posy))) return false;
-            map[posy][posx]->addEnemyId(id);
-            for (auto &&mod : enemy.id2moveattackV[id])
+            if(!(enemy.addUnit(type, id, endurance, posx, posy))) return false; // add unit
+            map[posy][posx]->addEnemyId(id); // register enemy on map
+            for (auto &&mod : enemy.id2moveattackV[id]) // update damage flags on map, based on added enemy damage profile
             {
                 int newY = posy + mod[0], newX = posx + mod[1];
-                if (newY < 0 || newY >= int(map.size())) continue;
+                if (newY < 0 || newY >= int(map.size())) continue; // check if within bounds
                 if (newX < 0 || newX >= int(map[newY].size())) continue;
 
                 map[newY][newX]->addDmg('B', enemy.id2dmg[id]['B']);

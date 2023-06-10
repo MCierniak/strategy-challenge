@@ -16,15 +16,14 @@
 // You should have received a copy of the GNU General Public License along with
 // Strategy Challenge Project. If not, see <http://www.gnu.org/licenses/>.
 
-// Uncomment for unit tests
-// #define TESTING_TRUE
-
-// Uncomment for player script debug mode
-// (i.e. player script output to stdout and stderr)
-#define DEBUG_TRUE
-
+#include "defaults.h"
 #include "io.h"
 
+// Macros for wall time monitoring
+#define DURATION(x) std::chrono::duration_cast<MILLISECONDS>(x).count()
+#define CURRENT_TIME std::chrono::high_resolution_clock::now()
+#define MILLISECONDS std::chrono::milliseconds
+#define SECONDS std::chrono::seconds
 
 std::string exec(const char* cmd);
 
@@ -62,7 +61,10 @@ int main(int argc, char **argv)
                 std::string ret = exec(ss.str().c_str());
                 #else // debug call 
                 std::string ret;
+                auto start = CURRENT_TIME;
                 system(ss.str().c_str());
+                int duration = DURATION(CURRENT_TIME - start);
+                std::cout << "(Mediator) Elapsed time " << duration << " ms" << std::endl; 
                 #endif
 
                 if (!(ret == std::string()))
@@ -85,7 +87,10 @@ int main(int argc, char **argv)
                 std::string ret = exec(ss.str().c_str());
                 #else // debug call 
                 std::string ret;
+                auto start = CURRENT_TIME;
                 system(ss.str().c_str());
+                int duration = DURATION(CURRENT_TIME - start);
+                std::cout << "(Mediator) Elapsed time " << duration << " ms" << std::endl; 
                 #endif
 
                 if (!(ret == std::string()))
@@ -142,7 +147,10 @@ int main(int argc, char **argv)
             std::string ret = exec(ss.str().c_str());
             #else // debug call
             std::string ret;
+            auto start = CURRENT_TIME;
             system(ss.str().c_str());
+            int duration = DURATION(CURRENT_TIME - start);
+            std::cout << "(Mediator) Elapsed time " << duration << " ms" << std::endl; 
             #endif
             
             if (!(ret == std::string()))
@@ -181,6 +189,7 @@ int main(int argc, char **argv)
     #else
         #include "tests.h"
         test_remove_dead_units();
+        test_process_unit_orders();
     #endif
     return 0;
 }

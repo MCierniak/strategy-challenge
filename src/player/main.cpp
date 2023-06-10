@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
         return 0;
     #else
         #include "tests.h"
+        // Perform all tests
         test_io_get_map();
         test_io_get_status();
         test_units_units_worker_find_target();
@@ -56,6 +57,7 @@ int main(int argc, char* argv[])
         test_units_actions_attack();
         test_grid_addId();
         test_path_dijkstra_priority_queue();
+        test_grid_resource_resNodeList();
     #endif
 }
 
@@ -121,12 +123,14 @@ void make_moves(char *argv[], int time_limit)
     std::ofstream file(argv[3]);
     if(file.fail()) return;
 
+    // Output base actions
     std::string temp;
     if (action_base(temp, gold, myUnits, enemyUnits))
     {
         file << temp;
         temp = std::string();
     }
+    // Main output loop. After every unit check time, break if needed.
     int duration = DURATION(CURRENT_TIME - start);
     for (auto &[key, value] : myUnits.units)
     {
@@ -149,6 +153,6 @@ void make_moves(char *argv[], int time_limit)
     #ifdef VERBOSE_TRUE
         std::cout << "(Player) I am finished." <<std::endl;
     #endif
-    // cleanup
+    // Cleanup
     file.close();
 }

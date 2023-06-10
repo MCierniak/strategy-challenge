@@ -19,6 +19,8 @@
 #ifndef PLAYER_IO_H
 #define PLAYER_IO_H
 
+// Functions responsible for parsin input and output files
+
 #include "defaults.h"
 
 #include "units/misc.h"
@@ -32,10 +34,5 @@
 bool get_map(const std::string &map_path, grid &map, int &X, int &Y);
 // Parse status from file, output rosters of own and enemy units
 bool get_status(const std::string &status_path, grid &map, long &gold, listUnits &myTeam, listUnits &enemy);
-
-// get_map unit test
-void test_get_map();
-// get_status unit test
-void test_get_status();
 
 #endif

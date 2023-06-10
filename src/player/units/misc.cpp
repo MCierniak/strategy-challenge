@@ -20,16 +20,16 @@
 
 bool listUnits::addBase(int ident, int end, int px, int py, char q)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->base = Base(ident, end, px, py, q);
-    this->id2arange[ident] = 0;
-    this->id2type[ident] = 'B';
-    this->id2speed[ident] = 0;
-    this->qAll += 1;
+    this->base = Base(ident, end, px, py, q); // Construct base
+    this->id2arange[ident] = 0; // Base cannot attack, arange = 0
+    this->id2type[ident] = 'B'; // Base type char
+    this->id2speed[ident] = 0; // Base cannot move, arange = 0
+    this->qAll += 1; // Base counts as a unit
 
-    this->id2dmg[ident]['B'] = 0;
-    this->id2dmg[ident]['W'] = 0;
+    this->id2dmg[ident]['B'] = 0; // Base cannot attack
+    this->id2dmg[ident]['W'] = 0; 
     this->id2dmg[ident]['K'] = 0;
     this->id2dmg[ident]['P'] = 0;
     this->id2dmg[ident]['C'] = 0;
@@ -37,11 +37,13 @@ bool listUnits::addBase(int ident, int end, int px, int py, char q)
     this->id2dmg[ident]['A'] = 0;
     this->id2dmg[ident]['S'] = 0;
 
+    // Base cannot attack or move, all permutation vectors set to empty
     this->id2moveattackV[ident] = std::vector<std::vector<int>>();
     this->id2slowMoveV[ident] = std::vector<std::vector<int>>();
     this->id2attackV[ident] = std::vector<std::vector<int>>();
     this->id2moveV[ident] = std::vector<std::vector<int>>();
 
+    // Push base to hitList, presumably will stay at the bottom
     this->hitList.push_back(ident);
 
     return true;
@@ -72,9 +74,9 @@ bool listUnits::addUnit(char type, int ident, int end, int px, int py)
 
 bool listUnits::addWorker(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Worker>(ident, end, px, py);
+    this->units[ident] = std::make_unique<Worker>(ident, end, px, py); // create unique_ptr for a Worker object
     this->id2arange[ident] = ATTACK_WORKER;
     this->id2speed[ident] = SPEED_WORKER;
     this->id2type[ident] = 'W';
@@ -293,8 +295,8 @@ bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnit
     #endif
     for (auto &&mod : allies.id2attackV[sId])
     {
-        int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
-        if (newY < 0 || newY >= int(map.size())) continue;
+        int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1]; // check all gridObj within attack permutation vector
+        if (newY < 0 || newY >= int(map.size())) continue; // out of bounds guard
         if (newX < 0 || newX >= int(map[newY].size())) continue;
 
         if(map[newY][newX]->checkEnemyNr() > 0)
@@ -302,9 +304,24 @@ bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnit
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) (Swordsman) Found targets in attack range. Staying in place." << std::endl;
             #endif
-            allies.units[sId]->trgtX = allies.units[sId]->posx;
-            allies.units[sId]->trgtY = allies.units[sId]->posy;
-            return true;
+            for (auto &&enemId : map[newY][newX]->getEnemyId())
+            {
+                if (enemies.id2type[enemId] == 'B') // watch out for base, calling listUnits::units with this id will cause Segmentation Fault
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+                else if (enemies.units[enemId]->endurance > 0) // if not base, check if enemy still alive before setting target
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+            }
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Swordsman) Nevermind." << std::endl;
+            #endif
         }
     }
     // Else, if enemies within move-attack range, move to attack range
@@ -313,20 +330,20 @@ bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnit
     #endif
     for (auto &&mod : allies.id2moveattackV[sId])
     {
-        int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
-        if (newY < 0 || newY >= int(map.size())) continue;
+        int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1]; // check all gridObj within move-attack permutation vector
+        if (newY < 0 || newY >= int(map.size())) continue; // out of bounds guard
         if (newX < 0 || newX >= int(map[newY].size())) continue;
 
         if(map[newY][newX]->checkEnemyNr() > 0)
         {
             for (auto &&mod2 : allies.id2slowMoveV[sId])
             {
-                int newY2 = allies.units[sId]->posy + mod2[0], newX2 = allies.units[sId]->posx + mod2[1];
-                if (newY2 < 0 || newY2 >= int(map.size())) continue;
+                int newY2 = allies.units[sId]->posy + mod2[0], newX2 = allies.units[sId]->posx + mod2[1]; // check all gridObj within move-1 permutation vector
+                if (newY2 < 0 || newY2 >= int(map.size())) continue; // out of bounds guard
                 if (newX2 < 0 || newX2 >= int(map[newY2].size())) continue;
-                if (!map[newY2][newX2]->checkTrav()) continue;
+                if (!map[newY2][newX2]->checkTrav()) continue; // traversability check
 
-                if (Dist(newX2, newY2, newX, newY) <= allies.id2arange[sId])
+                if (Dist(newX2, newY2, newX, newY) <= allies.id2arange[sId]) // if enemy within attack range after speed-1 movement, set target
                 {
                     #ifdef VERBOSE_TRUE
                         std::cout << "(Player) (Swordsman) Found targets in move-attack range. Moving to position." << std::endl;
@@ -343,13 +360,13 @@ bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnit
         std::cout << "(Player) (Swordsman) No targets in move-attack range. Looking for distant targets..." << std::endl;
     #endif
     int sPosX = allies.units[sId]->posx, sPosY = allies.units[sId]->posy;
-    for (auto &&eId : enemies.hitList)
+    for (auto &&eId : enemies.hitList) // Iterate over hitList (presumably sorted), pick any enemy
     {
-        evade_queue closestGridNode;
+        evade_queue closestGridNode; // use priority_queue for determinig closest gridObj within attack range of the target unit
         for (auto &&mod : allies.id2attackV[sId])
         {
             int newY, newX;
-            if (enemies.id2type[eId] == 'B')
+            if (enemies.id2type[eId] == 'B') // SegFault guard
             {
                 newY = enemies.base.posy + mod[0];
                 newX = enemies.base.posx + mod[1];
@@ -359,13 +376,13 @@ bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnit
                 newY = enemies.units[eId]->posy + mod[0];
                 newX = enemies.units[eId]->posx + mod[1];
             }
-            if (newY < 0 || newY >= int(map.size())) continue;
+            if (newY < 0 || newY >= int(map.size())) continue; // out of bounds and traversability guard
             if (newX < 0 || newX >= int(map[newY].size())) continue;
             if (!map[newY][newX]->checkTrav()) continue;
 
             closestGridNode.push(evade_queue_item(Dist(sPosX, sPosY, newX, newY), coord(newY, newX)));
         }
-        if (!closestGridNode.empty())
+        if (!closestGridNode.empty()) // if queue not empty, the top will be the desired grid.
         {
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) (Swordsman) Found target. Calculating path..." << std::endl;
@@ -399,9 +416,24 @@ bool find_target_archer(int sId, const grid &map, listUnits &allies, listUnits &
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) (Archer) Found targets in attack range. Staying in place." << std::endl;
             #endif
-            allies.units[sId]->trgtX = allies.units[sId]->posx;
-            allies.units[sId]->trgtY = allies.units[sId]->posy;
-            return true;
+            for (auto &&enemId : map[newY][newX]->getEnemyId())
+            {
+                if (enemies.id2type[enemId] == 'B')
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+                else if (enemies.units[enemId]->endurance > 0)
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+            }
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Archer) Nevermind." << std::endl;
+            #endif
         }
     }
     // Else, if enemies within move-attack range, move to attack range
@@ -527,9 +559,24 @@ bool find_target_pikeman(int sId, const grid &map, listUnits &allies, listUnits 
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) (Pikeman) Found targets in attack range. Staying in place." << std::endl;
             #endif
-            allies.units[sId]->trgtX = allies.units[sId]->posx;
-            allies.units[sId]->trgtY = allies.units[sId]->posy;
-            return true;
+            for (auto &&enemId : map[newY][newX]->getEnemyId())
+            {
+                if (enemies.id2type[enemId] == 'B')
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+                else if (enemies.units[enemId]->endurance > 0)
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+            }
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Pikeman) Nevermind." << std::endl;
+            #endif
         }
     }
     // Else, if enemies within move-attack range, move to attack range
@@ -655,9 +702,24 @@ bool find_target_knight(int sId, const grid &map, listUnits &allies, listUnits &
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) (Knight) Found targets in attack range. Staying in place." << std::endl;
             #endif
-            allies.units[sId]->trgtX = allies.units[sId]->posx;
-            allies.units[sId]->trgtY = allies.units[sId]->posy;
-            return true;
+            for (auto &&enemId : map[newY][newX]->getEnemyId())
+            {
+                if (enemies.id2type[enemId] == 'B')
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+                else if (enemies.units[enemId]->endurance > 0)
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+            }
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Knight) Nevermind." << std::endl;
+            #endif
         }
     }
     // Else, if enemies within move-attack range, move to attack range
@@ -875,9 +937,24 @@ bool find_target_catapult(int sId, const grid &map, listUnits &allies, listUnits
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) (Catapult) Found targets in attack range. Staying in place." << std::endl;
             #endif
-            allies.units[sId]->trgtX = allies.units[sId]->posx;
-            allies.units[sId]->trgtY = allies.units[sId]->posy;
-            return true;
+            for (auto &&enemId : map[newY][newX]->getEnemyId())
+            {
+                if (enemies.id2type[enemId] == 'B')
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+                else if (enemies.units[enemId]->endurance > 0)
+                {
+                    allies.units[sId]->trgtX = allies.units[sId]->posx;
+                    allies.units[sId]->trgtY = allies.units[sId]->posy;
+                    return true;
+                }
+            }
+            #ifdef VERBOSE_TRUE
+                std::cout << "(Player) (Catapult) Nevermind." << std::endl;
+            #endif
         }
     }
     // Else, if enemies within move-attack range, move to attack range

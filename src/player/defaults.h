@@ -23,10 +23,10 @@
 // #define TESTING_TRUE
 
 // Uncomment for verbosity
-#define VERBOSE_TRUE
+// #define VERBOSE_TRUE
 
 // Time (in microseconds) needed for final cleanup
-#define CLEANUP_TIME 100
+#define CLEANUP_TIME 10000
 
 // Macros for wall time monitoring
 #define DURATION(x) std::chrono::duration_cast<MICROSECONDS>(x).count()

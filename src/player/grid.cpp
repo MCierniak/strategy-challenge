@@ -18,12 +18,14 @@
 
 #include "grid.h"
 
+// Initialize static variables
 int resource::unusedResourceCount = 0;
 std::list<std::vector<int>> resource::resNodeList = std::list<std::vector<int>>();
 
 gridObj::gridObj(bool traversible, bool resource):
     isTraversable(traversible), isResource(resource)
 {
+    // Set initial dmg count to 1 (0 could potentially cause problems with dijkstra's path finding algo)
     dmg['W'] = 1;
     dmg['S'] = 1;
     dmg['K'] = 1;
@@ -40,9 +42,9 @@ emptySpace::emptySpace():
 resource::resource(int px, int py):
     gridObj(true, true), posx(px), posy(py)
 {
+    // Increment static unusedResourceCount, save node position in resNodeList
     resource::resNodeList.push_back(std::vector<int>{posy, posx});
     unusedResourceCount += 1;
-    // std::cout << "(unusedResourceCount) Incrementing unusedResourceCount in resource constructor "<< unusedResourceCount << std::endl;
 }
 
 barrier::barrier():
@@ -61,14 +63,15 @@ bool gridObj::checkResource()
 
 void gridObj::addDmg(char key, int val)
 {
+    // Increment potential damage indicator
     this->dmg[key] += val;
 }
 
 void gridObj::addEnemyId(int id)
 {
-    for (auto &&el : this->enemyIds) if (el == id) return;
-    this->enemyIds.push_back(id);
-    this->isTraversable = false;
+    for (auto &&el : this->enemyIds) if (el == id) return; // check id uniqness
+    this->enemyIds.push_back(id); // add enemy id to enemyIds vector
+    this->isTraversable = false; // set traversible flag to false
 }
 
 int gridObj::checkEnemyNr()
@@ -93,21 +96,16 @@ int gridObj::getEnemyId(int i)
 
 void resource::addEnemyId(int id)
 {
-    for (auto &&el : this->enemyIds) if (el == id) return;
-    this->enemyIds.push_back(id);
-    this->isTraversable = false;
-    if (this->enemyIds.size() == 1)
-    {
-        unusedResourceCount -= 1;
-        // std::cout << "(unusedResourceCount) Decrementing unusedResourceCount in addEnemyId " << unusedResourceCount << std::endl;
-    }
-    // else std::cout << "(unusedResourceCount) Not decrementing unusedResourceCount in addEnemyId. Resource already occupied. " << unusedResourceCount << std::endl;
+    for (auto &&el : this->enemyIds) if (el == id) return; // check id uniqness
+    this->enemyIds.push_back(id); // add enemy id to enemyIds vector
+    this->isTraversable = false; // set traversible flag to false
+    if (this->enemyIds.size() == 1) unusedResourceCount -= 1; // reduce unusedResourceCount, workers should not try to use resource nodes occupied by enemies
 }
 
 void gridObj::addWorkerId(int id)
 {
-    for (auto &&el : this->workerIds) if (el == id) return;
-    this->workerIds.push_back(id);
+    for (auto &&el : this->workerIds) if (el == id) return; // check id uniqness
+    this->workerIds.push_back(id); // add worker id to workerIds vector
 }
 
 void gridObj::removeWorkerId(int id)
@@ -117,25 +115,15 @@ void gridObj::removeWorkerId(int id)
 
 void resource::addWorkerId(int id)
 {
-    for (auto &&el : this->workerIds) if (el == id) return;
-    this->workerIds.push_back(id);
-    if (this->isTraversable && this->workerIds.size() == 1)
-    {
-        unusedResourceCount -= 1;
-        // std::cout << "(unusedResourceCount) Decrementing unusedResourceCount in addWorkerId "  << unusedResourceCount << std::endl;
-    }
-    // else std::cout << "(unusedResourceCount) Not decrementing unusedResourceCount in addWorkerId. Resource was already used. " << unusedResourceCount << std::endl;
+    for (auto &&el : this->workerIds) if (el == id) return; // check id uniqness
+    this->workerIds.push_back(id); // add worker id to workerIds vector
+    if (this->isTraversable && this->workerIds.size() == 1) unusedResourceCount -= 1; // reduce unusedResourceCount, workers should try to disperse rather than converge to one node
 }
 
 void resource::removeWorkerId(int id)
 {
     this->workerIds.erase(std::remove(this->workerIds.begin(), this->workerIds.end(), id), this->workerIds.end());
-    if (this->workerIds.size() == 0)
-    {
-        unusedResourceCount += 1;
-        // std::cout << "(unusedResourceCount) Incrementing unusedResourceCount in removeWorkerId " << unusedResourceCount << std::endl;
-    }
-    // else std::cout << "(unusedResourceCount) Not incrementing unusedResourceCount in removeWorkerId. More workers on node. " << unusedResourceCount << std::endl;
+    if (this->workerIds.size() == 0) unusedResourceCount += 1; // if no more workers on resource node, increment unusedResourceCount
 }
 
 std::vector<int>& gridObj::getWorkerId()
@@ -173,16 +161,8 @@ std::string barrier::print()
 emptySpace::~emptySpace(){}
 
 resource::~resource(){
-    if (this->workerIds.size() == 0 && this->enemyIds.size() == 0 && this->isTraversable)
-    {
-        unusedResourceCount -= 1;
-        // std::cout << "(unusedResourceCount) Decrementing unusedResourceCount in destructor " << unusedResourceCount << std::endl;
-    }
-    // else
-    // {
-    //     std::cout << "(unusedResourceCount) Not decrementing unusedResourceCount in destructor, resource was used " << unusedResourceCount << std::endl;
-    // }
-    resNodeList.remove(std::vector<int>{posy, posx});
+    if (this->workerIds.size() == 0 && this->enemyIds.size() == 0 && this->isTraversable) unusedResourceCount -= 1; // if resource was unused, decrement unusedResourceCount on destruction
+    resNodeList.remove(std::vector<int>{posy, posx}); // remove coords from resNodeList
 }
 
 barrier::~barrier(){}

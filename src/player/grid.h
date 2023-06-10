@@ -19,6 +19,8 @@
 #ifndef PLAYER_GRID_H
 #define PLAYER_GRID_H
 
+// Classes for map array
+
 #include "defaults.h"
 
 #include "utils.h"
@@ -54,23 +56,31 @@ public:
 
     virtual std::string print() = 0;
 
+    // Add dmg to dmg map
     void addDmg(char key, int val);
 
-    void addEnemyId(int id);
-    void addWorkerId(int id);
+    // Add enemy/worker ids
+    virtual void addEnemyId(int id);
+    virtual void addWorkerId(int id);
+    // Remove worker id (used when worker moves)
     void removeWorkerId(int id);
 
     // Check if unit can stop on this node
     bool checkTrav();
+    // Check if node contains resources
     bool checkResource();
 
+    // Check number of enemies on node
     int checkEnemyNr();
 
+    // Check potential damage
     int checkDmg(char key);
 
+    // Get ids of enemies standing on the node
     std::vector<int>& getEnemyId();
     int getEnemyId(int i);
 
+    // Get ids of workers standing on the node
     std::vector<int>& getWorkerId();
     int getWorkerId(int i);
 };
@@ -94,6 +104,8 @@ protected:
     static int unusedResourceCount;
     int posx, posy;
 public:
+    // List of resource node coordinates.
+    // Used to direct workers where to go
     static std::list<std::vector<int>> resNodeList;
     
     resource(int px, int py);
@@ -101,6 +113,7 @@ public:
 
     std::string print();
 
+    // Safely access unusedResourceCount
     static int getUnusedResourceCount();
 
     void addEnemyId(int id);

@@ -19,6 +19,8 @@
 #ifndef PLAYER_UNITS_MISC_FWD_H
 #define PLAYER_UNITS_MISC_FWD_H
 
+// Misc functions forward header. Necessary to avoid circular includes.
+
 #include "../defaults.h"
 
 #include "../grid.h"

@@ -20,43 +20,43 @@
 
 bool dijkstra_find_path(int unitId, listUnits &units, const grid &map, int sX, int sY, int tX, int tY, int &resX, int &resY)
 {
-    if (sY < 0 || sY >= int(map.size())) return false;
+    if (sY < 0 || sY >= int(map.size())) return false; // out of bounds guard
     if (sX < 0 || sX >= int(map[0].size())) return false;
     if (tY < 0 || tY >= int(map.size())) return false;
     if (tX < 0 || tX >= int(map[0].size())) return false;
-    std::vector<std::vector<int>> weight(map.size(), std::vector<int>(map[0].size(), 100000000));
-    std::priority_queue<std::vector<int>, std::vector<std::vector<int>>, my_comparator> gridQ;
+    std::vector<std::vector<int>> weight(map.size(), std::vector<int>(map[0].size(), 100000000)); // array of node weights
+    std::priority_queue<std::vector<int>, std::vector<std::vector<int>>, my_comparator> gridQ; // grid queue (priority to closest path)
 
-    std::unordered_map<std::vector<int>, std::vector<int>, VectorHasher> paths;
+    std::unordered_map<std::vector<int>, std::vector<int>, VectorHasher> paths; // output path
 
     // Current Y, current X, weight
-    gridQ.push(std::vector<int>{sY, sX, 0});
-    weight[sY][sX] = 0;
+    gridQ.push(std::vector<int>{sY, sX, 0}); // push current position to queue
+    weight[sY][sX] = 0; // set weight to 0
 
     while(!gridQ.empty())
     {
-        std::vector<int> current = gridQ.top();
-        gridQ.pop();
+        std::vector<int> current = gridQ.top(); // get front of the queue
+        gridQ.pop(); // remove front element
 
         for (auto &&mod : units.id2moveV[unitId])
         {
-            int newYi = current[0] + mod[0], newXi = current[1] + mod[1];
+            int newYi = current[0] + mod[0], newXi = current[1] + mod[1]; // iterate over connected nodes
 
-            if (newYi < 0 || newYi >= int(map.size())) continue;
+            if (newYi < 0 || newYi >= int(map.size())) continue; // out of bounds and traversability check
             if (newXi < 0 || newXi >= int(map[newYi].size())) continue;
             if (!map[newYi][newXi]->checkTrav()) continue;
 
-            int newWeight = current[2] + map[newYi][newXi]->checkDmg(units.id2type[unitId]);
+            int newWeight = current[2] + map[newYi][newXi]->checkDmg(units.id2type[unitId]); // determine node priority using distance and enemy attack range
 
-            if (weight[newYi][newXi] < newWeight) continue;
+            if (weight[newYi][newXi] < newWeight) continue; // if already visited via a shorter path, continue
             
-            weight[newYi][newXi] = newWeight;
+            weight[newYi][newXi] = newWeight; // otherwise determine weight and push connected nodes to queue 
             
             gridQ.push(std::vector<int>{newYi, newXi, newWeight});
 
-            paths[std::vector<int>{newYi, newXi}] = std::vector<int>{current[0], current[1]};
+            paths[std::vector<int>{newYi, newXi}] = std::vector<int>{current[0], current[1]}; // connect new node with previous
 
-            if (newYi == tY && newXi == tX)
+            if (newYi == tY && newXi == tX) // if target was found, traverse paths backwards until current position is found, determine next step and return
             {
                 std::vector<int> pCurr{tY, tX};
                 while (!(pCurr[0] == sY && pCurr[1] == sX))

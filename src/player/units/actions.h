@@ -19,19 +19,26 @@
 #ifndef PLAYER_UNITS_ACTIONS_H
 #define PLAYER_UNITS_ACTIONS_H
 
+// Unit action logic. The main action_unit() functon calls the unit's find_target and determines what to do with it.
+
 #include "../defaults.h"
 
 #include "../path/bfs.h"
 #include "misc.h"
 
+// Macros for coordinate sorting
 #define coord std::pair<int, int>
 #define evade_queue_item std::pair<int, coord>
 #define evade_queue std::priority_queue<evade_queue_item, std::vector<evade_queue_item>, std::greater<evade_queue_item>>
 
+// Performs attack. Returns true if payload received a useful command.
 bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
+// Find nearest position outside of enemy range. Only used by workers. Returns true if payload received a useful command.
 bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
+// Defensive action - if unit wants to move within range of an enemy, this function will redirect to the nearest safe grid. Also ensures units will try to evade deadly damage.
+bool cover(int sId, const grid &map, listUnits &allies, int &stepX, int &stepY);
 
-//Decision making functions
+// Main decision making functions
 bool action_base(std::string &payload, long gold, const listUnits &allies, const listUnits &enemies);
 bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &allies, listUnits &enemies);
 
