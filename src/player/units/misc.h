@@ -39,7 +39,7 @@ struct listUnits
     std::map<int, std::vector<std::vector<int>>> id2attackV;
     // Translate id to permutation vector (utils.h) for movement
     std::map<int, std::vector<std::vector<int>>> id2moveV;
-    // Main list of units (except base)
+    // Main list of units (excluding base)
     std::map<int, std::unique_ptr<Unit>> units;
     // Damage map for each unit (used to decrement enemy endurance after attack has been issued)
     std::map<int, std::map<char, int>> id2dmg;
@@ -53,25 +53,34 @@ struct listUnits
     // Only for list of enemy units, the hitList is sorted by distance to own base, ascending
     std::list<int> hitList;
 
-    // Total number of each unit and all units
+    // Total number of each unit type
     int qWorker = 0, qCatapult = 0, qRam = 0, qPikeman = 0, qArcher = 0;
     int qSwordsman = 0, qKnight = 0, qAll = 0;
 
     // The base
     Base base;
 
-    // Methods to add a base or other unit types. Id uniqness is ensured
+    // Method to add a base. Id uniqness is ensured
     bool addBase(int ident, int end, int px, int py, char q);
 
+    // Method to add units other than base. Id uniqness is ensured
     bool addUnit(char type, int ident, int end, int px, int py);
 
+    // Method to add workers. Id uniqness is ensured
     bool addWorker(int ident, int end, int px, int py);
+    // Method to add catapults. Id uniqness is ensured
     bool addCatapult(int ident, int end, int px, int py);
+    // Method to add ram. Id uniqness is ensured
     bool addRam(int ident, int end, int px, int py);
+    // Method to add pikeman. Id uniqness is ensured
     bool addPikeman(int ident, int end, int px, int py);
+    // Method to add archer. Id uniqness is ensured
     bool addArcher(int ident, int end, int px, int py);
+    // Method to add swordsman. Id uniqness is ensured
     bool addSwordsman(int ident, int end, int px, int py);
+    // Method to add knight. Id uniqness is ensured
     bool addKnight(int ident, int end, int px, int py);
+    // Id uniqness test 
     bool is_unique(int id);
 };
 

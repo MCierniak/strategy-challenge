@@ -92,15 +92,16 @@ Knight::Knight(int ident, int end, int px, int py):
 
 bool listUnits::addBase(int ident, int end, int px, int py, char q)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->id2typeName[ident] = std::string("base");
-    this->base = Base(ident, end, px, py, q);
-    this->id2arange[ident] = 0;
-    this->id2type[ident] = 'B';
-    this->id2speed[ident] = 0;
+    this->id2typeName[ident] = std::string("base"); // add human-readable name
+    this->base = Base(ident, end, px, py, q); // Construct base
+    this->id2arange[ident] = 0; // Base cannot attack, arange = 0
+    this->id2type[ident] = 'B'; // Base type char
+    this->id2speed[ident] = 0; // Base cannot move, speed = 0
+    this->qAll += 1; // Base counts as a unit
 
-    this->id2dmg[ident]['B'] = 0;
+    this->id2dmg[ident]['B'] = 0; // Base cannot attack
     this->id2dmg[ident]['W'] = 0;
     this->id2dmg[ident]['K'] = 0;
     this->id2dmg[ident]['P'] = 0;
@@ -114,16 +115,16 @@ bool listUnits::addBase(int ident, int end, int px, int py, char q)
 
 bool listUnits::addBase(int ident, int end, int px, int py, char q, int qT)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->id2typeName[ident] = std::string("base");
-    this->base = Base(ident, end, px, py, q, qT);
-    this->id2arange[ident] = 0;
-    this->id2type[ident] = 'B';
-    this->id2speed[ident] = 0;
-    this->qAll += 1;
+    this->id2typeName[ident] = std::string("base"); // add human-readable name
+    this->base = Base(ident, end, px, py, q, qT); // Construct base with active build queue
+    this->id2arange[ident] = 0; // Base cannot attack, arange = 0
+    this->id2type[ident] = 'B'; // Base type char
+    this->id2speed[ident] = 0; // Base cannot move, speed = 0
+    this->qAll += 1; // Base counts as a unit
 
-    this->id2dmg[ident]['B'] = 0;
+    this->id2dmg[ident]['B'] = 0; // Base cannot attack
     this->id2dmg[ident]['W'] = 0;
     this->id2dmg[ident]['K'] = 0;
     this->id2dmg[ident]['P'] = 0;
@@ -160,17 +161,17 @@ bool listUnits::removeUnit(int id)
 
 bool listUnits::addWorker(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Worker>(ident, px, py);
-    this->id2typeName[ident] = std::string("worker");
-    this->id2arange[ident] = ATTACK_WORKER;
-    this->id2speed[ident] = SPEED_WORKER;
-    this->id2type[ident] = 'W';
-    this->qWorker += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Worker>(ident, px, py); // create unique_ptr for a Worker object with max endurance
+    this->id2typeName[ident] = std::string("worker"); // add human-readable name
+    this->id2arange[ident] = ATTACK_WORKER; // add attack range value (int)
+    this->id2speed[ident] = SPEED_WORKER; // add speed value (int)
+    this->id2type[ident] = 'W'; // add unit type (char)
+    this->qWorker += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = WORKER2BASE;
+    this->id2dmg[ident]['B'] = WORKER2BASE; // populate damage map
     this->id2dmg[ident]['W'] = WORKER2WORKER;
     this->id2dmg[ident]['K'] = WORKER2KNIGHT;
     this->id2dmg[ident]['P'] = WORKER2PIKEMAN;
@@ -184,17 +185,17 @@ bool listUnits::addWorker(int ident, int px, int py)
 
 bool listUnits::addWorker(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Worker>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("worker");
-    this->id2arange[ident] = ATTACK_WORKER;
-    this->id2speed[ident] = SPEED_WORKER;
-    this->id2type[ident] = 'W';
-    this->qWorker += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Worker>(ident, end, px, py); // create unique_ptr for a Worker object
+    this->id2typeName[ident] = std::string("worker"); // add human-readable name
+    this->id2arange[ident] = ATTACK_WORKER; // add attack range value (int)
+    this->id2speed[ident] = SPEED_WORKER; // add speed value (int)
+    this->id2type[ident] = 'W'; // add unit type (char)
+    this->qWorker += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = WORKER2BASE;
+    this->id2dmg[ident]['B'] = WORKER2BASE; // populate damage map
     this->id2dmg[ident]['W'] = WORKER2WORKER;
     this->id2dmg[ident]['K'] = WORKER2KNIGHT;
     this->id2dmg[ident]['P'] = WORKER2PIKEMAN;
@@ -208,15 +209,15 @@ bool listUnits::addWorker(int ident, int end, int px, int py)
 
 bool listUnits::removeWorker(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qWorker -= 1;
-    this->qAll -= 1;
+    this->qWorker -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 
@@ -225,17 +226,17 @@ bool listUnits::removeWorker(int id)
 
 bool listUnits::addCatapult(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Catapult>(ident, px, py);
-    this->id2typeName[ident] = std::string("catapult");
-    this->id2arange[ident] = ATTACK_CATAPULT;
-    this->id2speed[ident] = SPEED_CATAPULT;
-    this->id2type[ident] = 'C';
-    this->qCatapult += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Catapult>(ident, px, py); // create unique_ptr for a Catapult object with max endurance
+    this->id2typeName[ident] = std::string("catapult"); // add human-readable name
+    this->id2arange[ident] = ATTACK_CATAPULT; // add attack range value (int)
+    this->id2speed[ident] = SPEED_CATAPULT; // add speed value (int)
+    this->id2type[ident] = 'C'; // add unit type (char)
+    this->qCatapult += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = CATAPULT2BASE;
+    this->id2dmg[ident]['B'] = CATAPULT2BASE; // populate damage map
     this->id2dmg[ident]['W'] = CATAPULT2WORKER;
     this->id2dmg[ident]['K'] = CATAPULT2KNIGHT;
     this->id2dmg[ident]['P'] = CATAPULT2PIKEMAN;
@@ -249,17 +250,17 @@ bool listUnits::addCatapult(int ident, int px, int py)
 
 bool listUnits::addCatapult(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Catapult>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("catapult");
-    this->id2arange[ident] = ATTACK_CATAPULT;
-    this->id2speed[ident] = SPEED_CATAPULT;
-    this->id2type[ident] = 'C';
-    this->qCatapult += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Catapult>(ident, end, px, py); // create unique_ptr for a Catapult object
+    this->id2typeName[ident] = std::string("catapult"); // add human-readable name
+    this->id2arange[ident] = ATTACK_CATAPULT; // add attack range value (int)
+    this->id2speed[ident] = SPEED_CATAPULT; // add speed value (int)
+    this->id2type[ident] = 'C'; // add unit type (char)
+    this->qCatapult += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = CATAPULT2BASE;
+    this->id2dmg[ident]['B'] = CATAPULT2BASE; // populate damage map
     this->id2dmg[ident]['W'] = CATAPULT2WORKER;
     this->id2dmg[ident]['K'] = CATAPULT2KNIGHT;
     this->id2dmg[ident]['P'] = CATAPULT2PIKEMAN;
@@ -273,15 +274,15 @@ bool listUnits::addCatapult(int ident, int end, int px, int py)
 
 bool listUnits::removeCatapult(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qCatapult -= 1;
-    this->qAll -= 1;
+    this->qCatapult -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 
@@ -290,17 +291,17 @@ bool listUnits::removeCatapult(int id)
 
 bool listUnits::addRam(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Ram>(ident, px, py);
-    this->id2typeName[ident] = std::string("ram");
-    this->id2arange[ident] = ATTACK_RAM;
-    this->id2speed[ident] = SPEED_RAM;
-    this->id2type[ident] = 'R';
-    this->qRam += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Ram>(ident, px, py); // create unique_ptr for a ram object with max endurance
+    this->id2typeName[ident] = std::string("ram"); // add human-readable name
+    this->id2arange[ident] = ATTACK_RAM; // add attack range value (int)
+    this->id2speed[ident] = SPEED_RAM; // add speed value (int)
+    this->id2type[ident] = 'R'; // add unit type (char)
+    this->qRam += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = RAM2BASE;
+    this->id2dmg[ident]['B'] = RAM2BASE; // populate damage map
     this->id2dmg[ident]['W'] = RAM2WORKER;
     this->id2dmg[ident]['K'] = RAM2KNIGHT;
     this->id2dmg[ident]['P'] = RAM2PIKEMAN;
@@ -314,17 +315,17 @@ bool listUnits::addRam(int ident, int px, int py)
 
 bool listUnits::addRam(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
     
-    this->units[ident] = std::make_unique<Ram>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("ram");
-    this->id2arange[ident] = ATTACK_RAM;
-    this->id2speed[ident] = SPEED_RAM;
-    this->id2type[ident] = 'R';
-    this->qRam += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Ram>(ident, end, px, py); // create unique_ptr for a ram object
+    this->id2typeName[ident] = std::string("ram"); // add human-readable name
+    this->id2arange[ident] = ATTACK_RAM; // add attack range value (int)
+    this->id2speed[ident] = SPEED_RAM; // add speed value (int)
+    this->id2type[ident] = 'R'; // add unit type (char)
+    this->qRam += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = RAM2BASE;
+    this->id2dmg[ident]['B'] = RAM2BASE; // populate damage map
     this->id2dmg[ident]['W'] = RAM2WORKER;
     this->id2dmg[ident]['K'] = RAM2KNIGHT;
     this->id2dmg[ident]['P'] = RAM2PIKEMAN;
@@ -338,15 +339,15 @@ bool listUnits::addRam(int ident, int end, int px, int py)
 
 bool listUnits::removeRam(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qRam -= 1;
-    this->qAll -= 1;
+    this->qRam -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 
@@ -355,17 +356,17 @@ bool listUnits::removeRam(int id)
 
 bool listUnits::addPikeman(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Pikeman>(ident, px, py);
-    this->id2typeName[ident] = std::string("pikeman");
-    this->id2arange[ident] = ATTACK_PIKEMAN;
-    this->id2speed[ident] = SPEED_PIKEMAN;
-    this->id2type[ident] = 'P';
-    this->qPikeman += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Pikeman>(ident, px, py); // create unique_ptr for a pikeman object with max endurance
+    this->id2typeName[ident] = std::string("pikeman"); // add human-readable name
+    this->id2arange[ident] = ATTACK_PIKEMAN; // add attack range value (int)
+    this->id2speed[ident] = SPEED_PIKEMAN; // add speed value (int)
+    this->id2type[ident] = 'P'; // add unit type (char)
+    this->qPikeman += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = PIKEMAN2BASE;
+    this->id2dmg[ident]['B'] = PIKEMAN2BASE; // populate damage map
     this->id2dmg[ident]['W'] = PIKEMAN2WORKER;
     this->id2dmg[ident]['K'] = PIKEMAN2KNIGHT;
     this->id2dmg[ident]['P'] = PIKEMAN2PIKEMAN;
@@ -379,17 +380,17 @@ bool listUnits::addPikeman(int ident, int px, int py)
 
 bool listUnits::addPikeman(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Pikeman>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("pikeman");
-    this->id2arange[ident] = ATTACK_PIKEMAN;
-    this->id2speed[ident] = SPEED_PIKEMAN;
-    this->id2type[ident] = 'P';
-    this->qPikeman += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Pikeman>(ident, end, px, py); // create unique_ptr for a pikeman object
+    this->id2typeName[ident] = std::string("pikeman"); // add human-readable name
+    this->id2arange[ident] = ATTACK_PIKEMAN; // add attack range value (int)
+    this->id2speed[ident] = SPEED_PIKEMAN; // add speed value (int)
+    this->id2type[ident] = 'P'; // add unit type (char)
+    this->qPikeman += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = PIKEMAN2BASE;
+    this->id2dmg[ident]['B'] = PIKEMAN2BASE; // populate damage map
     this->id2dmg[ident]['W'] = PIKEMAN2WORKER;
     this->id2dmg[ident]['K'] = PIKEMAN2KNIGHT;
     this->id2dmg[ident]['P'] = PIKEMAN2PIKEMAN;
@@ -403,15 +404,15 @@ bool listUnits::addPikeman(int ident, int end, int px, int py)
 
 bool listUnits::removePikeman(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qPikeman -= 1;
-    this->qAll -= 1;
+    this->qPikeman -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 
@@ -420,17 +421,17 @@ bool listUnits::removePikeman(int id)
 
 bool listUnits::addArcher(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Archer>(ident, px, py);
-    this->id2typeName[ident] = std::string("archer");
-    this->id2arange[ident] = ATTACK_ARCHER;
-    this->id2speed[ident] = SPEED_ARCHER;
-    this->id2type[ident] = 'A';
-    this->qArcher += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Archer>(ident, px, py); // create unique_ptr for an archer object with max endurance
+    this->id2typeName[ident] = std::string("archer"); // add human-readable name
+    this->id2arange[ident] = ATTACK_ARCHER; // add attack range value (int)
+    this->id2speed[ident] = SPEED_ARCHER; // add speed value (int)
+    this->id2type[ident] = 'A'; // add unit type (char)
+    this->qArcher += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = ARCHER2BASE;
+    this->id2dmg[ident]['B'] = ARCHER2BASE; // populate damage map
     this->id2dmg[ident]['W'] = ARCHER2WORKER;
     this->id2dmg[ident]['K'] = ARCHER2KNIGHT;
     this->id2dmg[ident]['P'] = ARCHER2PIKEMAN;
@@ -444,17 +445,17 @@ bool listUnits::addArcher(int ident, int px, int py)
 
 bool listUnits::addArcher(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Archer>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("archer");
-    this->id2arange[ident] = ATTACK_ARCHER;
-    this->id2speed[ident] = SPEED_ARCHER;
-    this->id2type[ident] = 'A';
-    this->qArcher += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Archer>(ident, end, px, py); // create unique_ptr for an archer object
+    this->id2typeName[ident] = std::string("archer"); // add human-readable name
+    this->id2arange[ident] = ATTACK_ARCHER; // add attack range value (int)
+    this->id2speed[ident] = SPEED_ARCHER; // add speed value (int)
+    this->id2type[ident] = 'A'; // add unit type (char)
+    this->qArcher += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = ARCHER2BASE;
+    this->id2dmg[ident]['B'] = ARCHER2BASE; // populate damage map
     this->id2dmg[ident]['W'] = ARCHER2WORKER;
     this->id2dmg[ident]['K'] = ARCHER2KNIGHT;
     this->id2dmg[ident]['P'] = ARCHER2PIKEMAN;
@@ -468,15 +469,15 @@ bool listUnits::addArcher(int ident, int end, int px, int py)
 
 bool listUnits::removeArcher(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qArcher -= 1;
-    this->qAll -= 1;
+    this->qArcher -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 
@@ -485,17 +486,17 @@ bool listUnits::removeArcher(int id)
 
 bool listUnits::addSwordsman(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Swordsman>(ident, px, py);
-    this->id2typeName[ident] = std::string("swordsman");
-    this->id2arange[ident] = ATTACK_SWORDSMAN;
-    this->id2speed[ident] = SPEED_SWORDSMAN;
-    this->id2type[ident] = 'S';
-    this->qSwordsman += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Swordsman>(ident, px, py); // create unique_ptr for a swordsman object with max endurance
+    this->id2typeName[ident] = std::string("swordsman"); // add human-readable name
+    this->id2arange[ident] = ATTACK_SWORDSMAN; // add attack range value (int)
+    this->id2speed[ident] = SPEED_SWORDSMAN; // add speed value (int)
+    this->id2type[ident] = 'S'; // add unit type (char)
+    this->qSwordsman += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = SWORDSMAN2BASE;
+    this->id2dmg[ident]['B'] = SWORDSMAN2BASE; // populate damage map
     this->id2dmg[ident]['W'] = SWORDSMAN2WORKER;
     this->id2dmg[ident]['K'] = SWORDSMAN2KNIGHT;
     this->id2dmg[ident]['P'] = SWORDSMAN2PIKEMAN;
@@ -509,17 +510,17 @@ bool listUnits::addSwordsman(int ident, int px, int py)
 
 bool listUnits::addSwordsman(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Swordsman>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("swordsman");
-    this->id2arange[ident] = ATTACK_SWORDSMAN;
-    this->id2speed[ident] = SPEED_SWORDSMAN;
-    this->id2type[ident] = 'S';
-    this->qSwordsman += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Swordsman>(ident, end, px, py); // create unique_ptr for a swordsman object
+    this->id2typeName[ident] = std::string("swordsman"); // add human-readable name
+    this->id2arange[ident] = ATTACK_SWORDSMAN; // add attack range value (int)
+    this->id2speed[ident] = SPEED_SWORDSMAN; // add speed value (int)
+    this->id2type[ident] = 'S'; // add unit type (char)
+    this->qSwordsman += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = SWORDSMAN2BASE;
+    this->id2dmg[ident]['B'] = SWORDSMAN2BASE; // populate damage map
     this->id2dmg[ident]['W'] = SWORDSMAN2WORKER;
     this->id2dmg[ident]['K'] = SWORDSMAN2KNIGHT;
     this->id2dmg[ident]['P'] = SWORDSMAN2PIKEMAN;
@@ -533,15 +534,15 @@ bool listUnits::addSwordsman(int ident, int end, int px, int py)
 
 bool listUnits::removeSwordsman(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qSwordsman -= 1;
-    this->qAll -= 1;
+    this->qSwordsman -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 
@@ -550,17 +551,17 @@ bool listUnits::removeSwordsman(int id)
 
 bool listUnits::addKnight(int ident, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Knight>(ident, px, py);
-    this->id2typeName[ident] = std::string("knight");
-    this->id2arange[ident] = ATTACK_KNIGHT;
-    this->id2speed[ident] = SPEED_KNIGHT;
-    this->id2type[ident] = 'K';
-    this->qKnight += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Knight>(ident, px, py); // create unique_ptr for a knight object with max endurance
+    this->id2typeName[ident] = std::string("knight"); // add human-readable name
+    this->id2arange[ident] = ATTACK_KNIGHT; // add attack range value (int)
+    this->id2speed[ident] = SPEED_KNIGHT; // add speed value (int)
+    this->id2type[ident] = 'K'; // add unit type (char)
+    this->qKnight += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = KNIGHT2BASE;
+    this->id2dmg[ident]['B'] = KNIGHT2BASE; // populate damage map
     this->id2dmg[ident]['W'] = KNIGHT2WORKER;
     this->id2dmg[ident]['K'] = KNIGHT2KNIGHT;
     this->id2dmg[ident]['P'] = KNIGHT2PIKEMAN;
@@ -574,17 +575,17 @@ bool listUnits::addKnight(int ident, int px, int py)
 
 bool listUnits::addKnight(int ident, int end, int px, int py)
 {
-    if (!this->is_unique(ident)) return false;
+    if (!this->is_unique(ident)) return false; // id uniqness check
 
-    this->units[ident] = std::make_unique<Knight>(ident, end, px, py);
-    this->id2typeName[ident] = std::string("knight");
-    this->id2arange[ident] = ATTACK_KNIGHT;
-    this->id2speed[ident] = SPEED_KNIGHT;
-    this->id2type[ident] = 'K';
-    this->qKnight += 1;
-    this->qAll += 1;
+    this->units[ident] = std::make_unique<Knight>(ident, end, px, py); // create unique_ptr for a knight object
+    this->id2typeName[ident] = std::string("knight"); // add human-readable name
+    this->id2arange[ident] = ATTACK_KNIGHT; // add attack range value (int)
+    this->id2speed[ident] = SPEED_KNIGHT; // add speed value (int)
+    this->id2type[ident] = 'K'; // add unit type (char)
+    this->qKnight += 1; // increment unit count
+    this->qAll += 1; // increment total unit count
 
-    this->id2dmg[ident]['B'] = KNIGHT2BASE;
+    this->id2dmg[ident]['B'] = KNIGHT2BASE; // populate damage map
     this->id2dmg[ident]['W'] = KNIGHT2WORKER;
     this->id2dmg[ident]['K'] = KNIGHT2KNIGHT;
     this->id2dmg[ident]['P'] = KNIGHT2PIKEMAN;
@@ -598,15 +599,15 @@ bool listUnits::addKnight(int ident, int end, int px, int py)
 
 bool listUnits::removeKnight(int id)
 {
-    if (this->is_unique(id)) return false;
+    if (this->is_unique(id)) return false; // check if id exists
 
-    this->units.erase(id);
+    this->units.erase(id); // erase all map elements with this id key
     this->id2typeName.erase(id);
     this->id2arange.erase(id);
     this->id2speed.erase(id);
     this->id2type.erase(id);
-    this->qKnight -= 1;
-    this->qAll -= 1;
+    this->qKnight -= 1; // decrement unit count
+    this->qAll -= 1; // decrement total unit count
 
     this->id2dmg.erase(id);
 

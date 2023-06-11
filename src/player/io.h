@@ -19,7 +19,7 @@
 #ifndef PLAYER_IO_H
 #define PLAYER_IO_H
 
-// Functions responsible for parsin input and output files
+// Functions responsible for parsing input and output files
 
 #include "defaults.h"
 

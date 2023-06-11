@@ -139,14 +139,16 @@ public:
     Unit(int ident, int end, int px, int py);
     virtual ~Unit() = 0;
 
-    // Function to set trgtX, trgtY => rid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     virtual bool find_target(const grid &map, listUnits &allies, listUnits &enemies) = 0;
 };
 
 class Base : public Unit
 {
 public:
+    // Current construction
     char queue;
+    // Init flag, set to false if default constructor used
     bool init;
 
     // Default constructor needed for listUnits struct initialziation
@@ -157,6 +159,7 @@ public:
     // Guard against using base constructed with a default constructor
     bool isInit();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -166,6 +169,7 @@ public:
     Worker(int ident, int end, int px, int py);
     ~Worker();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -175,6 +179,7 @@ public:
     Swordsman(int ident, int end, int px, int py);
     ~Swordsman();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -184,6 +189,7 @@ public:
     Archer(int ident, int end, int px, int py);
     ~Archer();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -193,6 +199,7 @@ public:
     Pikeman(int ident, int end, int px, int py);
     ~Pikeman();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -202,6 +209,7 @@ public:
     Knight(int ident, int end, int px, int py);
     ~Knight();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -211,6 +219,7 @@ public:
     Ram(int ident, int end, int px, int py);
     ~Ram();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 
@@ -220,6 +229,7 @@ public:
     Catapult(int ident, int end, int px, int py);
     ~Catapult();
 
+    // Function to set trgtX, trgtY => grid coords within range of the chosen enemy / coords of the chosen resource node in case of workers
     bool find_target(const grid &map, listUnits &allies, listUnits &enemies);
 };
 

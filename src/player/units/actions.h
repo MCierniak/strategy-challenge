@@ -35,7 +35,7 @@
 bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, listUnits &enemies);
 // Find nearest position outside of enemy range. Only used by workers. Returns true if payload received a useful command.
 bool evade(std::string &payload, int sId, const grid &map, listUnits &allies);
-// Defensive action - if unit wants to move within range of an enemy, this function will redirect to the nearest safe grid. Also ensures units will try to evade deadly damage.
+// Defensive action - attempt to move towards an advantageous position.
 bool cover(int sId, const grid &map, listUnits &allies, int &stepX, int &stepY);
 
 // Main decision making functions

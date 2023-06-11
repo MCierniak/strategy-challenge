@@ -134,7 +134,9 @@
 class Unit
 {
 public:
+    // Unit id and hp
     int id, endurance;
+    // Unit position
     int posx, posy;
     
     Unit(int ident, int end, int px, int py);
@@ -144,9 +146,12 @@ public:
 class Base : public Unit
 {
 public:
+    // Current construction
     char queue;
+    // Remaining construction time
     int qTime = 0;
 
+    // Default constructor needed for listUnits struct initialziation
     Base();
     Base(int ident, int end, int px, int py, char q);
     Base(int ident, int end, int px, int py, char q, int qT);
@@ -156,7 +161,9 @@ public:
 class Worker : public Unit
 {
 public:
+    // Contructor for new units
     Worker(int ident, int px, int py);
+    // Contructor for existing units
     Worker(int ident, int end, int px, int py);
     ~Worker();
 };
@@ -164,7 +171,9 @@ public:
 class Catapult : public Unit
 {
 public:
+    // Contructor for new units
     Catapult(int ident, int px, int py);
+    // Contructor for existing units
     Catapult(int ident, int end, int px, int py);
     ~Catapult();
 };
@@ -172,7 +181,9 @@ public:
 class Ram : public Unit
 {
 public:
+    // Contructor for new units
     Ram(int ident, int px, int py);
+    // Contructor for existing units
     Ram(int ident, int end, int px, int py);
     ~Ram();
 };
@@ -180,7 +191,9 @@ public:
 class Pikeman : public Unit
 {
 public:
+    // Contructor for new units
     Pikeman(int ident, int px, int py);
+    // Contructor for existing units
     Pikeman(int ident, int end, int px, int py);
     ~Pikeman();
 };
@@ -188,7 +201,9 @@ public:
 class Archer : public Unit
 {
 public:
+    // Contructor for new units
     Archer(int ident, int px, int py);
+    // Contructor for existing units
     Archer(int ident, int end, int px, int py);
     ~Archer();
 };
@@ -196,7 +211,9 @@ public:
 class Swordsman : public Unit
 {
 public:
+    // Contructor for new units
     Swordsman(int ident, int px, int py);
+    // Contructor for existing units
     Swordsman(int ident, int end, int px, int py);
     ~Swordsman();
 };
@@ -204,64 +221,93 @@ public:
 class Knight : public Unit
 {
 public:
+    // Contructor for new units
     Knight(int ident, int px, int py);
+    // Contructor for existing units
     Knight(int ident, int end, int px, int py);
     ~Knight();
 };
 
+// List of player units
 struct listUnits
 {
+    // Main list of units (excluding base)
     std::map<int, std::unique_ptr<Unit>> units;
+    // Damage map for each unit (used to decrement enemy endurance after attack has been issued)
     std::map<int, std::map<char, int>> id2dmg;
+    // Human-readable version of id2type
     std::map<int, std::string> id2typeName;
+    // Translate id to attack range
     std::map<int, int> id2arange;
+    // Translate id to unit type
     std::map<int, char> id2type;
+    // Translate id to unit speed
     std::map<int, int> id2speed;
 
+    // Leftover from player script. Not used here
     hitListType hitList;
 
+    // Total number of each unit type
     int qWorker = 0, qCatapult = 0, qRam = 0, qPikeman = 0, qArcher = 0;
     int qSwordsman = 0, qKnight = 0, qAll = 0;
 
+    // The base
     Base base;
 
+    // Method to add a base. Id uniqness is ensured
     bool addBase(int ident, int end, int px, int py, char q);
     bool addBase(int ident, int end, int px, int py, char q, int qT);
 
+    // Method to remove unit on death
     bool removeUnit(int id);
 
+    // Method to add workers. Id uniqness is ensured
     bool addWorker(int ident, int px, int py);
     bool addWorker(int ident, int end, int px, int py);
+    // Method to remove worker on death
     bool removeWorker(int id);
 
+    // Method to add catapults. Id uniqness is ensured
     bool addCatapult(int ident, int px, int py);
     bool addCatapult(int ident, int end, int px, int py);
+    // Method to remove catapult on death
     bool removeCatapult(int id);
 
+    // Method to add ram. Id uniqness is ensured
     bool addRam(int ident, int px, int py);
     bool addRam(int ident, int end, int px, int py);
+    // Method to remove ram on death
     bool removeRam(int id);
 
+    // Method to add pikeman. Id uniqness is ensured
     bool addPikeman(int ident, int px, int py);
     bool addPikeman(int ident, int end, int px, int py);
+    // Method to remove pikeman on death
     bool removePikeman(int id);
 
+    // Method to add archer. Id uniqness is ensured
     bool addArcher(int ident, int px, int py);
     bool addArcher(int ident, int end, int px, int py);
+    // Method to remove archer on death
     bool removeArcher(int id);
 
+    // Method to add swordsman. Id uniqness is ensured
     bool addSwordsman(int ident, int px, int py);
     bool addSwordsman(int ident, int end, int px, int py);
+    // Method to remove swordsman on death
     bool removeSwordsman(int id);
 
+    // Method to add knight. Id uniqness is ensured
     bool addKnight(int ident, int px, int py);
     bool addKnight(int ident, int end, int px, int py);
+    // Method to remove knight on death
     bool removeKnight(int id);
 
+    // Id uniqness test 
     bool is_unique(int id);
 };
 
-//Misc
+// Distance between First and Second
 int Dist(int xFirst, int yFirst, int xSecond, int ySecond);
 
 #endif

@@ -27,11 +27,17 @@
 
 struct listUnits;
 
+// Specialized find_target() function for swordsmen
 bool find_target_swordsman(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+// Specialized find_target() function for archers
 bool find_target_archer(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+// Specialized find_target() function for pikemen
 bool find_target_pikeman(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+// Specialized find_target() function for knights
 bool find_target_knight(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+// Specialized find_target() function for rams
 bool find_target_ram(int sId, const grid &map, listUnits &allies, listUnits &enemies);
+// Specialized find_target() function for catapults
 bool find_target_catapult(int sId, const grid &map, listUnits &allies, listUnits &enemies);
 
 #endif

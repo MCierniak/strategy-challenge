@@ -134,7 +134,7 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
             std::string eol_guard;
 
             ss >> alliegence >> type;
-            if (!ss)
+            if (!ss) // if not enought values to unpack, return
             {
                 std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                 return false;
@@ -146,12 +146,12 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
             case 'B': // Base unit, assume line has extra queue param
                 int bqTime;
                 ss >> id >> posx >> posy >> endurance >> bQueue >> bqTime;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -159,23 +159,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addBase(id, endurance, posx, posy, bQueue, bqTime))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addBase(id, endurance, posx, posy, bQueue, bqTime))) return false;
                 }
                 continue;
             case 'K': // Knight unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -183,23 +185,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addKnight(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addKnight(id, endurance, posx, posy))) return false;
                 }
                 continue;
             case 'S': // Swordsman unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -207,23 +211,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addSwordsman(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addSwordsman(id, endurance, posx, posy))) return false;
                 }
                 continue;
             case 'A': // Archer unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -231,23 +237,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addArcher(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addArcher(id, endurance, posx, posy))) return false;
                 }
                 continue;
             case 'P': // Pikeman unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -255,23 +263,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addPikeman(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addPikeman(id, endurance, posx, posy))) return false;
                 }
                 continue;
             case 'C': // Catapult unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -279,23 +289,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addCatapult(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addCatapult(id, endurance, posx, posy))) return false;
                 }
                 continue;
             case 'R': // Ram unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -303,23 +315,25 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addRam(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addRam(id, endurance, posx, posy))) return false;
                 }
                 continue;
             case 'W': // Worker unit
                 ss >> id >> posx >> posy >> endurance;
-                if (!ss)
+                if (!ss) // if not enought values to unpack, return
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
                     return false;
                 }
-                ss >> eol_guard;
+                ss >> eol_guard; // test if more inputs remain on line
                 if (ss)
                 {
                     std::cerr << "(Mediator) Error in parsing status data!" << std::endl;
@@ -327,11 +341,13 @@ bool get_status(const std::string &status_path, int &max_index, grid &map_p1, gr
                 }
                 if (alliegence == "P1")
                 {
+                    // If unit belongs to p1, add to p1 unitlists and set p2 map flags
                     map_p2[posy][posx]->setTrav(false);
                     if(!(units_p1.addWorker(id, endurance, posx, posy))) return false;
                 }
                 else
                 {
+                    // ... and vice versa
                     map_p1[posy][posx]->setTrav(false);
                     if(!(units_p2.addWorker(id, endurance, posx, posy))) return false;
                 }
@@ -370,7 +386,7 @@ bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits
         int id;
         char action;
         ss >> id >> action;
-        if(!ss)
+        if(!ss) // if not enought values to unpack, disqualify player
         {
             std::cout << "(Mediator) Error in orders! Incomplete order!" << std::endl;
             playerWins = false;
@@ -379,6 +395,7 @@ bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits
         }
         if (!playerUnits.is_unique(id))
         {
+            // Interpret orders
             if (playerUnits.id2type[id] == 'B')
             {
                 if(!process_base_orders(id, action, ss, gold, playerUnits, playerWins, opponentWins)) return true;
@@ -389,7 +406,7 @@ bool get_orders(const std::string &orders_path, grid &map, long &gold, listUnits
                 continue;
             }
         }
-        else
+        else // if error in orders, disqualify player
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " does not exist!" << std::endl;
             playerWins = false;
@@ -479,6 +496,7 @@ bool start_game()
         // Set initial resource distribution
         long gold_1 = INITIAL_GOLD_1, gold_2 = INITIAL_GOLD_2;
 
+        // Output status files
         file.open(STATUS_P1_LOC);
         if (file.fail())
         {
@@ -525,7 +543,7 @@ bool start_game()
 
 bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win, bool &draw)
 {
-    // Load raw map into memory. Ignore units.
+    // Load raw map into memory. Ignore units. Separate maps for each player to specify respective traversal flags.
     int X = 0, Y = 0;
     grid map_p1, map_p2;
     if (!get_map(MAP_LOC, map_p1, X, Y)) return false;
@@ -583,7 +601,7 @@ bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win, bool &draw)
         if (player1Win || player2Win) return true;
     }
 
-    if (turn > 2000)
+    if (turn > 2000) // If turn limit is exceeded, declare winner or draw
     {
         draw = units_p1.qAll == units_p2.qAll;
         player1Win = units_p1.qAll > units_p2.qAll;
@@ -639,7 +657,7 @@ bool process_base_orders(int id, char task, std::stringstream &order, long &gold
     std::string eol_guard;
     char target;
     order >> target;
-    if (!order)
+    if (!order) // Check if order has valid format
     {
         std::cout << "(Mediator) Error in orders! Incomplete order!" << std::endl;
         playerWins = false;
@@ -684,6 +702,7 @@ bool process_base_orders(int id, char task, std::stringstream &order, long &gold
             return false;
         }
 
+        // If all tests passed, update base build status
         units.base.queue = target;
         units.base.qTime = BUILD_TIME(target);
 
@@ -708,7 +727,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
         int tX, tY;
         std::string eol_guard;
         order >> tX >> tY;
-        if (!order)
+        if (!order) // Check if order has valid format
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
@@ -724,14 +743,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
             return false;
         }
 
-        if (order)
-        {
-            std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
-            playerWins = false;
-            opponentWins = true;
-            return false;
-        }
-
+        // Check if order does not exceed map bounds
         if (tX >= int(map[0].size()) || tX < 0 || tY >= int(map.size()) || tY < 0)
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
@@ -740,6 +752,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
             return false;
         }
 
+        // Check if order does not direct to a barrier node
         if (!map[tY][tX]->checkTrav())
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " attempts an illegal move!" << std::endl;
@@ -753,6 +766,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
         std::cout << " to " << tX << " " << tY << " (distance ";
         std::cout << Dist(units.units[id]->posx, units.units[id]->posy, tX, tY) << ")" << std::endl;
 
+        // Check if order is possible within the units speed limit
         if (Dist(units.units[id]->posx, units.units[id]->posy, tX, tY) > units.id2speed[id])
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " cannot move that far!" << std::endl;
@@ -761,6 +775,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
             return false;
         }
 
+        // Update unit status
         units.units[id]->posx = tX;
         units.units[id]->posy = tY;
 
@@ -772,7 +787,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
         int tId;
         std::string eol_guard;
         order >> tId;
-        if (!order)
+        if (!order) // Check if order has valid format
         {
             std::cout << "(Mediator) Error in orders! Unit with id " << id << " received invalid command!" << std::endl;
             playerWins = false;
@@ -795,7 +810,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
         else std::cout << Dist(units.units[id]->posx, units.units[id]->posy, enemies.units[tId]->posx, enemies.units[tId]->posy) <<")" << std::endl;
 
         bool condition;
-        if (enemies.id2type[tId] == 'B')
+        if (enemies.id2type[tId] == 'B') // Seg Fault guard
         {
             condition = Dist
             (
@@ -811,7 +826,7 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
                 enemies.units[tId]->posx, enemies.units[tId]->posy
             ) <= units.id2arange[id];
         }
-        if(condition)
+        if(condition) // Check if target within attack range, update endurance if yes
         {
             if (enemies.id2type[tId] == 'B') enemies.base.endurance -= units.id2dmg[id]['B'];
             else enemies.units[tId]->endurance -= units.id2dmg[id][enemies.id2type[tId]];
@@ -836,14 +851,14 @@ bool process_unit_orders(int id, char task, std::stringstream &order, const grid
 
 bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins)
 {
-    if (units.base.endurance <= 0)
+    if (units.base.endurance <= 0) // If base endurance <= 0 declare winner
     {
         playerWins = true;
         opponentWins = false;
         return true;
     }
     std::vector<int> deadBox;
-    for (auto &[key, val] : units.units)
+    for (auto &[key, val] : units.units) // gather all dead units
     {
         if (val->endurance <= 0)
         {
@@ -851,7 +866,7 @@ bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins)
             deadBox.push_back(key);
         }
     }
-    for (auto &&id : deadBox)
+    for (auto &&id : deadBox) // remove all dead units
     {
         units.removeUnit(id);
     }
@@ -860,6 +875,7 @@ bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins)
 
 bool add_new_unit(int &max_index, listUnits &units)
 {
+    // add a unit if base qTime == 0
     if (units.base.queue != '0' && units.base.qTime == 0)
     {
         max_index++;
@@ -911,6 +927,7 @@ bool add_new_unit(int &max_index, listUnits &units)
 
 std::string unit_output_player(const std::string &name, listUnits &units)
 {
+    // string buffer for player status files
     std::stringstream ss;
     ss << name << " B " << units.base.id << " " << units.base.posx << " " << units.base.posy << " " << units.base.endurance << " " << units.base.queue << '\n';
     for (auto &[id, unit] : units.units)
@@ -922,6 +939,7 @@ std::string unit_output_player(const std::string &name, listUnits &units)
 
 std::string unit_output_mediator(const std::string &name, listUnits &units)
 {
+    // string buffer for mediator status file
     std::stringstream ss;
     ss << name << " B " << units.base.id << " " << units.base.posx << " " << units.base.posy;
     ss << " " << units.base.endurance << " " << units.base.queue << " " << units.base.qTime << '\n';
@@ -934,6 +952,10 @@ std::string unit_output_mediator(const std::string &name, listUnits &units)
 
 void write_hr_map_status(const grid &map, listUnits &units_p1, listUnits &units_p2)
 {
+    // print map using the format (x,y,[e/b/r],[units],p1,p2)
+    // where x,y are coordinates, e - empty, b - barrier, r - resource
+    // units are named A1, K1,... for player 1, and A2, K2,... for player 2
+    // p1 and p2 is the total number of units of each player on the node
     std::ofstream file("data/mapaHR.txt");
     for (int i = 0; i < int(map.size()); i++)
     {

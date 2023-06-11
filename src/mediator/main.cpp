@@ -25,6 +25,7 @@
 #define MILLISECONDS std::chrono::milliseconds
 #define SECONDS std::chrono::seconds
 
+// Script execution function
 std::string exec(const char* cmd);
 
 int main(int argc, char **argv)
@@ -44,22 +45,24 @@ int main(int argc, char **argv)
         if (file_exists(MEDIATOR_LOC))
         {
 
+            // Load mediator data
             std::ifstream file(MEDIATOR_LOC);
             std::string temp;
-            getline(file, temp);
+            getline(file, temp); // First line - previous turn count
             int turn = stoi(temp);
             file.close();
 
             // Call player 1 script
             if (++turn; turn % 2 == 1)
             {
+                // Prepare player script call
                 std::cout << "(Mediator) Turn " << turn << ". Running player 1 script." << std::endl;
                 if(timeout == 5) ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC;
                 else ss << "timeout " << timeout << " " << P1_SCRIPT << " " << MAP_LOC << " " << STATUS_P1_LOC << " " << ORDERS_P1_LOC << " " << timeout;
                 
                 #ifndef DEBUG_TRUE // release call
                 std::string ret = exec(ss.str().c_str());
-                #else // debug call 
+                #else // debug call - will not respect timeout, but will output execution time to stdout
                 std::string ret;
                 auto start = CURRENT_TIME;
                 system(ss.str().c_str());
@@ -67,6 +70,7 @@ int main(int argc, char **argv)
                 std::cout << "(Mediator) Elapsed time " << duration << " ms" << std::endl; 
                 #endif
 
+                // if script timed out, ret will not be empty
                 if (!(ret == std::string()))
                 {
                     std::cout << "(Mediator) Player 1 timed out!" << std::endl;
@@ -79,13 +83,14 @@ int main(int argc, char **argv)
             // Call player 2 script
             else
             {
+                // Prepare player script call
                 std::cout << "(Mediator) Turn " << turn << ". Running player 2 script." << std::endl;
                 if(timeout == 5) ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC;
                 else ss << "timeout " << timeout << " " << P2_SCRIPT << " " << MAP_LOC << " " << STATUS_P2_LOC << " " << ORDERS_P2_LOC << " " << timeout;
                 
                 #ifndef DEBUG_TRUE // release call
                 std::string ret = exec(ss.str().c_str());
-                #else // debug call 
+                #else // debug call - will not respect timeout, but will output execution time to stdout
                 std::string ret;
                 auto start = CURRENT_TIME;
                 system(ss.str().c_str());
@@ -93,6 +98,7 @@ int main(int argc, char **argv)
                 std::cout << "(Mediator) Elapsed time " << duration << " ms" << std::endl; 
                 #endif
 
+                // if script timed out, ret will not be empty
                 if (!(ret == std::string()))
                 {
                     std::cout << "(Mediator) Player 2 timed out!" << std::endl;
@@ -145,7 +151,7 @@ int main(int argc, char **argv)
             
             #ifndef DEBUG_TRUE // release call
             std::string ret = exec(ss.str().c_str());
-            #else // debug call
+            #else // debug call - will not respect timeout, but will output execution time to stdout
             std::string ret;
             auto start = CURRENT_TIME;
             system(ss.str().c_str());
@@ -153,6 +159,7 @@ int main(int argc, char **argv)
             std::cout << "(Mediator) Elapsed time " << duration << " ms" << std::endl; 
             #endif
             
+            // if script timed out, ret will not be empty
             if (!(ret == std::string()))
             {
                 std::cout << "(Mediator) Player 1 timed out!" << std::endl;
@@ -161,6 +168,7 @@ int main(int argc, char **argv)
             }
             else
             {
+                // Prepare next turn states.
                 std::cout << "(Mediator) Player 1 submitted orders." << std::endl;
                 bool player1Win = false, player2Win = false, draw = false;
                 if(!prep_next_turn(turn, player1Win, player2Win, draw))
@@ -188,6 +196,7 @@ int main(int argc, char **argv)
         }
     #else
         #include "tests.h"
+        // Perform all tests
         test_remove_dead_units();
         test_process_unit_orders();
     #endif

@@ -20,7 +20,7 @@
 
 void test_remove_dead_units()
 {
-    // Test the behavior of listUnits::remove methods
+    // Test the behavior of remove_dead_units() function
     bool pWins, oWins;
     listUnits units;
     units.addBase(1, 200, 0, 0, '0');

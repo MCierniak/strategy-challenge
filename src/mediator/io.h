@@ -45,17 +45,25 @@ bool start_game();
 // Function evaluating last order and updating status for the next player.
 bool prep_next_turn(int &turn, bool &player1Win, bool &player2Win, bool &draw);
 
+// Interpret player orders for base
 bool process_base_orders(int id, char task, std::stringstream &order, long &gold, listUnits &units, bool &playerWins, bool &opponentWins);
+// Interpret player orders for units
 bool process_unit_orders(int id, char task, std::stringstream &order, const grid &map, listUnits &units, listUnits &enemies, bool &playerWins, bool &opponentWins);
 
+// Remove untis with 0 or negative endurance
 bool remove_dead_units(listUnits &units, bool &playerWins, bool &opponentWins);
+// Add built unit
 bool add_new_unit(int &max_index, listUnits &units);
 
+// Output for player status files
 std::string unit_output_player(const std::string &name, listUnits &units);
+// Output for mediator status files
 std::string unit_output_mediator(const std::string &name, listUnits &units);
 
+// Human readable map for the makeshift GUI :)
 void write_hr_map_status(const grid &map, listUnits &units_p1, listUnits &units_p2);
 
+// Check if the file provided in name string exists
 bool file_exists(const std::string &name);
 
 #endif

@@ -93,13 +93,13 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
     (void)allies; // voids to avoid compiler warnings
     (void)enemies;
-    // If already on empty resource node, stay there
-    // The third condition ensures that at most one worker will stay
-    if (this->posy < 0 || this->posy >= int(map.size())) return false;
+    if (this->posy < 0 || this->posy >= int(map.size())) return false; // sanity test (if worker outside map bounds, do nothing)
     if (this->posx < 0 || this->posx >= int(map[0].size())) return false;
     #ifdef VERBOSE_TRUE
         std::cout << "(Player) (Worker) Looking for resource..." << std::endl;
     #endif
+    // If already on empty resource node, stay there
+    // The third condition ensures that at most one worker will stay
     if (
         map[this->posy][this->posx]->checkResource() && 
         (
@@ -115,7 +115,7 @@ bool Worker::find_target(const grid &map, listUnits &allies, listUnits &enemies)
         this->trgtX = this->posx;
         return true;
     }
-    // If not, find nearest empty resource node
+    // If not, find nearest (to base) empty resource node
     for (auto &&el : resource::resNodeList)
     {
         if (el[0] < 0 || el[0] >= int(map.size())) return false;
@@ -169,25 +169,25 @@ bool Swordsman::find_target(const grid &map, listUnits &allies, listUnits &enemi
 
 bool Archer::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    return find_target_archer(this->id, map, allies, enemies);
+    return find_target_archer(this->id, map, allies, enemies); // call external function logic function (misc.cpp)
 }
 
 bool Pikeman::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    return find_target_pikeman(this->id, map, allies, enemies);
+    return find_target_pikeman(this->id, map, allies, enemies); // call external function logic function (misc.cpp)
 }
 
 bool Knight::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    return find_target_knight(this->id, map, allies, enemies);
+    return find_target_knight(this->id, map, allies, enemies); // call external function logic function (misc.cpp)
 }
 
 bool Ram::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    return find_target_ram(this->id, map, allies, enemies);
+    return find_target_ram(this->id, map, allies, enemies); // call external function logic function (misc.cpp)
 }
 
 bool Catapult::find_target(const grid &map, listUnits &allies, listUnits &enemies)
 {
-    return find_target_catapult(this->id, map, allies, enemies);
+    return find_target_catapult(this->id, map, allies, enemies); // call external function logic function (misc.cpp)
 }

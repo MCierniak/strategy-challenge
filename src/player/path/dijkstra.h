@@ -25,6 +25,7 @@
 
 #include "../grid.h"
 
+// Comparator for priority_queue
 struct my_comparator
 {
     bool operator()(std::vector<int> const& a, std::vector<int> const& b) const

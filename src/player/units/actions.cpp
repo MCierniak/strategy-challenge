@@ -59,11 +59,11 @@ bool attack(std::string &payload, int sId, const grid &map, listUnits &allies, l
             std::cout << "(Player) Target acquired." << std::endl;
         #endif
         int trgt_id = enemiesInRange.top().second;  // if queue not empty, output attack command to payload,
-        ss << sId << " A " << trgt_id << '\n';      // decrement endurance so that other units won't needlesly target dead enemies
+        ss << sId << " A " << trgt_id << '\n';
         payload += ss.str();
 
-        if (enemies.id2type[trgt_id] == 'B') enemies.base.endurance -= allies.id2dmg[sId]['B'];
-        else enemies.units[trgt_id]->endurance -= allies.id2dmg[sId][enemies.id2type[trgt_id]];
+        if (enemies.id2type[trgt_id] == 'B') enemies.base.endurance -= allies.id2dmg[sId]['B']; // SegFault guard
+        else enemies.units[trgt_id]->endurance -= allies.id2dmg[sId][enemies.id2type[trgt_id]]; // decrement endurance so that other units won't needlesly target dead enemies
 
         #ifdef VERBOSE_TRUE
             std::cout << "(Player) Attacking!" << std::endl;
@@ -95,13 +95,13 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
     // Not in range of enemies, do nothing
     if (dmg == 1) return false;
 
-    for (auto &&mod : allies.id2moveV[sId])
+    for (auto &&mod : allies.id2moveV[sId]) // Iterate over all nodes in move range
     {
         int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
-        if (newY < 0 || newY >= int(map.size())) continue;
+        if (newY < 0 || newY >= int(map.size())) continue; // out of bounds guard
         if (newX < 0 || newX >= int(map[newY].size())) continue;
 
-        if (!map[newY][newX]->checkTrav()) continue;
+        if (!map[newY][newX]->checkTrav()) continue; // traverse guard
 
         dmg = map[newY][newX]->checkDmg(type);
 
@@ -123,7 +123,7 @@ bool evade(std::string &payload, int sId, const grid &map, listUnits &allies)
             return true;
         }
     }
-    if (!eQueue.empty())
+    if (!eQueue.empty()) // if no nodes are safe, choose one with the lowest damage potential
     {
         std::stringstream ss;
         coord next = eQueue.top().second;
@@ -147,15 +147,15 @@ bool cover(int sId, const grid &map, listUnits &allies, int &stepX, int &stepY)
     if 
     (
         (map[stepY][stepX]->checkDmg(allies.id2type[sId]) > 1 &&                                    // If moving to within range of an enemy,
-        map[allies.units[sId]->posy][allies.units[sId]->posx]->checkDmg(allies.id2type[sId]) == 1)  // find closest safe ndoe instead
+        map[allies.units[sId]->posy][allies.units[sId]->posx]->checkDmg(allies.id2type[sId]) == 1)  // find closest safe node instead
     )
     {
         #ifdef VERBOSE_TRUE
             std::cout << "(Player) Taking cover! Moving to a better position than " << stepX << " " << stepY << std::endl;
         #endif
         int distToStep = Dist(allies.units[sId]->posx, allies.units[sId]->posy, stepX, stepY); // Distance to original target gridObj
-        int cX = allies.units[sId]->posx, cY = allies.units[sId]->posy; // coordinates of the original target gridObj
-        for (auto &&mod : allies.id2moveV[sId])
+        int cX = allies.units[sId]->posx, cY = allies.units[sId]->posy; // coordinates of the current position
+        for (auto &&mod : allies.id2moveV[sId]) // iterate over all nodes in move range
         {
             int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
             if (newY < 0 || newY >= int(map.size())) continue; // out of bounds and traverse check
@@ -186,12 +186,12 @@ bool cover(int sId, const grid &map, listUnits &allies, int &stepX, int &stepY)
         #ifdef VERBOSE_TRUE
             std::cout << "(Player) Taking cover! Avoiding imminent death on " << stepX << " " << stepY << std::endl;
         #endif
-        int cX = allies.units[sId]->posx, cY = allies.units[sId]->posy;
-        int dmg = map[cY][cX]->checkDmg(allies.id2type[sId]);
-        for (auto &&mod : allies.id2moveV[sId])
+        int cX = allies.units[sId]->posx, cY = allies.units[sId]->posy; // coordinates of the current position
+        int dmg = map[cY][cX]->checkDmg(allies.id2type[sId]); // damage if staying in place
+        for (auto &&mod : allies.id2moveV[sId]) // iterate over all nodes in move range
         {
             int newY = allies.units[sId]->posy + mod[0], newX = allies.units[sId]->posx + mod[1];
-            if (newY < 0 || newY >= int(map.size())) continue;
+            if (newY < 0 || newY >= int(map.size())) continue; // out of bounds and traverse check
             if (newX < 0 || newX >= int(map[newY].size())) continue;
             if (!map[newY][newX]->checkTrav()) continue;
             if 
@@ -374,7 +374,7 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
             allies.units[unitId]->trgtY == allies.units[unitId]->posy
         )
         return attack(payload, unitId, map, allies, enemies);
-        // Target in range, move to it
+        // Target in range, move to it with full speed, check target position with the cover() function
         else if 
         (
             Dist
@@ -388,7 +388,7 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 std::cout << "(Player) Moving full range" << std::endl;
             #endif
             std::stringstream ss;
-            if (cover(unitId, map, allies, allies.units[unitId]->trgtX, allies.units[unitId]->trgtY))
+            if (cover(unitId, map, allies, allies.units[unitId]->trgtX, allies.units[unitId]->trgtY)) // When moving full speed perform cover check to make sure the unit ends on an advantageous position
             {
                 ss << unitId << " M " << allies.units[unitId]->trgtX << ' ' << allies.units[unitId]->trgtY << '\n';
                 payload = ss.str();
@@ -401,7 +401,7 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 allies.units[unitId]->posy = allies.units[unitId]->trgtY;
                 return true;
             }
-            else return false;
+            else return false; // if cover suggests not moving, return false
         }
         // Target in range, move to it, attack
         else if 
@@ -424,7 +424,7 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 map[allies.units[unitId]->trgtY][allies.units[unitId]->trgtX]->addWorkerId(unitId);
                 map[allies.units[unitId]->posy][allies.units[unitId]->posx]->removeWorkerId(unitId);
             }
-            allies.units[unitId]->posx = allies.units[unitId]->trgtX;
+            allies.units[unitId]->posx = allies.units[unitId]->trgtX; // Update unit position before attacking
             allies.units[unitId]->posy = allies.units[unitId]->trgtY;
             attack(payload, unitId, map, allies, enemies);
             return true;
@@ -442,12 +442,12 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 allies.units[unitId]->posx, allies.units[unitId]->posy,
                 allies.units[unitId]->trgtX, allies.units[unitId]->trgtY,
                 stepX, stepY, allies.id2moveV[unitId]
-            )) return false;
+            )) return false; // if bfs returns false, no path to target found
             #ifdef VERBOSE_TRUE
                 std::cout << "(Player) BFS-directed move." << std::endl;
             #endif
             std::stringstream ss;
-            if (cover(unitId, map, allies, stepX, stepY))
+            if (cover(unitId, map, allies, stepX, stepY)) // When directed by BFS, perform cover check to make sure the unit ends on an advantageous position
             {
                 ss << unitId << " M " << stepX << ' ' << stepY << '\n';
                 payload = ss.str();
@@ -460,7 +460,7 @@ bool action_unit(std::string &payload, int unitId, const grid &map, listUnits &a
                 allies.units[unitId]->posy = stepY;
                 return true;
             }
-            else return false;
+            else return false; // if cover suggests not moving, return false
         }
     }
     // No valid targets, evade damage and wait

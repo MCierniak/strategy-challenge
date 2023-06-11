@@ -46,7 +46,7 @@ bool dijkstra_find_path(int unitId, listUnits &units, const grid &map, int sX, i
             if (newXi < 0 || newXi >= int(map[newYi].size())) continue;
             if (!map[newYi][newXi]->checkTrav()) continue;
 
-            int newWeight = current[2] + map[newYi][newXi]->checkDmg(units.id2type[unitId]); // determine node priority using distance and enemy attack range
+            int newWeight = current[2] + map[newYi][newXi]->checkDmg(units.id2type[unitId]); // determine node priority using distance and enemy attack potential
 
             if (weight[newYi][newXi] < newWeight) continue; // if already visited via a shorter path, continue
             
